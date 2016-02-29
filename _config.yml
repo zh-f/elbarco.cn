@@ -65,6 +65,8 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: indigo
 
+email: zh.f@outlook.com
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
