@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>消灭由后台IO阻塞引起的大型JVM GC停顿 | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="翻译">
+  <meta name="description" content="原文地址：https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic。原创翻译，转载请注明出处。
+
+在生产环境中，我们屡次看到在JVM中运行的应用程序偶尔会遭遇比较严重的停顿，我们称之为STW（Stop－The－World），这个现象是因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="消灭由后台IO阻塞引起的大型JVM GC停顿">
+<meta property="og:url" content="http://0x4b5.top/2016/03/06/消灭由后台IO阻塞引起的大型JVM GC暂停/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="原文地址：https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic。原创翻译，转载请注明出处。
+
+在生产环境中，我们屡次看到在JVM中运行的应用程序偶尔会遭遇比较严重的停顿，我们称之为STW（Stop－The－World），这个现象是因">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-SystemSetup.jpg">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-GC1.jpg">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-GC2.jpg">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/TimeSeries-JVM1.jpg">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/TimeSeries-JVM2.jpg">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-GC-Log.png">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-schematic-revised.jpg">
+<meta property="og:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-Pauses-2-revised.jpg">
+<meta property="og:updated_time" content="2016-03-06T14:17:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="消灭由后台IO阻塞引起的大型JVM GC停顿">
+<meta name="twitter:description" content="原文地址：https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic。原创翻译，转载请注明出处。
+
+在生产环境中，我们屡次看到在JVM中运行的应用程序偶尔会遭遇比较严重的停顿，我们称之为STW（Stop－The－World），这个现象是因">
+<meta name="twitter:image" content="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-SystemSetup.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2016</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-circle-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">消灭由后台IO阻塞引起的大型JVM GC停顿</div>
+        <a href="javascript:;" class="header-icon waves-circle-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">消灭由后台IO阻塞引起的大型JVM GC停顿</h1>
+    <h5 class="subtitle">2016-03-06</h5>
+  </div>
+</header>
+
+    <div class="container body-wrap">
+      
+  <article id="post-消灭由后台IO阻塞引起的大型JVM GC暂停" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/翻译/">翻译</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="消灭由后台IO阻塞引起的大型JVM GC停顿" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
+&lt;p&gt;原文地址：&lt;a href=&quot;https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic&quot;&gt;https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic&lt;/a&gt;。&lt;br&gt;&lt;br&gt;原创翻译，转载请注明出处。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在生产环境中，我们屡次看到在JVM中运行的应用程序偶尔会遭遇比较严重的停顿，我们称之为STW（Stop－The－World），这个现象是因为JVM的GC日志记录进程被后台IO阻塞（比如系统页缓存的回写）锁定所引起的。在STW停顿期间，JVM暂停了所有的应用线程，应用程序停止响应用户的请求，因此对于一些延迟敏感的用户操作，这种暂停会造成不可接受的延迟。&lt;/p&gt;" data-url="http://0x4b5.top/2016/03/06/消灭由后台IO阻塞引起的大型JVM GC暂停/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#生产问题"><span class="post-toc-text">生产问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#在实验室环境中重现问题"><span class="post-toc-text">在实验室环境中重现问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Java工作负载"><span class="post-toc-text">Java工作负载</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#后台IO"><span class="post-toc-text">后台IO</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#系统配置"><span class="post-toc-text">系统配置</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#场景1（无后台IO负载）"><span class="post-toc-text">场景1（无后台IO负载）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#场景2（有后台IO负载）"><span class="post-toc-text">场景2（有后台IO负载）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#调查"><span class="post-toc-text">调查</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#后台IO活动"><span class="post-toc-text">后台IO活动</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解决方案"><span class="post-toc-text">解决方案</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#评估将GC日志放置在SSD和tmpfs上"><span class="post-toc-text">评估将GC日志放置在SSD和tmpfs上</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结论"><span class="post-toc-text">结论</span></a></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><blockquote>
+<p>原文地址：<a href="https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic" target="_blank" rel="external">https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic</a>。<br><br>原创翻译，转载请注明出处。</p>
+</blockquote>
+<p>在生产环境中，我们屡次看到在JVM中运行的应用程序偶尔会遭遇比较严重的停顿，我们称之为STW（Stop－The－World），这个现象是因为JVM的GC日志记录进程被后台IO阻塞（比如系统页缓存的回写）锁定所引起的。在STW停顿期间，JVM暂停了所有的应用线程，应用程序停止响应用户的请求，因此对于一些延迟敏感的用户操作，这种暂停会造成不可接受的延迟。</p>
+<a id="more"></a>
+<p>我们的分析调查显示，暂停是由于JVM GC（垃圾回收）在GC日志记录过程中的write()系统调用诱导引起的。这类写日志的操作，即便是采用了异步写模式（比如缓冲IO或者非阻塞IO），仍然会被操作系统的机制包括页缓存写会锁定相当长的时间。</p>
+<p>我们讨论了多种方案来缓解该问题。对于延迟敏感的Java应用，我们建议将Java日志文件已到一个分离的活着高性能的磁盘上（如SSD，tmpfs等）。</p>
+<h2 id="生产问题"><a href="#生产问题" class="headerlink" title="生产问题"></a>生产问题</h2><p>当JVM管理的堆空间进行了垃圾回收，JVM可能会停止，从而向应用中引入了STW停顿。鉴于启动Java实例时配置的选项不同，不同类型的GC和JVM活动会被记录到GC日志文件中。尽管一些GC诱导的STW停顿比如扫描、标志、整理堆对象是我们众所周知的，但是我们发现依然有很多大型的STW停顿是有后台IO阻塞引起。在我们的生产环境中，我们看到了在关键任务的Java应用中很多无法解释的大型STW停顿（&gt;5s）。这样的停顿不能被应用层面的逻辑和JVM GC活动所解释。如下面所示，展现了一个大型的超过4s的STW停顿和一些GC信息。垃圾收集器是G1.G1具有一个8GB的堆空间和并行的新生代垃圾收集，一般来讲整个垃圾回收过程仅需小于1s即可完成，简单的GC选项使开销较小。然而，应用线程竟然暂停了超过4s。GC（如回收堆空间）的工作量不足以解释4.17s这样巨大的暂停时间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2015-12-20T16:09:04.088-0800: 95.743: [GC pause (G1 Evacuation Pause) (young) (initial-mark) 8258M-&gt;6294M(10G), 0.1343256 secs]</span><br><span class="line">2015-12-20T16:09:08.257-0800: 99.912: Total time for which application threads were stopped: 4.1692476 seconds</span><br></pre></td></tr></table></figure>
+<p>使用G1收集器产生的4，17s的GC STW暂停</p>
+<p>另一个例子，下面的GC日志快照展示了一个11.45s的STW暂停。垃圾收集器是CMS（Concurrent Mode Sweep）。”用户”/“系统”时间可以忽略不计，然而”real”GC时间大于11s。最后一行明确了11.45s的应用暂停时间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2016-01-14T22:08:28.028+0000: 312052.604: [GC (Allocation Failure) 312064.042: [ParNew</span><br><span class="line">Desired survivor size 1998848 bytes, new threshold 15 (max 15)</span><br><span class="line">- age   1:    1678056 bytes,    1678056 total</span><br><span class="line">: 508096K-&gt;3782K(508096K), 0.0142796 secs] 1336653K-&gt;835675K(4190400K), 11.4521443 secs] [Times: user=0.18 sys=0.01, real=11.45 secs]</span><br><span class="line">2016-01-14T22:08:39.481+0000: 312064.058: Total time for which application threads were stopped: 11.4566012 seconds</span><br></pre></td></tr></table></figure>
+<p>由CMS收集器引起的11.45sGC STW暂停</p>
+<p>由于应用是十分延迟敏感的，我们花费了相当大的努力来研究这个问题。最终，我们重现了问题，找到了关键诱因，然后提出了几项解决方案来解决它。</p>
+<h2 id="在实验室环境中重现问题"><a href="#在实验室环境中重现问题" class="headerlink" title="在实验室环境中重现问题"></a>在实验室环境中重现问题</h2><p>首先，我们先从在实验室环境中重现这个无法解释的大型JVM暂停开始。出于可控性和重复性的考虑，我们设计了一个简单的工作负载来移除生产应用程序的复杂性。</p>
+<p>我们在两个场景中运行这个工作负载：具备和不具备后台IO活动。不具备后台IO的场景用作“基线”，另一个引入后台IO的场景用于重现问题。</p>
+<h2 id="Java工作负载"><a href="#Java工作负载" class="headerlink" title="Java工作负载"></a>Java工作负载</h2><p>我们所使用的Java工作负载用向队列中持续分配10KB的对象。当对象数量达到100，000时，一半的对象会被移除队列。所以堆中对象的最大值时100，000个对象，约占用原始大小10GB。进程会持续固定的一段时间（如5min）。</p>
+<p>Java源码和生成后台IO的脚本，都开源在这里<a href="https://github.com/zhenyun/JavaGCworkload" target="_blank" rel="external">https://github.com/zhenyun/JavaGCworkload</a>。我们考虑的主要性能指标是大JVM GC暂停的次数。</p>
+<h2 id="后台IO"><a href="#后台IO" class="headerlink" title="后台IO"></a>后台IO</h2><p>后台IO是由脚本引入，该脚本负责持续的复制大文件。后台工作负载答曰产生150MB/s的写负载，足以使单个硬盘跑满。为了看到产生的IO负载有多严重，我们使用”sar －d －p 2”来收集一下统计数据：await（设备发出的IO请求送达的平均时间（单位，毫秒）），tps（每秒传输到物理设备上的数量总和）和wr_sec-per-s（写入到设备的扇区数）。平均数值是：await＝421ms，tps＝305，wr_sec-per-s=302K。</p>
+<h2 id="系统配置"><a href="#系统配置" class="headerlink" title="系统配置"></a>系统配置</h2><p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-SystemSetup.jpg" alt=""></p>
+<h2 id="场景1（无后台IO负载）"><a href="#场景1（无后台IO负载）" class="headerlink" title="场景1（无后台IO负载）"></a>场景1（无后台IO负载）</h2><p>作为基线，本次运行无后台IO负载。所有JVM GC暂停的时间序列数据所示如下图所示。没有发现超过250ms的单一暂停。</p>
+<p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-GC1.jpg" alt=""></p>
+<p>场景一中的所有JVM GC暂停（无后台IO负载）</p>
+<h2 id="场景2（有后台IO负载）"><a href="#场景2（有后台IO负载）" class="headerlink" title="场景2（有后台IO负载）"></a>场景2（有后台IO负载）</h2><p>当后台IO运行时，同样的Java工作负载在5分钟的运行期间，能够看到3.6s的STW暂停，和三个超过0.5s的暂停。</p>
+<p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-GC2.jpg" alt=""></p>
+<p>场景二中的所有JVM GC暂停（有后台IO负载）</p>
+<h2 id="调查"><a href="#调查" class="headerlink" title="调查"></a>调查</h2><p>为了弄明白是什么系统调用引起的STW暂停，我们使用<a href="http://linux.die.net/man/1/strace" target="_blank" rel="external">strace</a>工具来取得由JVM实例产生的系统调用快照。</p>
+<p>我们首先验证了JVM将GC信息记录到文件使用了异步IO。此外，我们追溯自启动JVM所发出的所有系统调用。GC日志文件采用了异步模式打开，并且没有观察到由fsync()调用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">16:25:35.411993 open(&quot;gc.log&quot;, O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3 &lt;0.000073&gt;</span><br></pre></td></tr></table></figure>
+<p>捕获的JVM打开GC日志文件产生的open()系统调用</p>
+<p>然而，快照显示由JVM调用的异步write()系统调用有不同寻常的较长的执行时间。检查系统调用和JVM暂停的时间戳，我们发现他们具备强烈的关联关系。在下面的两张图表，我们展示了2分钟内的延迟情况。</p>
+<p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/TimeSeries-JVM1.jpg" alt=""></p>
+<p>时间序列相关（JVM STW暂停）。</p>
+<p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/TimeSeries-JVM2.jpg" alt=""></p>
+<p>时间序列相关（write()系统调用延迟）</p>
+<p>接着，我们放大焦点，关注发生在13:32:35时最大1.59s停顿。下面展示了相关的GC日志和strace输出：</p>
+<p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-GC-Log.png" alt=""></p>
+<p>GC日志和strace输出</p>
+<p>让我们来尝试理解究竟发生了什么：</p>
+<ol>
+<li>35.04时（第2行），新生代GC启动，花费0.12s完成</li>
+<li>新生代GC在35.17完成，JVM进行系统调用write()，尝试将新生代GC统计输出到GC日志文件（第4行）</li>
+<li>write()调用被锁定1.47s，最终在36.64（第5行）完成，花费1.47s。</li>
+<li>当write()调用在36.64返回JVM，JVM纪录了1.59s的STW暂停（0.12+1.47）（第3行）</li>
+</ol>
+<p>换句话说，实际的STW暂停由两部分组成：（1）GC时间（本例中新生代GC所花费时间）；（2）GC日记录日志所花费的时间（本例中的write()时间）。</p>
+<p>这些数据表明，GC日志记录过程算在了JVM STW暂停中，日志记录的时间被当作STW暂停的一部分。特别的，整个应用的暂停主要包含两部分：因为JVM GC活动引起的暂停和因为在JVM GC日志记录时由操作系统阻塞write()系统调用所产生的暂停。下面的图表展示了两者的关系。</p>
+<p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-schematic-revised.jpg" alt=""></p>
+<p>日志记录期间JVM和操作系统的相互作用</p>
+<p>如果GC日志记录被操作系统阻塞，阻塞的时间也被计算为STW暂停的一部分。然而新问题是，为何缓冲写会被阻塞？翻阅大量的资源包括内核源码，我们意识到缓冲写可能卡在内核代码。包括多个原因，如：（1）稳定页写操作；（2）日志提交。</p>
+<p>稳定页写操作：JVM向GC日志文件中的写操作首先修改了相关的文件缓存页内容。即使缓存页稍后会通过操作系统的写回机制持久化到磁盘文件中，对内存中页的修改仍然会造成由“稳定页写操作”引起的页面争用。在“稳定页写操作”时，如果页面正在被操作系统写回，对这个页的write()操作必须等待写回完成。页面锁定来确保数据的一致性，避免部分新的一页保留到磁盘。</p>
+<p>日志提交：对于日志文件系统，适当的日志在文件写入期间生成。写入新内容到GC日志文件导致新的块被分配，文件系统需要先将日志数据提交到文件。在日志提交期间，如果操作系统具有其他IO活动，提交操作可能需要稍作等待。如果后台IO活动比较繁重，则等待时间会明显加长。值得注意的是，<a href="https://en.wikipedia.org/wiki/Ext4" target="_blank" rel="external">EXT4</a>文件系统具备一项“延迟分配”的特性，来推迟某些特定日志数据的操作系统写回时间，可以有效缓解这个问题。此外要注意的是，将EXT4的数据模式从默认的“有序”更改为“写回”并不会真正处理这个问题，因为日志需要在写扩展调用返回前就被持久化。</p>
+<h2 id="后台IO活动"><a href="#后台IO活动" class="headerlink" title="后台IO活动"></a>后台IO活动</h2><p>从特定的JVM垃圾收集的角度来说，在典型的生产环境中，后台IO活动是不可避免的。有几类产生IO活动的源头：（1）系统活动；（2）管理软件；（3）其他协同应用；（4）同一JVM实例产生的IO。首先，操作系统包含许多机制（比如“／proc”文件系统）将数据写入底层磁盘。第二，系统级的软件比如<a href="https://cfengine.com/" target="_blank" rel="external">CFEngine</a>也会产生磁盘IO。第三，如果节点需要和其他应用协同共享磁盘，则其他应用会竞争IO。第四，特定的JVM实例也可能产生除GC日志之外的磁盘IO。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>尽管在当前的HotSpot JVM实现（也存在于其他虚拟机）中，GC日志记录过程会被后台IO活动阻塞，我们仍然有很多解决方案来帮助在写入到GC日志文件时缓解这个问题。</p>
+<p>首先，增强JVM可以完全的解决这个问题。尤其，当GC日志记录活动和引起STW暂停的JVM GC进程分裂，这个问题就会消失不见。举例来说，JVM可以将GC日志记录功能，放入一个不同的线程来单独处理日志文件写操作，因此，不会造成STW暂停。但是独立线程来记录日志会存在JVM崩溃时丢失GC日志信息的风险。暴露给用户一个JVM标志位允许用户指定偏好应当时不错的选择。</p>
+<p>由于后台IO引起的STW暂停时间的长短依赖于究竟IO负载有多繁重，那么我们可以采用各种方式来减少后台IO的强烈程度。举例来说，在同一个节点上取消已分配的其他IO密集型应用程序，减少其它类型的日志记录，改进日志循环等。</p>
+<p>对于延迟敏感的应用来讲，比如服务用户进行交互操作，稍微大的STW暂停（比如大于0.25s）都是不可容忍的。因此，需要实施特别的方案。确保没有由系统诱导产生的较大STW暂停的最底线就是使GC日志记录动作避免被操作系统IO活动阻塞。</p>
+<p>一种解决方案是将GC日志放入tmpfs（比如，-Xloggc:/tmpfs/gc.log）。因为tmpfs没有磁盘备份，写入到tmpfs不会产生磁盘活动，因此也不会被磁盘IO阻塞。但是这种方式存在两个问题：（1）GC日志文件会在系统宕机时丢失；（2）tmpfs消耗物理内存。一种缓解方案就是隔段时间将日志文件持久化备份，可以减少丢失的数量。</p>
+<p>另一种方案就是将GC日志文件放置在SSD（Solid－State Drives，固态硬盘）上，固态硬盘具备更好的IO性能。根据IO负载，SSD可用作GC日志记录专属的驱动器，或者与其他IO负载应用共享。然而，SSD的价格需要考虑在成本中。</p>
+<p>相较使用SSD，一个更具成本效益的优胜方案是将GC日志文件放入一个专用的硬盘上面。由于该硬盘仅提供GC日志记录，所以产生的磁盘IO看起来能达到降低暂停，提高JVM性能的目标。事实上，上面我们展示的场景1中，就用了这种配置方式，因此采用这种方式可以保证在GC日志记录驱动器上没有其它IO活动存在。</p>
+<h2 id="评估将GC日志放置在SSD和tmpfs上"><a href="#评估将GC日志放置在SSD和tmpfs上" class="headerlink" title="评估将GC日志放置在SSD和tmpfs上"></a>评估将GC日志放置在SSD和tmpfs上</h2><p>我们采用了专有文件系统的方式，将GC日志放置在SSD和tmpfs驱动器上。我们运行了和场景2中同样的Java负载和后台IO负载。</p>
+<p>对于SSD和tmpfs，我们观察到了相似的结果，下面的图表展示了将GC日志文件放置在SSD磁盘上的结果。我们发现JVM暂停性能比场景1中略差，但是所有的暂停均小于0.25s。结果表明，后台IO负载并没有影响应用的性能。</p>
+<p><img src="https://content.linkedin.com/content/dam/engineering/site-assets/images/blog/posts/2016/02/JVM-Pauses-2-revised.jpg" alt=""></p>
+<p>将GC日志记录到SSD上所有的JVM STW暂停</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>延迟敏感的Java应用程序需要较小的JVM GC暂停。然而，当磁盘IO繁重时，JVM会被阻塞明显的一段时间。</p>
+<p>我们研究了这个问题，并且得出以下结论：</p>
+<ol>
+<li>JVM GC需要write()系统调用来记录GC活动；</li>
+<li>由于后台磁盘IO，像write()这样的调用会被阻塞；</li>
+<li>GC日志记录过程是JVM暂停的一部分，因此write()调用的时间会计算在JVM STW暂停时间中。</li>
+</ol>
+<p>我们提出了一系列的解决方案来缓解这个问题。尤其的，调查结果可以用于提高 JVM 实现，以避免此问题。对于延迟敏感的应用程序，一个即刻生效的解决方案即是将GC日志文件放置在单独的硬盘或者高性能的磁盘驱动器，如SSD上面，来避免IO竞争。</p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav flex-row">
+  <div class="flex-col waves-block prev">
+    
+  </div>
+  <div class="flex-col waves-block next">
+    
+      <a href="/2016/03/02/开山第一篇/" title="开山第一篇" id="post-next" class="post-nav-link">
+        <span class="article-nav-title">下一篇</span>
+        <i class="icon icon-chevron-right"></i>
+      </a>
+    
+  </div>
+
+</nav>
+
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="消灭由后台IO阻塞引起的大型JVM GC暂停" data-title="消灭由后台IO阻塞引起的大型JVM GC停顿" data-url="http://0x4b5.top/2016/03/06/消灭由后台IO阻塞引起的大型JVM GC暂停/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-circle-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="消灭由后台IO阻塞引起的大型JVM GC停顿" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
+&lt;p&gt;原文地址：&lt;a href=&quot;https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic&quot;&gt;https://engineering.linkedin.com/blog/2016/02/eliminating-large-jvm-gc-pauses-caused-by-background-io-traffic&lt;/a&gt;。&lt;br&gt;&lt;br&gt;原创翻译，转载请注明出处。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在生产环境中，我们屡次看到在JVM中运行的应用程序偶尔会遭遇比较严重的停顿，我们称之为STW（Stop－The－World），这个现象是因为JVM的GC日志记录进程被后台IO阻塞（比如系统页缓存的回写）锁定所引起的。在STW停顿期间，JVM暂停了所有的应用线程，应用程序停止响应用户的请求，因此对于一些延迟敏感的用户操作，这种暂停会造成不可接受的延迟。&lt;/p&gt;" data-url="http://0x4b5.top/2016/03/06/消灭由后台IO阻塞引起的大型JVM GC暂停/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+
+<script type="text/javascript">
+var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cspan id='cnzz_stat_icon_1257688433' style='display:none' %3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1257688433%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+
+
+
+</body>
+</html>
