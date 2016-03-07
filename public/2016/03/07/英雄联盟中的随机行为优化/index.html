@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>英雄联盟中的随机性为优化 | El barco | Just another mediocre programmer</title>
+  <title>英雄联盟中的随机行为优化 | El barco | Just another mediocre programmer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <meta name="keywords" content="翻译">
@@ -12,7 +12,7 @@
 
 对于像英雄联盟这样不断演进的产品的开发者而言，需要不断的致力于与系统的熵作斗争，因为他们将越来越多的内容添加到资源有限的服务器中。新的内容带了新的隐性成本——不仅是更多的实施成本，同时也包括由于创造了更多的纹理、仿真和处理造成的内存和性能成本。如果我们忽略（或者错误估算）了这些成本，则整体游戏性能不佳，可玩性减少。故障使人厌恶，延迟使人愤怒，帧率下降">
 <meta property="og:type" content="article">
-<meta property="og:title" content="英雄联盟中的随机性为优化">
+<meta property="og:title" content="英雄联盟中的随机行为优化">
 <meta property="og:url" content="http://0x4b5.top/2016/03/07/英雄联盟中的随机行为优化/index.html">
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="原文地址：传送门原创翻译，转载请注明出处
@@ -30,9 +30,9 @@
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/processor_memory_gap.jpg">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/codesoftly_comic.jpg">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/VTune3.PNG">
-<meta property="og:updated_time" content="2016-03-07T05:49:55.498Z">
+<meta property="og:updated_time" content="2016-03-07T06:41:10.956Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="英雄联盟中的随机性为优化">
+<meta name="twitter:title" content="英雄联盟中的随机行为优化">
 <meta name="twitter:description" content="原文地址：传送门原创翻译，转载请注明出处
 
 
@@ -105,7 +105,7 @@
         <a href="javascript:;" class="header-icon waves-circle-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
-        <div class="flex-col header-title ellipsis">英雄联盟中的随机性为优化</div>
+        <div class="flex-col header-title ellipsis">英雄联盟中的随机行为优化</div>
         <a href="javascript:;" class="header-icon waves-circle-light" id="menu-share">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
@@ -113,7 +113,7 @@
 </header>
 <header class="content-header">
   <div class="container">
-    <h1 class="author">英雄联盟中的随机性为优化</h1>
+    <h1 class="author">英雄联盟中的随机行为优化</h1>
     <h5 class="subtitle">2016-03-07</h5>
   </div>
 </header>
@@ -132,7 +132,7 @@
         <aside class="post-widget" id="post-widget">
 
           
-          <div class="post-share" id="post-share" data-title="英雄联盟中的随机性为优化" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
+          <div class="post-share" id="post-share" data-title="英雄联盟中的随机行为优化" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
 &lt;p&gt;原文地址：&lt;a href=&quot;http://engineering.riotgames.com/news/random-acts-optimization&quot;&gt;传送门&lt;/a&gt;&lt;br&gt;原创翻译，转载请注明出处&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;img src=&quot;http://7xrgsx.com1.z0.glb.clouddn.com/particlesheader2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
@@ -176,7 +176,7 @@
 
           
           <nav class="post-toc-wrap" id="post-toc">
-            
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#步骤1-鉴别"><span class="post-toc-text">步骤1:鉴别</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#步骤2-理解"><span class="post-toc-text">步骤2:理解</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#步骤3-迭代"><span class="post-toc-text">步骤3:迭代</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a></li></ol>
           </nav>
           
         </aside>
@@ -199,8 +199,7 @@
 <p><em>步骤三：迭代</em></p>
 <p>当我们理解了为何特定部分代码执行较慢及代码本意要执行的内容，我们就有了足够的信息来设计和开发一套可行的解决方案。使用鉴别步骤中的工具和得到的快照数据，我们将新代码和旧代码的性能做了比较。如果解决方案效果出众，我们会彻底的进行测试以确保不引入来新的bug，那么接下来就可以击掌庆贺了，因为我们已经为其他内部测试做好了充分的准备。在大多数情况下，新的代码不见的足够快，所以我们不断迭代解决方案，知道新的代码能达到优化的目的。</p>
 <p>现在，让我们看下在英雄联盟代码库中这几个步骤的实施细节，并以最近优化的粒子系统逐步介绍。</p>
-<p>##步骤1:鉴别</p>
-<p>拳头的工程师使用大量的分析工具来检查游戏客户端和服务器的性能。我们先查看来客户端的帧率和通过Waffles得到的高级分析信息（通过工具的特定函数获得的输出信息），这个内部工具可以让我们在内部构建的客户端与服务器保持联通。此外，Waffles还具备其他功能，如在测试过程中触发调试、检查游戏内部数据如导航分格和暂停或者减缓游戏过程。</p>
+<h2 id="步骤1-鉴别"><a href="#步骤1-鉴别" class="headerlink" title="步骤1:鉴别"></a>步骤1:鉴别</h2><p>拳头的工程师使用大量的分析工具来检查游戏客户端和服务器的性能。我们先查看来客户端的帧率和通过Waffles得到的高级分析信息（通过工具的特定函数获得的输出信息），这个内部工具可以让我们在内部构建的客户端与服务器保持联通。此外，Waffles还具备其他功能，如在测试过程中触发调试、检查游戏内部数据如导航分格和暂停或者减缓游戏过程。</p>
 <p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/Waffles.png" alt=""><br>Waffles截图</p>
 <p>Waffles提供了一个实时展示界面，并提供详细的性能信息。上图是Waffles如何展现客户端性能表现的经典例子，上边图形（绿色柱状图）以毫秒为单位表示了帧率——越高的柱状图表示越低的帧率。非常慢的帧率在游戏中是可以感受得到的。柱状图下面是重要功能的分层视图，通过点击任何绿色柱状图，工程师都会看到影响该帧率的详细信息。通过这里，我们可以看出些端倪，即哪部分代码运行时导致性能较差的关键。</p>
 <p>我们使用一个简单的宏在代码库内手工检测一些重要函数来提供这份性能相关的信息。在对外发布的游戏版本中，这个宏并没有被打包编译，但在测试版本打包中，这个宏作为一个很小的class存在，它创建了一个事件，存放于配置文件缓冲区。该事件包含一个字符串识别码、一个线程ID、一个时间戳和其他必要的信息（比如它还可以存储在其生命周期内所有发生的内存配置数）。当对象超出范围后，析构器会在配置缓冲区中更新该事件自构造以来的运行时间。在随后的时间，可以输出和解析此配置文件缓冲区——理想的情况是在另一个进程进行以尽量减少对游戏本身的影响。</p>
@@ -214,8 +213,7 @@
 <p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/VTune.PNG" alt=""></p>
 <p>VTune中的Hot Functions</p>
 <p>上面的表格展现了一些粒子相关的函数。作为参考，最上面两个较大的函数用于为每个粒子更新矩阵和位置、方向相关的状态。举例来说，我们来看在第三和第九项AnimatedVariableWithRandomFactor&lt;&gt;中的Evaluate函数，函数很小（并且容易理解），但是相对而言比较耗时。</p>
-<p>##步骤2:理解</p>
-<p>现在，我们选择了一个需要优化的函数，则需要理解这个函数要做的事情和为什么这么做的原因。在本例中，AnimatedVariables被英雄联盟美术师用来定义粒子特征是如何随着时间变化。一旦一个美术师为一个特定的粒子可见性指定关键帧值后，代码中便会插入这些数据来产生一条曲线。插值方法是线性插值或一阶或二次集成。动画曲线被大量的使用——尽在召唤师峡谷（译者注：英雄联盟的地图之一，也是最热门的地图）中就有接近40000的动画曲线——涵盖了从粒子颜色扩展到旋转速度方方面面。Evaluate函数在每场游戏中会被调用数以亿计次。此外，LOL中的粒子系统是游戏体验中很重要的一部分，所以它们的行为不能做出任何改变。</p>
+<h2 id="步骤2-理解"><a href="#步骤2-理解" class="headerlink" title="步骤2:理解"></a>步骤2:理解</h2><p>现在，我们选择了一个需要优化的函数，则需要理解这个函数要做的事情和为什么这么做的原因。在本例中，AnimatedVariables被英雄联盟美术师用来定义粒子特征是如何随着时间变化。一旦一个美术师为一个特定的粒子可见性指定关键帧值后，代码中便会插入这些数据来产生一条曲线。插值方法是线性插值或一阶或二次集成。动画曲线被大量的使用——尽在召唤师峡谷（译者注：英雄联盟的地图之一，也是最热门的地图）中就有接近40000的动画曲线——涵盖了从粒子颜色扩展到旋转速度方方面面。Evaluate函数在每场游戏中会被调用数以亿计次。此外，LOL中的粒子系统是游戏体验中很重要的一部分，所以它们的行为不能做出任何改变。</p>
 <p>这个类其实已经做过了优化，通过查表的方式，对每个timestep所需要的值都预先计算过并存储在一个数组中，所以在读取这些数值时不必再次计算，所以减少了计算的耗时。这是一个明智的选择，因为曲线的一阶和二次集成是一个昂贵的进程。为每个系统中的每个粒子上的动画变量进行这个操作会使得处理过程大大减少。</p>
 <p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/graphpointgraphsmaller.png" alt=""></p>
 <p>动画变量曲线的查询表</p>
@@ -247,8 +245,7 @@
 <p>顺便说一句，我学会了作为一名程序员最重要的事情之一便是尊重你正在处理的代码。代码有可能看起很疯狂，但是这样写的目的可能是基于一个好的出发点。在没有完全理解代码如何使用和其为何设计之前不要错误的认为这些代码是丑陋愚蠢的。</p>
 <p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/codesoftly_comic.jpg" alt=""></p>
 <p>来自：<a href="http://codesoftly.com/2010/03/ha-code-entropy-explained.html" target="_blank" rel="external">http://codesoftly.com/2010/03/ha-code-entropy-explained.html</a></p>
-<p>##步骤3:迭代</p>
-<p>现在我们了解了哪部分代码执行较慢、这部分代码本意是什么和为何执行较慢，是时候开始构想解决方案了。每个常见的执行路径都是为单独变量设计，我们还知道数量少的键的线性插值非常快（在少量高速缓存中作简单的计算），所以我们需要在考虑这种情况的基础上进行重新设计。最后，我们可以回到前面罕见集成曲线的预计算查询表上。</p>
+<h2 id="步骤3-迭代"><a href="#步骤3-迭代" class="headerlink" title="步骤3:迭代"></a>步骤3:迭代</h2><p>现在我们了解了哪部分代码执行较慢、这部分代码本意是什么和为何执行较慢，是时候开始构想解决方案了。每个常见的执行路径都是为单独变量设计，我们还知道数量少的键的线性插值非常快（在少量高速缓存中作简单的计算），所以我们需要在考虑这种情况的基础上进行重新设计。最后，我们可以回到前面罕见集成曲线的预计算查询表上。</p>
 <p>在某些情况下，当我们不使用查询表时，首先构造这些表是没有意义的，所以会释放大量意义非凡的内存（大多数表具有256个条目或者更多，每个条目可达12字节的大小，这相当于大约每张表3kb）。所以现在，我们可以使用额外的一些内存来添加缓存的条目和存储的单值的数量。</p>
 <p>之前的代码看起来是这个样子的：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> AnimatedVariable</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// &lt;snip&gt;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">float</span>&gt; mTimes;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt;     mValues;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> AnimatedVariablePrecomputed</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// &lt;snip&gt;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;T&gt; mPrecomutedValues;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -264,8 +261,7 @@
 <p>在VTune中展示的优化过的代码片段</p>
 <p>修改后的代码执行速度大约快了3倍：在最慢的函数列表中该函数从第三位降到了第22位！不仅执行更快，同时还降低了内存的使用，大约减少了750kb。这还不算完，不仅函数执行更快，占内存更少，同时提高了线性插值的准确度。可谓一石三鸟。</p>
 <p>这里并没有提到的内容（尽管文章已经足够长了）是我如何通过不断迭代找到了这个解决方案。我最初的尝试减少在粒子生命周期内样本表的大小。这个方案几乎有效——但有些移动较快的粒子由于样本表的减少，变的参差不齐。幸运的是，这个现象很快就被发现了，使得我依然能够将方案更换为本文中提到的方法。当然还有一些其他的代码修改，但是对于性能提高并没有直接效果，也有些代码的修改甚至造成了代码执行更慢。</p>
-<p>##总结</p>
-<p>本文中介绍的是英雄联盟游戏代码库中代码优化的一个典型案例。虽然变动更小，但是这个改动使得内存节约了750kb，粒子线程比较之前运行快了1到2毫秒，这使得主线程执行的更快。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文中介绍的是英雄联盟游戏代码库中代码优化的一个典型案例。虽然变动更小，但是这个改动使得内存节约了750kb，粒子线程比较之前运行快了1到2毫秒，这使得主线程执行的更快。</p>
 <p>当程序员寻求优化的时候，虽然看似显而易见，但这里提到的三个阶段都常常会被忽视。这里只是为了强调一下：</p>
 <ol>
 <li>鉴别：分析应用并找出性能最差的部分</li>
@@ -285,7 +281,7 @@
   </div>
   <div class="flex-col waves-block next">
     
-      <a href="/2016/03/02/开山第一篇/" title="开山第一篇" id="post-next" class="post-nav-link">
+      <a href="/2016/03/03/开山第一篇/" title="开山第一篇" id="post-next" class="post-nav-link">
         <span class="article-nav-title">下一篇</span>
         <i class="icon icon-chevron-right"></i>
       </a>
@@ -305,7 +301,7 @@
   
   <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="英雄联盟中的随机行为优化" data-title="英雄联盟中的随机性为优化" data-url="http://0x4b5.top/2016/03/07/英雄联盟中的随机行为优化/index.html"></div>
+	<div class="ds-thread" data-thread-key="英雄联盟中的随机行为优化" data-title="英雄联盟中的随机行为优化" data-url="http://0x4b5.top/2016/03/07/英雄联盟中的随机行为优化/index.html"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -332,7 +328,7 @@
   </main>
 <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-circle-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-<div class="global-share" id="global-share" data-title="英雄联盟中的随机性为优化" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
+<div class="global-share" id="global-share" data-title="英雄联盟中的随机行为优化" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
 &lt;p&gt;原文地址：&lt;a href=&quot;http://engineering.riotgames.com/news/random-acts-optimization&quot;&gt;传送门&lt;/a&gt;&lt;br&gt;原创翻译，转载请注明出处&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;img src=&quot;http://7xrgsx.com1.z0.glb.clouddn.com/particlesheader2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
