@@ -9,6 +9,8 @@ tags: CentOS7
 
 这是一个关于怎样在你的 CentOS 7 上安装配置 [VNC](http://en.wikipedia.org/wiki/Virtual_Network_Computing) 服务的教程。当然这个教程也适合 RHEL 7 。在这个教程里，我们将学习什么是 VNC 以及怎样在 CentOS 7 上安装配置 [VNC 服务器](http://en.wikipedia.org/wiki/Virtual_Network_Computing)。
 
+<!--more-->
+
 我们都知道，作为一个系统管理员，大多数时间是通过网络管理服务器的。在管理服务器的过程中很少会用到图形界面，多数情况下我们只是用 SSH 来完成我们的管理任务。在这篇文章里，我们将配置 VNC 来提供一个连接我们 CentOS 7 服务器的方法。VNC 允许我们开启一个远程图形会话来连接我们的服务器，这样我们就可以通过网络远程访问服务器的图形界面了。
 
 VNC 服务器是一个自由开源软件，它可以让用户可以远程访问服务器的桌面环境。另外连接 VNC 服务器需要使用 VNC viewer 这个客户端。
@@ -32,7 +34,7 @@ VNC 服务器是一个自由开源软件，它可以让用户可以远程访问�
 >这里我操作时，运维给准备了一台CentOS 7的环境已经安装了桌面。所以第一步我直接跳过，而是SSH到服务器，直接进行VNC的安装，不过还是保留原文的全部步骤吧。
 
 
-## 1.安装 X-Window
+### 安装 X-Window
 
 首先我们需要安装 [X-Window](http://en.wikipedia.org/wiki/X_Window_System)，在终端中运行下面的命令，安装会花费一点时间。
 
@@ -64,7 +66,7 @@ VNC 服务器是一个自由开源软件，它可以让用户可以远程访问�
 
 现在，我们要在服务器上安装 VNC 服务器了。
 
-### 2.安装 VNC 服务器
+### 安装 VNC 服务器
 
 现在要在我们的 CentOS 7 上安装 VNC 服务器了。我们需要执行下面的命令。
 
@@ -74,7 +76,7 @@ VNC 服务器是一个自由开源软件，它可以让用户可以远程访问�
 
 ![](https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817b0m2tj40jjs0120l.png)
 
-### 3.配置 VNC
+### 配置 VNC
 
 然后，我们需要在 `/etc/systemd/system/` 目录里创建一个配置文件。我们可以将 `/lib/systemd/sytem/vncserver@.service` 拷贝一份配置文件范例过来。
 
@@ -124,7 +126,7 @@ $ sudo vncpasswd
 
 <strong style="color:red">确保你输入的密码多于6个字符。</strong>
 
-### 4.开启服务
+### 开启服务
 
 用下面的命令（永久地）开启服务：
 
@@ -138,7 +140,7 @@ $ sudo systemctl enable vncserver@:1.service
 $ sudo systemctl start vncserver@:1.service
 ```
 
-### 5.防火墙设置
+### 防火墙设置
 
 我们需要配置防火墙来让 VNC 服务正常工作。
 
@@ -151,7 +153,7 @@ $ sudo systemctl restart firewalld.service
 
 现在就可以用 IP 和端口号（LCTT 译注：例如 192.168.1.1:1 ，这里的端口不是服务器的端口，而是视 VNC 连接数的多少从1开始排序）来连接 VNC 服务器了。
 
-### 6.用 VNC 客户端连接服务器
+### 用 VNC 客户端连接服务器
 
 好了，现在已经完成了 VNC 服务器的安装了。要使用 VNC 连接服务器，我们还需要一个在本地计算机上安装的仅供连接远程计算机使用的 VNC 客户端。
 
@@ -169,7 +171,7 @@ VNC 服务本身使用的是5900端口。鉴于有不同的用户使用 VNC ，�
 # curl -s checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'
 ```
 
-### 7.总结
+### 总结
 
 好了，现在我们已经在运行 CentOS 7 / RHEL 7 的服务器上安装配置好了 VNC 服务器。VNC 是自由开源软件中最简单的一种能实现远程控制服务器的工具，也是一款优秀的 Teamviewer Remote Access 替代品。VNC 允许一个安装了 VNC 客户端的用户远程控制一台安装了 VNC 服务的服务器。
 
