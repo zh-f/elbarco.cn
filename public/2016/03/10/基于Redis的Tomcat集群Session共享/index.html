@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>基于Redis的Tomcat集群Session共享 | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Reids,Tomcat">
+  <meta name="description" content="目前的web应用集群，使用Nginx做负载均衡，将upstream配置成ip_hash的方式，这种模式下，Nginx会根据来源IP和后端配置来做hash分配，确保固定IP只访问一个后端。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Redis的Tomcat集群Session共享">
+<meta property="og:url" content="http://0x4b5.top/2016/03/10/基于Redis的Tomcat集群Session共享/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="目前的web应用集群，使用Nginx做负载均衡，将upstream配置成ip_hash的方式，这种模式下，Nginx会根据来源IP和后端配置来做hash分配，确保固定IP只访问一个后端。">
+<meta property="og:updated_time" content="2016-03-10T14:45:22.211Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于Redis的Tomcat集群Session共享">
+<meta name="twitter:description" content="目前的web应用集群，使用Nginx做负载均衡，将upstream配置成ip_hash的方式，这种模式下，Nginx会根据来源IP和后端配置来做hash分配，确保固定IP只访问一个后端。">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2016</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-circle-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">基于Redis的Tomcat集群Session共享</div>
+        <a href="javascript:;" class="header-icon waves-circle-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">基于Redis的Tomcat集群Session共享</h1>
+    <h5 class="subtitle">2016-03-10</h5>
+  </div>
+</header>
+
+    <div class="container body-wrap">
+      
+  <article id="post-基于Redis的Tomcat集群Session共享" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reids/">Reids</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tomcat/">Tomcat</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="基于Redis的Tomcat集群Session共享" data-pic="/img/avatar.png" data-summary="&lt;p&gt;目前的web应用集群，使用Nginx做负载均衡，将upstream配置成&lt;code&gt;ip_hash&lt;/code&gt;的方式，这种模式下，Nginx会根据来源IP和后端配置来做hash分配，确保固定IP只访问一个后端。" data-url="http://0x4b5.top/2016/03/10/基于Redis的Tomcat集群Session共享/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#从Nginx-upstream配置说起"><span class="post-toc-text">从Nginx upstream配置说起</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Session共享机制"><span class="post-toc-text">Session共享机制</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#应用服务器间的Session复制共享"><span class="post-toc-text">应用服务器间的Session复制共享</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#基于缓存数据库的Session共享"><span class="post-toc-text">基于缓存数据库的Session共享</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-text">参考</span></a></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><p>目前的web应用集群，使用Nginx做负载均衡，将upstream配置成<code>ip_hash</code>的方式，这种模式下，Nginx会根据来源IP和后端配置来做hash分配，确保固定IP只访问一个后端。<a id="more"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream YOUR_NAME &#123;</span><br><span class="line">	ip_hash;</span><br><span class="line">    server 192.168.8.15:8080;</span><br><span class="line">    server 192.168.8.17:8080;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是，由于固定某个IP只能访问单独的一个后端，如果宕机或者需要升级程序时做停机重启，正在操作的用户就会退出到登录页面，不仅用户体验很差，而且正在做的操作不能保证成功，容易产生脏数据等。</p>
+<h2 id="从Nginx-upstream配置说起"><a href="#从Nginx-upstream配置说起" class="headerlink" title="从Nginx upstream配置说起"></a>从Nginx upstream配置说起</h2><p>首先，来看一下Nginx upstream的几种负载均衡策略：</p>
+<p>1）轮询<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream YOUR_NAME &#123;</span><br><span class="line">    server 192.168.8.15:8080;</span><br><span class="line">    server 192.168.8.17:8080;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>2）权重：该策略可解决服务器性能不等的情况下轮询比率的调配<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream YOUR_NAME &#123;</span><br><span class="line">    server 192.168.8.15:8080 weight=2;</span><br><span class="line">    server 192.168.8.17:8080 weight=3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>3）ip_hash<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream YOUR_NAME &#123;</span><br><span class="line">	ip_hash;</span><br><span class="line">    server 192.168.8.15:8080;</span><br><span class="line">    server 192.168.8.17:8080;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>4）fair：需要安装<a href="http://wiki.nginx.org/HttpUpstreamFairModule" target="_blank" rel="external">Upstream Fair Balancer</a> Module。该策略根据后端服务的响应时间来分配，响应时间短的后端优先分配<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream YOUR_NAME &#123;</span><br><span class="line">    server 192.168.8.15:8080;</span><br><span class="line">    server 192.168.8.17:8080;</span><br><span class="line">	fair;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>5）一致性Hash：需要安装<a href="https://www.nginx.com/resources/wiki/modules/consistent_hash/" target="_blank" rel="external">Upstream Consistent Hash</a> Module，该策略可以根据给定的字符串进行Hash分配，具体参见官方Wiki。</p>
+<p>由此可见，我们迫切的需要使用轮训的方式来做负载均衡，那对于大规模集群部署的web应用来讲，轮训的方式就要Session必须进行共享。</p>
+<h2 id="Session共享机制"><a href="#Session共享机制" class="headerlink" title="Session共享机制"></a>Session共享机制</h2><p>在集群系统下实现Session共享机制一般有如下两种方案：</p>
+<ul>
+<li>应用服务器间的Session复制共享（如Tomcat自带的Session共享）</li>
+<li>基于缓存数据库的Session共享（如使用Memcached、Redis）</li>
+</ul>
+<h3 id="应用服务器间的Session复制共享"><a href="#应用服务器间的Session复制共享" class="headerlink" title="应用服务器间的Session复制共享"></a>应用服务器间的Session复制共享</h3><p>Session复制共享，主要是指集群环境下，多台应用服务器之间同步Session，使其保持一致，对外透明。如果其中一台服务器发生故障，根据负载均衡的原理，Web服务器（Apache/Nginx）会遍历寻找可用节点，分发请求，由于Session已同步，故能保证用户的Session信息不会丢失。</p>
+<p>此方案的不足之处：</p>
+<ul>
+<li>技术复杂,必须在同一种中间件之间完成(如Tomcat-Tomcat之间).</li>
+<li>Session复制带来的性能损失会快速增加.特别是当Session中保存了较大的对象,而且对象变化较快时, 性能下降更加显著. 这种特性使得Web应用的水平扩展受到了限制。</li>
+<li>Session内容序列化（Serialize），会消耗系统性能。</li>
+<li>Session内容通过广播同步给成员，会造成网络流量瓶颈，即便是内网瓶颈。</li>
+</ul>
+<h3 id="基于缓存数据库的Session共享"><a href="#基于缓存数据库的Session共享" class="headerlink" title="基于缓存数据库的Session共享"></a>基于缓存数据库的Session共享</h3><p>基于缓存数据库的Session共享是指使用如Memcached、Redis等Cache DB来存取Session信息：应用服务器接受新请求将Session信息保存到Cache DB中，当应用服务器发生故障，Web服务器（Apache/Nginx）会遍历寻找可用节点，分发请求，当应用服务器发现Session不在本机内存，则会去Cache DB中查找，如果找到，则复制到本机，这样就实现了Session的共享和高可用。</p>
+<p>我选用的是Redis而不是Memcached，是因为Redis具有更丰富的数据结构，比如可以为Key指定过期时间，从而不需要我们定期的刷新缓存。而Memcached做不到，所有就有了这样一个合理的方案——</p>
+<p>在GitHub有这样一个开源工具<a href="https://github.com/jcoleman/tomcat-redis-session-manager" target="_blank" rel="external">tomcat-redis-session-manager</a>，可以帮我们实现基于Redis的Session共享，然而直接拿来用的话，Session的key直接就是SessionID，没有一个统一的前缀，所以经过一些小改造，代码已托管到<a href="https://github.com/2hf/customized-tomcat-redis-session-manager" target="_blank" rel="external">这里</a>，可以通过Tomcat/conf/server.xml的最下面的<context>中增加sessionCookieName配置你想要的Redis中key的前缀，如下所示：</context></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Context</span> <span class="attr">docBase</span>=<span class="string">"/root/YOUR_WEB_APP"</span> </span><br><span class="line">	<span class="attr">path</span>=<span class="string">""</span> </span><br><span class="line">	<span class="attr">reloadable</span>=<span class="string">"true"</span> </span><br><span class="line">	<span class="attr">sessionCookieName</span>=<span class="string">"YOURJSessionID"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>闲话少说，下面开始讲解如何使用：<br>1）下载源码编译成Jar包，讲 tomcat-redis-session-manager-1.2.jar 、jedis-2.6.1.jar、commons-pool2-2.2.jar拷贝到Tomcat目录下的lib中（Jedis、commons-pool2版本任意）<br>2）在Tomcat的conf目录下，编辑<code>context.xml</code>。如果你是用Redis单点，则可以仿照如下配置：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">"com.orangefunction.tomcat.redissessions.RedisSessionHandlerValve"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Manager</span> <span class="attr">className</span>=<span class="string">"com.orangefunction.tomcat.redissessions.RedisSessionManager"</span></span><br><span class="line">         <span class="attr">host</span>=<span class="string">"192.168.8.38"</span> </span><br><span class="line">         <span class="attr">port</span>=<span class="string">"6379"</span> </span><br><span class="line">         <span class="attr">database</span>=<span class="string">"1"</span> </span><br><span class="line">         <span class="attr">maxInactiveInterval</span>=<span class="string">"60"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>如果是Redis集群环境，则可仿照如下配置：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">"com.orangefunction.tomcat.redissessions.RedisSessionHandlerValve"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Manager</span> <span class="attr">className</span>=<span class="string">"com.orangefunction.tomcat.redissessions.RedisSessionManager"</span></span><br><span class="line">    <span class="attr">database</span>=<span class="string">"1"</span>    </span><br><span class="line">	<span class="attr">maxInactiveInterval</span>=<span class="string">"60"</span> </span><br><span class="line">    <span class="attr">sentinelMaster</span>=<span class="string">"mymaster"</span></span><br><span class="line">    <span class="attr">sentinels</span>=<span class="string">"192.168.8.43:26379,192.168.8.45:26379,192.168.8.47:26379"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>参数均可选，详见上面<code>tomcat-redis-session-manager</code>Github中的说明。</p>
+<p></p><p style="color:red"><strong>关于maxInactiveInterval，即失效时间，这里做一些说明：</strong></p><p></p>
+<blockquote>
+<p>即使在这里配置的<code>maxInactiveInterval</code>是60s，如果<code>web.xml</code>配置了session的失效时间，则以<code>web.xml</code>为准。<br>另，<br>如果有一下三处配置了Session的失效时间，则下面的配置覆盖上面的配置:</p>
+<ul>
+<li>TOMCAT_HOME/conf/web.xml</li>
+<li>WebApplication/webapp/WEB-INF/web.xml</li>
+<li>写在代码中的值 : HttpSession.setMaxInactiveInterval(int)</li>
+</ul>
+<p>即实际生效顺序是:<br>HttpSession.setMaxInactiveInterval(int) &gt; $WebApplication/webapp/WEB-INF/web.xml &gt; $TOMCAT_HOME/conf/web.xml</p>
+</blockquote>
+<p>启动Tomcat，访问应用，即可在Redis中看到效果。</p>
+<p>关于测试，可以将Nginx Upstream配置为轮询后，仅留一台应用服务器启动，登陆操作，然后启动另外一台，停止第一台服务，继续操作，发现并未受任何影响，即可。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>nginx upstream的几种配置方式：<a href="http://alwaysyunwei.blog.51cto.com/3224143/1239182" target="_blank" rel="external">http://alwaysyunwei.blog.51cto.com/3224143/1239182</a><br>Load Balancing via Nginx Upstream :<a href="http://nginx.org/en/docs/http/load_balancing.html" target="_blank" rel="external">http://nginx.org/en/docs/http/load_balancing.html</a><br>Tomcat7基于Redis的Session共享：<a href="https://yq.aliyun.com/articles/1298" target="_blank" rel="external">https://yq.aliyun.com/articles/1298</a><br>Tomcat Session Timeout Web.xml: <a href="http://stackoverflow.com/questions/13463036/tomcat-session-timeout-web-xml" target="_blank" rel="external">http://stackoverflow.com/questions/13463036/tomcat-session-timeout-web-xml</a></p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav flex-row">
+  <div class="flex-col waves-block prev">
+    
+  </div>
+  <div class="flex-col waves-block next">
+    
+      <a href="/2016/03/09/如何在CentOS7上安装和配置VNCServer/" title="如何在CentOS7上安装和配置VNCServer" id="post-next" class="post-nav-link">
+        <span class="article-nav-title">下一篇</span>
+        <i class="icon icon-chevron-right"></i>
+      </a>
+    
+  </div>
+
+</nav>
+
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="基于Redis的Tomcat集群Session共享" data-title="基于Redis的Tomcat集群Session共享" data-url="http://0x4b5.top/2016/03/10/基于Redis的Tomcat集群Session共享/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-circle-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="基于Redis的Tomcat集群Session共享" data-pic="/img/avatar.png" data-summary="&lt;p&gt;目前的web应用集群，使用Nginx做负载均衡，将upstream配置成&lt;code&gt;ip_hash&lt;/code&gt;的方式，这种模式下，Nginx会根据来源IP和后端配置来做hash分配，确保固定IP只访问一个后端。" data-url="http://0x4b5.top/2016/03/10/基于Redis的Tomcat集群Session共享/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+
+<script type="text/javascript">
+var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cspan id='cnzz_stat_icon_1257688433' style='display:none' %3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1257688433%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+
+
+
+</body>
+</html>
