@@ -1,7 +1,7 @@
 ---
 title: 如何在CentOS7上安装和配置VNCServer
 date: 2016-03-09 17:22:56
-tags: CentOS7
+tags: [Linux, CentOS7]
 ---
 
 >原文地址：[传送门](http://linoxide.com/linux-how-to/install-configure-vnc-server-centos-7-0/)
