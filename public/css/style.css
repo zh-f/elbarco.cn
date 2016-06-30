@@ -716,34 +716,21 @@ a.waves-effect .waves-ripple {
   color: #cfd8dc;
   font-size: 13px;
 }
-#menu .social {
-  margin: 2em 0 0;
-}
-#menu .social a {
-  opacity: .8;
-}
-#menu .social a.weibo {
-  color: #DC5442;
-}
-#menu .social a.github {
-  color: #363F45;
-}
-#menu .social a.rss {
-  color: #FF9800;
-}
-#menu .social a:hover {
-  opacity: 1;
-}
 #menu .nav {
-  padding: 0;
+  margin: 0;
+  padding: 12px 0;
   list-style: none;
   line-height: 44px;
+  overflow-y: auto;
 }
 #menu .nav li {
   padding: 0 20px;
 }
 #menu .nav li .icon {
-  padding-right: 30px;
+  position: absolute;
+  top: 0;
+  left: 20px;
+  line-height: 44px;
 }
 #menu .nav li:hover,
 #menu .nav li.active {
@@ -757,6 +744,7 @@ a.waves-effect .waves-ripple {
 }
 #menu .nav a {
   display: block;
+  padding-left: 48px;
   height: 44px;
   font-weight: 500;
   color: #727272;

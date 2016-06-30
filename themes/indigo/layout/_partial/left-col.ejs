@@ -14,12 +14,14 @@
   <ul class="nav">
     <%
       var menuItem, isActive = function(item) {
-          return (is_home() && item === 'home') || (is_current("/links") && item === 'links') || (is_archive() && item === 'archives') || ( (is_tag() || page.type === 'tags') && item === 'tags');
+          var url = url_for(item.url);
+          return (url === '/' ? '' : url) + '/index.html' === '/' + page.path;
+          
       };
       for (var i in theme.menu) {
         menuItem = theme.menu[i];
       %>
-        <li class="waves-block<% if(isActive(i)){ %> active<% } %>">
+        <li class="waves-block<% if(isActive(menuItem)){ %> active<% } %>">
           <a href="<%- url_for(menuItem.url) %>" <% if(menuItem.target){ %>target="_blank"<% } %> >
             <i class="icon icon-lg icon-<%= i %>"></i><%=_.startCase(i) %>
           </a>
