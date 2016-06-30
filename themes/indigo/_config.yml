@@ -6,9 +6,12 @@ menu:
     url: /archives
   tags:
     url: /tags
+  links:
+    url: /links
   github:
     url: https://github.com/2hf
     target: _blank
+  
 
 rss: /atom.xml
 
