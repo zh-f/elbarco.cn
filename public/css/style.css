@@ -124,6 +124,9 @@
 .icon-close:before {
   content: "\f00d";
 }
+.icon-links:before {
+  content: "\f0c1";
+}
 *,
 *::before,
 *::after {
