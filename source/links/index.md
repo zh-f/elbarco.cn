@@ -1,10 +1,11 @@
 ---
 noDate: true
-comments: false
+comments: true
 ---
 
-## 友情链接
+* 浩哥：[http://www.iyeele.com/](http://www.iyeele.com/)
 
-浩哥：[http://www.iyeele.com/](http://www.iyeele.com/)
-郭建祥：[http://guojianxiang.com/](http://guojianxiang.com/)
+* 郭建祥：[http://guojianxiang.com/](http://guojianxiang.com/)
+
+>欢迎各位看官交换链接~:)
 
