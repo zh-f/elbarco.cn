@@ -14,7 +14,7 @@
   <ul class="nav">
     <%
       var menuItem, isActive = function(item) {
-          return (is_home() && item === 'home') || (item === 'links') || (is_archive() && item === 'archives') || ( (is_tag() || page.type === 'tags') && item === 'tags');
+          return (is_home() && item === 'home') || (is_current("/links") && item === 'links') || (is_archive() && item === 'archives') || ( (is_tag() || page.type === 'tags') && item === 'tags');
       };
       for (var i in theme.menu) {
         menuItem = theme.menu[i];
