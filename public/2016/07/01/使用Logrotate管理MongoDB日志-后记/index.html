@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用Logrotate管理MongoDB日志-后记 | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="MongoDB,Logrotate">
+  <meta name="description" content="发现问题昨天完成了Logrotate管理MongoDB日志的配置工作，手动执行验证通过，但是今天查看日志切换情况，却没有如期待的一般——在日志目录下仅有一个mongodb.log文件——日志没有切换？！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Logrotate管理MongoDB日志-后记">
+<meta property="og:url" content="http://elbarco.cn/2016/07/01/使用Logrotate管理MongoDB日志-后记/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="发现问题昨天完成了Logrotate管理MongoDB日志的配置工作，手动执行验证通过，但是今天查看日志切换情况，却没有如期待的一般——在日志目录下仅有一个mongodb.log文件——日志没有切换？！">
+<meta property="og:updated_time" content="2016-07-01T08:01:27.447Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Logrotate管理MongoDB日志-后记">
+<meta name="twitter:description" content="发现问题昨天完成了Logrotate管理MongoDB日志的配置工作，手动执行验证通过，但是今天查看日志切换情况，却没有如期待的一般——在日志目录下仅有一个mongodb.log文件——日志没有切换？！">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/links"  >
+            <i class="icon icon-lg icon-links"></i>Links
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2016</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-circle-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用Logrotate管理MongoDB日志-后记</div>
+        <a href="javascript:;" class="header-icon waves-circle-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">使用Logrotate管理MongoDB日志-后记</h1>
+    <h5 class="subtitle">2016-07-01</h5>
+  </div>
+</header>
+
+    <div class="container body-wrap">
+      
+  <article id="post-使用Logrotate管理MongoDB日志-后记" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Logrotate/">Logrotate</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="使用Logrotate管理MongoDB日志-后记" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;发现问题&quot;&gt;&lt;a href=&quot;#发现问题&quot; class=&quot;headerlink&quot; title=&quot;发现问题&quot;&gt;&lt;/a&gt;发现问题&lt;/h2&gt;&lt;p&gt;昨天完成了&lt;a href=&quot;http://elbarco.cn/2016/06/30/%E4%BD%BF%E7%94%A8Logrotate%E7%AE%A1%E7%90%86MongoDB%E6%97%A5%E5%BF%97/&quot;&gt;Logrotate管理MongoDB日志的配置&lt;/a&gt;工作，手动执行验证通过，但是今天查看日志切换情况，却没有如期待的一般——在日志目录下仅有一个mongodb.log文件——日志没有切换？！" data-url="http://elbarco.cn/2016/07/01/使用Logrotate管理MongoDB日志-后记/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#发现问题"><span class="post-toc-text">发现问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-text">分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#确定执行情况"><span class="post-toc-text">确定执行情况</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#原因探究"><span class="post-toc-text">原因探究</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解决过程"><span class="post-toc-text">解决过程</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#检查安装情况"><span class="post-toc-text">检查安装情况</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#安装"><span class="post-toc-text">安装</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#执行命令"><span class="post-toc-text">执行命令</span></a></li></ol></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><h2 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h2><p>昨天完成了<a href="http://elbarco.cn/2016/06/30/%E4%BD%BF%E7%94%A8Logrotate%E7%AE%A1%E7%90%86MongoDB%E6%97%A5%E5%BF%97/">Logrotate管理MongoDB日志的配置</a>工作，手动执行验证通过，但是今天查看日志切换情况，却没有如期待的一般——在日志目录下仅有一个mongodb.log文件——日志没有切换？！<a id="more"></a></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><h3 id="确定执行情况"><a href="#确定执行情况" class="headerlink" title="确定执行情况"></a>确定执行情况</h3><p>为了确定配置的每天执行的MongoDB日至切换是否执行过，我们首先查看<code>/var/log/cron</code>，下面是截取了部分内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">Jul  1 03:01:02 localhost anacron[19152]: Will run job &apos;cron.daily&apos; in 49 min.</span><br><span class="line">Jul  1 03:01:02 localhost anacron[19152]: Jobs will be executed sequentially</span><br><span class="line">...</span><br><span class="line">Jul  1 03:50:02 localhost anacron[19152]: Job &apos;cron.daily&apos; started</span><br><span class="line">...</span><br><span class="line">Jul  1 03:50:02 localhost run-parts(/etc/cron.daily)[19251]: starting logrotate</span><br><span class="line">Jul  1 03:50:02 localhost run-parts(/etc/cron.daily)[19267]: finished logrotate</span><br><span class="line">...</span><br><span class="line">Jul  1 03:53:49 localhost anacron[19152]: Job &apos;cron.daily&apos; terminated</span><br><span class="line">Jul  1 03:53:49 localhost anacron[19152]: Normal exit (1 job run)</span><br></pre></td></tr></table></figure>
+<p>可以看到，在7月1日凌晨3点50左右确实执行了每日的计划任务，并且<code>cron.daily</code>正常退出。但是Logrotate有没有出错还要继续分析。</p>
+<p>查看<code>/var/log/message</code>，在同样的时间段，发现了这样一条错误信息：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Jul  1 03:50:02 localhost logrotate: ALERT exited abnormally with [1]</span><br></pre></td></tr></table></figure></p>
+<p>而这段错误信息，正是Logrotate每日执行的计划任务脚本中执行异常退出的提示信息：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# cat /etc/cron.daily/logrotate </span><br><span class="line">#!/bin/sh</span><br><span class="line"></span><br><span class="line">/usr/sbin/logrotate /etc/logrotate.conf &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">EXITVALUE=$?</span><br><span class="line">if [ $EXITVALUE != 0 ]; then</span><br><span class="line">    /usr/bin/logger -t logrotate &quot;ALERT exited abnormally with [$EXITVALUE]&quot;</span><br><span class="line">fi</span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure></p>
+<h3 id="原因探究"><a href="#原因探究" class="headerlink" title="原因探究"></a>原因探究</h3><p>原因探究的过程非常简单——Google，所以略。</p>
+<blockquote>
+<p>噗……友谊的小船说翻就翻！（╯－_－）╯╧╧</p>
+</blockquote>
+<p>回到正题。</p>
+<p>引起该问题的原因与SELinux有关。使用<code>getenforce</code>查询SELinux状态：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# getenforce</span><br><span class="line">Enforcing</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，我们当前的SELinux处于Enforcing模式下，此时，因为我们在之前MongoDB轮换配置文件中，<strong>使用了除了<code>/var/log/</code>之外的路径</strong>，那么：</p>
+<blockquote>
+<p>SELinux was restricting the access to logrotate on log files in directories which does not have the required SELinux file context type. “/var/log” directory has “var_log_t” file context, and logrotate was able to do the needful. </p>
+</blockquote>
+<p>即，<code>/var/log</code>目录具有<code>var_log_t</code>文件上下文，如果要使用Logrotate，我们的日志目录也应该具备这个向下问。所以解决方案就是为配置文件中使用的日志目录设置文件上下文，可以通过下面两个命令做到：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">semanage fcontext -a -t var_log_t &lt;directory/logfile&gt;</span><br><span class="line">restorecon -v &lt;directory/logfile&gt;</span><br></pre></td></tr></table></figure></p>
+<p>第一个命令，用于设置上下文，第二个命令用于对于需要设置上下文的目录活文件，递归的设置。</p>
+<h2 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h2><h3 id="检查安装情况"><a href="#检查安装情况" class="headerlink" title="检查安装情况"></a>检查安装情况</h3><p>执行<code>man semanage</code>或<code>semanage -h</code>检查是否安装<code>semanage</code>:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# man semanage</span><br><span class="line">No manual entry for semanage</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# semanage -h</span><br><span class="line">-bash: semanage: command not found</span><br></pre></td></tr></table></figure></p>
+<p>这里我们并没有找到这个命令，所以需要安装相关软件，如果已安装，则跳过这一步。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>找到是什么软件提供了<code>semanage</code>命令：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]#  yum provides */semanage</span><br><span class="line">Loaded plugins: fastestmirror, refresh-packagekit, security</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: mirrors.yun-idc.com</span><br><span class="line"> * extras: mirrors.yun-idc.com</span><br><span class="line"> * updates: mirrors.yun-idc.com</span><br><span class="line">libsemanage-devel-2.0.43-5.1.el6.x86_64 : Header files and libraries used to build policy manipulation tools</span><br><span class="line">Repo        : base</span><br><span class="line">Matched from:</span><br><span class="line">Filename    : /usr/include/semanage</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">libsemanage-devel-2.0.43-5.1.el6.i686 : Header files and libraries used to build policy manipulation tools</span><br><span class="line">Repo        : base</span><br><span class="line">Matched from:</span><br><span class="line">Filename    : /usr/include/semanage</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">policycoreutils-python-2.0.83-29.el6.x86_64 : SELinux policy core python utilities</span><br><span class="line">Repo        : base</span><br><span class="line">Matched from:</span><br><span class="line">Filename    : /usr/sbin/semanage</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">policycoreutils-python-2.0.83-29.el6.x86_64 : SELinux policy core python utilities</span><br><span class="line">Repo        : installed</span><br><span class="line">Matched from:</span><br><span class="line">Filename    : /usr/sbin/semanage</span><br></pre></td></tr></table></figure></p>
+<p>这里，我们手动安装一下<code>policycoreutils-python</code>即可：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# yum -y install policycoreutils-python</span><br></pre></td></tr></table></figure></p>
+<h3 id="执行命令"><a href="#执行命令" class="headerlink" title="执行命令"></a>执行命令</h3><p>安装完毕，执行命令:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# semanage fcontext -a -t var_log_t &apos;/mongoData/mongodb_log/mongodb.log&apos;</span><br><span class="line">[root@localhost ~]# restorecon -Frvv /mongoData/mongodb_log/mongodb.log</span><br></pre></td></tr></table></figure></p>
+<p>设置完file context之后，记录会被持久化到<code>/etc/selinux/targeted/contexts/files/file_contexts.local</code>中，我们可以检查一下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# cat /etc/selinux/targeted/contexts/files/file_contexts.local</span><br><span class="line"># This file is auto-generated by libsemanage</span><br><span class="line"># Do not edit directly.</span><br><span class="line"></span><br><span class="line">/mongoData/mongodb_log/mongodb.log    system_u:object_r:var_log_t:s0</span><br></pre></td></tr></table></figure></p>
+<p>此时，补锅工作结束。</p>
+<p>更多详细内容，点击这里查看<a href="https://access.redhat.com/solutions/39006" target="_blank" rel="external">参考文章</a></p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav flex-row">
+  <div class="flex-col waves-block prev">
+    
+  </div>
+  <div class="flex-col waves-block next">
+    
+      <a href="/2016/06/30/使用Logrotate管理MongoDB日志/" title="使用Logrotate管理MongoDB日志" id="post-next" class="post-nav-link">
+        <span class="article-nav-title">下一篇</span>
+        <i class="icon icon-chevron-right"></i>
+      </a>
+    
+  </div>
+
+</nav>
+
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="使用Logrotate管理MongoDB日志-后记" data-title="使用Logrotate管理MongoDB日志-后记" data-url="http://elbarco.cn/2016/07/01/使用Logrotate管理MongoDB日志-后记/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-circle-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="使用Logrotate管理MongoDB日志-后记" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;发现问题&quot;&gt;&lt;a href=&quot;#发现问题&quot; class=&quot;headerlink&quot; title=&quot;发现问题&quot;&gt;&lt;/a&gt;发现问题&lt;/h2&gt;&lt;p&gt;昨天完成了&lt;a href=&quot;http://elbarco.cn/2016/06/30/%E4%BD%BF%E7%94%A8Logrotate%E7%AE%A1%E7%90%86MongoDB%E6%97%A5%E5%BF%97/&quot;&gt;Logrotate管理MongoDB日志的配置&lt;/a&gt;工作，手动执行验证通过，但是今天查看日志切换情况，却没有如期待的一般——在日志目录下仅有一个mongodb.log文件——日志没有切换？！" data-url="http://elbarco.cn/2016/07/01/使用Logrotate管理MongoDB日志-后记/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+
+<script type="text/javascript">
+var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cspan id='cnzz_stat_icon_1257688433' style='display:none' %3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1257688433%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+
+
+
+</body>
+</html>
