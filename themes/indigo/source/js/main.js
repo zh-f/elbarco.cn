@@ -124,6 +124,16 @@
                     mask.classList.remove('in');
                 }
             };
+        },
+        search: function() {
+            var searchWrap = d.getElementById('search-wrap');
+
+            function toggleSearch() {
+                searchWrap.classList.toggle('in');
+            }
+
+            d.getElementById('search').addEventListener(even, toggleSearch);
+            d.getElementById('search').addEventListener(even, toggleSearch);
         }
     };
 

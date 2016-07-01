@@ -127,11 +127,33 @@
 .icon-links:before {
   content: "\f0c1";
 }
+.icon-search:before {
+  content: "\f002";
+}
+.icon-coffee:before {
+  content: "\f0f4";
+}
 *,
 *::before,
 *::after {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+}
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #b6b6b6;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #727272;
+}
+::-webkit-scrollbar-thumb:active {
+  background-color: #727272;
 }
 html {
   background-color: #fff;
@@ -920,6 +942,7 @@ a.waves-effect .waves-ripple {
   left: 0;
   background-color: #607d8b;
   visibility: hidden;
+  -webkit-transform: scaleX(0);
   transform: scaleX(0);
   -webkit-transition: 0.4s ease-in-out;
   transition: 0.4s ease-in-out;
@@ -927,6 +950,7 @@ a.waves-effect .waves-ripple {
 .post-title-link:hover::after,
 .post-title-link:active::after {
   visibility: visible;
+  -webkit-transform: scaleX(1);
   transform: scaleX(1);
 }
 .post-meat {
@@ -1349,8 +1373,9 @@ a.waves-effect .waves-ripple {
 }
 .post-content img {
   display: block;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 96%;
+  margin: 40px auto;
+  padding: 8px;
   background: #fff;
   border-radius: 2px;
   overflow: hidden;
@@ -1537,6 +1562,7 @@ a.waves-effect .waves-ripple {
   left: 0;
   background-color: #607d8b;
   visibility: hidden;
+  -webkit-transform: scaleX(0);
   transform: scaleX(0);
   -webkit-transition: 0.4s ease-in-out;
   transition: 0.4s ease-in-out;
@@ -1544,6 +1570,7 @@ a.waves-effect .waves-ripple {
 .tag-list-item:hover::after,
 .tag-list-item:active::after {
   visibility: visible;
+  -webkit-transform: scaleX(1);
   transform: scaleX(1);
 }
 .tag-list-link {
@@ -1730,4 +1757,142 @@ pre .coffeescript .title {
 pre .keyword,
 pre .javascript .function {
   color: #8959a8;
+}
+.search-wrap {
+  position: relative;
+  min-width: 56px;
+}
+.search-wrap.in .search-input {
+  width: 320px;
+  opacity: 1;
+}
+.search-wrap.in #search {
+  color: #cfd8dc;
+}
+.search-wrap .search-input {
+  position: relative;
+  z-index: 2;
+  width: 0;
+  height: 36px;
+  margin: 10px 10px 0 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  border-bottom: 2px solid #fff;
+  opacity: 0;
+  -webkit-transition: 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
+}
+.search-wrap .search-input::-webkit-input-placeholder {
+  color: #cfd8dc;
+}
+.search-wrap .header-icon {
+  position: absolute;
+  top: 0;
+  z-index: 3;
+}
+.search-wrap #search {
+  right: 0;
+}
+.search-wrap #back {
+  display: none;
+  left: 0;
+}
+.search-panel {
+  position: fixed;
+  top: 50px;
+  right: 65px;
+  z-index: 36;
+  width: 400px;
+  max-height: 70%;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transform: translateY(-50%) scale(0.5);
+  transform: translateY(-50%) scale(0.5);
+  -webkit-transition: 0.3s ease-in;
+  transition: 0.3s ease-in;
+}
+.search-panel.in {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transform: none;
+  transform: none;
+}
+.search-result {
+  margin: 0;
+  padding: 0;
+}
+.search-result .item {
+  line-height: 1.6em;
+  border-top: 1px solid #dadada;
+}
+.search-result .item:first-child {
+  border-top: none;
+}
+.search-result .item a {
+  padding: 10px 20px;
+}
+.search-result .title {
+  color: #607d8b;
+}
+.search-result .title:hover {
+  color: #cfd8dc;
+}
+.search-result .tags span,
+.search-result .time {
+  font-size: 13px;
+  color: #727272;
+}
+.search-result .tags {
+  margin-right: 1em;
+}
+.search-result .tags span {
+  margin-right: .5em;
+}
+.search-result .time {
+  padding-left: 1em;
+}
+.search-result .tips {
+  padding: 30px 0;
+  text-align: center;
+  color: #727272;
+}
+.lock-size {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+@media screen and (max-width: 760px) {
+  .search-wrap.in {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    width: 100%;
+    padding: 0 16px 0 56px;
+    background: #607d8b;
+  }
+  .search-wrap.in .search-input {
+    width: 100%;
+  }
+  .search-wrap.in #back {
+    display: block;
+  }
+  .search-panel {
+    z-index: 28;
+    top: 0;
+    right: 0;
+    padding-top: 56px;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }

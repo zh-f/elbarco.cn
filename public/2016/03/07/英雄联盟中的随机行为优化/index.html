@@ -108,13 +108,26 @@
   <main id="main">
     <header class="header" id="header">
     <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-circle-light on" id="menu-toggle">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
         <div class="flex-col header-title ellipsis">英雄联盟中的随机行为优化</div>
-        <a href="javascript:;" class="header-icon waves-circle-light" id="menu-share">
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
+        
     </div>
 </header>
 <header class="content-header">
@@ -123,7 +136,6 @@
     <h5 class="subtitle">2016-03-07</h5>
   </div>
 </header>
-
     <div class="container body-wrap">
       
   <article id="post-英雄联盟中的随机行为优化" class="article article-type-post" itemscope itemprop="blogPost">
@@ -336,7 +348,7 @@
     </div>
   </main>
 <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-circle-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 <div class="global-share" id="global-share" data-title="英雄联盟中的随机行为优化" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
 &lt;p&gt;原文地址：&lt;a href=&quot;http://engineering.riotgames.com/news/random-acts-optimization&quot;&gt;传送门&lt;/a&gt;&lt;br&gt;原创翻译，转载请注明出处&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -384,13 +396,29 @@
 
 
 
-
-<script type="text/javascript">
-var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cspan id='cnzz_stat_icon_1257688433' style='display:none' %3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1257688433%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<script type="text/template" id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
 </script>
+<script src="/js/search.js"></script>
 
 
+
+
+
+<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
 
 
 
