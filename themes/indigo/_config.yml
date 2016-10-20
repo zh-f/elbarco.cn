@@ -43,7 +43,7 @@ toc:
   list_number: false  # 是否显示数字排序
 
 #站长统计，如要开启，输入CNZZ站点id，如 cnzz: 1255152447
-#cnzz: 1257688433
+cnzz: 1257688433
 
 # Miscellaneous
 google_analytics: 'UA-83522316-1'
