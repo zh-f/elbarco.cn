@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Galera Cluster for MySQL介绍 | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="MySQL,Galera Cluster,DB">
+  <meta name="description" content="关于数据库复制数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Galera Cluster for MySQL介绍">
+<meta property="og:url" content="http://elbarco.cn/2016/12/28/introduction-to-galera-cluster-for-mysql/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="关于数据库复制数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/master-slave-repl.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/multi-master-repl.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/certification-based-replication.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/repl-api.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/primary-componet.png">
+<meta property="og:updated_time" content="2016-12-28T06:33:24.262Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Galera Cluster for MySQL介绍">
+<meta name="twitter:description" content="关于数据库复制数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——">
+<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/master-slave-repl.png">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/links"  >
+            <i class="icon icon-lg icon-links"></i>Links
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2016</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Galera Cluster for MySQL介绍</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">Galera Cluster for MySQL介绍</h1>
+    <h5 class="subtitle">2016-12-28</h5>
+  </div>
+</header>
+    <div class="container body-wrap">
+      
+  <article id="post-introduction-to-galera-cluster-for-mysql" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DB/">DB</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Galera-Cluster/">Galera Cluster</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="Galera Cluster for MySQL介绍" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;关于数据库复制&quot;&gt;&lt;a href=&quot;#关于数据库复制&quot; class=&quot;headerlink&quot; title=&quot;关于数据库复制&quot;&gt;&lt;/a&gt;关于数据库复制&lt;/h2&gt;&lt;p&gt;数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——&lt;br&gt;" data-url="http://elbarco.cn/2016/12/28/introduction-to-galera-cluster-for-mysql/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关于数据库复制"><span class="post-toc-text">关于数据库复制</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Galera-Cluster-for-MySQL架构"><span class="post-toc-text">Galera Cluster for MySQL架构</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#部分关键字解释"><span class="post-toc-text">部分关键字解释</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Primary-Componet"><span class="post-toc-text">Primary Componet</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Replication-Configuration"><span class="post-toc-text">Replication Configuration</span></a></li></ol></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><h2 id="关于数据库复制"><a href="#关于数据库复制" class="headerlink" title="关于数据库复制"></a>关于数据库复制</h2><p>数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——<br><a id="more"></a></p>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/master-slave-repl.png" alt=""></p>
+<ul>
+<li>Master/Slave Replication</li>
+</ul>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/multi-master-repl.png" alt=""></p>
+<ul>
+<li>Multi-master Replication</li>
+</ul>
+<p>对于主从方式的复制方式，master节点上的写操作会通过数据库日志（如MySQ了的binary log）记录，并通过网络传递给slave节点，然后由slave节点根据master节点传递的日志执行这些变更。<br>而对于多主的复制方式，每个节点都可执行写操作，然后将写操作同步到其他节点。</p>
+<p>无论是哪种方式，根据事务在集群中传递的方式，我们又将复制分为两类——</p>
+<ul>
+<li>Synchronous Replication - 同步复制，所有的节点在一个单一事务中完成同步，即，在一个事务提交时，所有节点有相同的值。</li>
+<li>Asynchronous Replication - 异步复制，主节点的写操作，异步的更新到其他节点中，即，当主节点事务提交时，在很短的时间内，有些节点的值与直接点不一致。</li>
+</ul>
+<p>目前，我们的MySQL集群部署方式是双主，但是同一时刻所有的读写压力只在启动一台上，并没有真正意义上实现资源的合理利用，即，仅保证了高可用，但是没有保证负载均衡。</p>
+<p>为了实现真正的数据库集群的负载均衡及高可用，我们找到了一个不错的MySQL集群的解决方案，即Galera Cluster for MySQL。它将多个数据库节点组织成一个cluster，并提供以下特性：</p>
+<ol>
+<li>同步复制，主备无延迟</li>
+<li>支持多主同时读写，保证数据一致性</li>
+<li>集群中各个节点保存全量数据</li>
+<li>节点添加或删除，集群具备自动监测和配置</li>
+<li>行级锁并行复制</li>
+<li>不需要写binlog</li>
+</ol>
+<h2 id="Galera-Cluster-for-MySQL架构"><a href="#Galera-Cluster-for-MySQL架构" class="headerlink" title="Galera Cluster for MySQL架构"></a>Galera Cluster for MySQL架构</h2><p>使用了Galera之后，客户端和Galera节点之间交互的时序图如下所示：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/certification-based-replication.png" alt=""></p>
+<p>当客户端执行COMMIT命令，但实际提交未发生前，所有的数据库同一事务中的变更和变更行的主键会被收集到一个<code>write-set</code>中，紧接着，数据库节点就会将<code>write-set</code>发送到所有的其他节点。</p>
+<p>之后，<code>write-set</code>会使用主键执行一次验证，这个操作在集群的每个节点上都会进行，验证操作决定了是否可以应用<code>write-set</code>。如果验证未通过，则节点丢掉<code>write-set</code>并且集群回滚；如果验证通过，则事务提交，并且<code>write-set</code>会被应用到集群的其他节点。</p>
+<p>上面这中复制方式又称为“基于认证的复制”（Certification Based Replication）。</p>
+<p>那么Galera Cluster内部又是如何工作的呢？</p>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/repl-api.png" alt=""></p>
+<p>如上图所示，Galera Cluster有四个组件组成：</p>
+<ul>
+<li>DBMS - Galera Cluster支持MySQL、MariaDB和Percona XtraDB</li>
+<li>wsrep API  </li>
+<li>Galera Replication Plugin</li>
+<li>Group Communication plugins</li>
+</ul>
+<p>这里就不一一展开具体解释了，详细的可以参见<a href="http://galeracluster.com/documentation-webpages/architecture.html#wsrep-api" target="_blank" rel="external">Replication API</a></p>
+<h2 id="部分关键字解释"><a href="#部分关键字解释" class="headerlink" title="部分关键字解释"></a>部分关键字解释</h2><h3 id="Primary-Componet"><a href="#Primary-Componet" class="headerlink" title="Primary Componet"></a>Primary Componet</h3><p>除了单一节点故障之外，集群可能会由于网络原因分裂成几个组件，在这种情况下，为了避免冲突，只有一个组件可以继续修改数据库状态，而这个组件，就称为Primary Component。</p>
+<p>Primary Component其实是一个集群，当发生集群分裂的时候，Galera Cluster会执行一个特殊的权重算法，来选举一个组件作为Primary Component，如下图所示：</p>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/primary-componet.png" alt=""></p>
+<p>如果集群具有偶数个节点，则会存在脑裂的风险。如果由于网络导致集群被分裂成恰好数量相等的两个cluster，则每个cluster都有可能保持自己的权重，并且两个都会变成non-primary状态。</p>
+<p>所以为了能够实现自动故障转移，需要至少三个节点——</p>
+<ul>
+<li>单交换器的集群应该至少具备3个节点</li>
+<li>跨交换机的集群应该至少具备3个交换机</li>
+<li>跨网络的集群应该至少具备3个网络</li>
+<li>跨数据中心的集群应该至少具备3个数据中心</li>
+</ul>
+<h3 id="Replication-Configuration"><a href="#Replication-Configuration" class="headerlink" title="Replication Configuration"></a>Replication Configuration</h3><ul>
+<li>wsrep_cluster_name - 集群名称，所有集群中的节点，名称必须一致。</li>
+<li>wsrep_cluster_address - 定义集群中的节点IP地址，多个地址使用逗号分割。</li>
+<li>wsrep_node_name - 节点名称。</li>
+<li>wsrep_node_address - 每个节点自己的IP地址。</li>
+<li>wsrep_provider - 定义Galera Replication Plugin的路径，安装之后不确定在哪里的情况下，可以通过<code>find / -name libgalera_smm.so</code> 来查找。</li>
+<li>wsrep_provider_options - 定义节点传递给wsrep provider的一些可选配置，如：<code>gcache.size</code>，表示节点缓存<code>write-sets</code>集合的磁盘空间，默认值是128M；<code>gcache.page_size</code>表示页存储中单页大小，整体页面存储的上限是磁盘的大小，默认值是128M。</li>
+<li>wsrep_method - 定义了节点在单个状态快照传输（State Snapshot Transfer，指完整的数据从一个集群节点——又称为donor——拷贝到一个新加入的节点——又称为joiner——的过程）中使用的方法或者脚本，支持的方法有<code>mysqldump</code>和<code>rsync</code>两种，在大数据集的场景中，后者比前者更快。</li>
+</ul>
+<p>上面是我们<code>/etc/my.cnf.d/wsrep.cnf</code>文件中几个配置项的解释，更多的详细内容，请参见<a href="http://galeracluster.com/documentation-webpages/reference.html" target="_blank" rel="external">http://galeracluster.com/documentation-webpages/reference.html</a>。</p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav">
+  
+  
+    <div class="waves-block waves-effect next fr">
+      <a href="/2016/09/05/difference-between-stringbuilder-and-stringbuffer/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">简述StringBuilder和StringBuffer的区别</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="introduction-to-galera-cluster-for-mysql" data-title="Galera Cluster for MySQL介绍" data-url="http://elbarco.cn/2016/12/28/introduction-to-galera-cluster-for-mysql/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="Galera Cluster for MySQL介绍" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;关于数据库复制&quot;&gt;&lt;a href=&quot;#关于数据库复制&quot; class=&quot;headerlink&quot; title=&quot;关于数据库复制&quot;&gt;&lt;/a&gt;关于数据库复制&lt;/h2&gt;&lt;p&gt;数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——&lt;br&gt;" data-url="http://elbarco.cn/2016/12/28/introduction-to-galera-cluster-for-mysql/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<script type="text/template" id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</script>
+<script src="/js/search.js"></script>
+
+
+
+
+
+<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-83522316-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</body>
+</html>
