@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>从Python中内嵌列表复制说起 | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Python,Deep Copy,Shallow Copy">
+  <meta name="description" content="写在前面在学习Python3时，看到了列表的拷贝，于是把这个小课题整理在这里，以作记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从Python中内嵌列表复制说起">
+<meta property="og:url" content="http://elbarco.cn/2017/03/29/nested-lists-and-deep-copies/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="写在前面在学习Python3时，看到了列表的拷贝，于是把这个小课题整理在这里，以作记录。">
+<meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/nested-list-01.png">
+<meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/nested-list-02.png">
+<meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/nested-list-03.png">
+<meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/shallow-copy.png">
+<meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/deep-copy.png">
+<meta property="og:updated_time" content="2017-03-29T09:26:32.640Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从Python中内嵌列表复制说起">
+<meta name="twitter:description" content="写在前面在学习Python3时，看到了列表的拷贝，于是把这个小课题整理在这里，以作记录。">
+<meta name="twitter:image" content="http://elbarco.eos.eayun.com/imgs/nested-list-01.png">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/links"  >
+            <i class="icon icon-lg icon-links"></i>Links
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2017</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">从Python中内嵌列表复制说起</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">从Python中内嵌列表复制说起</h1>
+    <h5 class="subtitle">2017-03-29</h5>
+  </div>
+</header>
+    <div class="container body-wrap">
+      
+  <article id="post-nested-lists-and-deep-copies" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Deep-Copy/">Deep Copy</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shallow-Copy/">Shallow Copy</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="从Python中内嵌列表复制说起" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;写在前面&quot;&gt;&lt;a href=&quot;#写在前面&quot; class=&quot;headerlink&quot; title=&quot;写在前面&quot;&gt;&lt;/a&gt;写在前面&lt;/h2&gt;&lt;p&gt;在学习Python3时，看到了列表的拷贝，于是把这个小课题整理在这里，以作记录。&lt;br&gt;" data-url="http://elbarco.cn/2017/03/29/nested-lists-and-deep-copies/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#写在前面"><span class="post-toc-text">写在前面</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#内嵌列表和列表拷贝中的问题"><span class="post-toc-text">内嵌列表和列表拷贝中的问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#对列表的深拷贝"><span class="post-toc-text">对列表的深拷贝</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结和引申思考"><span class="post-toc-text">总结和引申思考</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-text">参考</span></a></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>在学习Python3时，看到了列表的拷贝，于是把这个小课题整理在这里，以作记录。<br><a id="more"></a></p>
+<h2 id="内嵌列表和列表拷贝中的问题"><a href="#内嵌列表和列表拷贝中的问题" class="headerlink" title="内嵌列表和列表拷贝中的问题"></a>内嵌列表和列表拷贝中的问题</h2><p>Python中的列表是可以嵌入列表的，这个特性的应用场景之一便是用于表示二维矩阵。如下所示：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = [[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>], [<span class="number">20</span>, <span class="number">21</span>, <span class="number">22</span>]]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m[<span class="number">0</span>]</span><br><span class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m[<span class="number">2</span>]</span><br><span class="line">[<span class="number">20</span>, <span class="number">21</span>, <span class="number">22</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m[<span class="number">2</span>][<span class="number">2</span>]</span><br><span class="line"><span class="number">22</span></span><br></pre></td></tr></table></figure></p>
+<p>当然，这一特性可以用于按照我们自己的方式扩展到更多维的矩阵。</p>
+<p>大部分情况下，内嵌列表如果只是这样使用，我们需要关心的也就到此为止了。但是因为有变量引用对象，而对象本身又是可被修改的情况，比如列表中内嵌列表，而内嵌列表本身是可被修改的，我们还会遇到下面提到的问题，我们通过例子来演示。</p>
+<p>创建一个含有内嵌列表的列表<code>original</code>：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested = [<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original = [nested, <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
+<p>列表<code>original</code>的第一个元素指向了列表<code>nested</code>，如图所示：<br><img src="http://elbarco.eos.eayun.com/imgs/nested-list-01.png" alt=""></p>
+<p>列表<code>nested</code>的修改可以通过直接修改其本身，也可以通过修改列表<code>original</code>来实现，即：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested[<span class="number">0</span>] = <span class="string">'zero'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested</span><br><span class="line">[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
+<p>如果我们将<code>nested</code>赋值为其他列表，则<code>nested</code>和<code>original</code>之间的连接就会断掉，即：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested = [<span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
+<p>如图所示：<br><img src="http://elbarco.eos.eayun.com/imgs/nested-list-02.png" alt=""></p>
+<p>除了上面提到的直接赋值的方式，列表的拷贝我们还可以使用——</p>
+<ul>
+<li><p>全切片(full slice)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = x[:]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y</span><br><span class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>+</code>或<code>*</code>运算符</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = x + []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y</span><br><span class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>z = x * <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>z</span><br><span class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>但是无论上面哪种复制方式，只要列表中存在嵌入列表，就会存在这种问题，我们把这种复制称之为“浅拷贝”，即<em>shallow copy</em>，与之相对的，是“深拷贝”，即<em>deep copy</em>。</p>
+<h2 id="对列表的深拷贝"><a href="#对列表的深拷贝" class="headerlink" title="对列表的深拷贝"></a>对列表的深拷贝</h2><p>对于含有内嵌列表的列表来讲，如果我们需要把内嵌列表也一并拷贝，则需要使用<code>copy</code>模块的<code>deepcopy</code>功能。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>original = [[<span class="number">0</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow = original[:]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> copy</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>deep = copy.deepcopy(original)</span><br></pre></td></tr></table></figure>
+<p>复制后两个列表的构成其实如下图所示：<br><img src="http://elbarco.eos.eayun.com/imgs/nested-list-03.png" alt=""></p>
+<p>在得到列表<code>shallow</code>和列表<code>deep</code>后，我们去尝试修改列表中的值和内嵌列表的值，并看看效果如何：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow[<span class="number">1</span>]=<span class="number">2</span> <span class="comment">#更改列表中非内嵌列表的值，原列表值不变</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow</span><br><span class="line">[[<span class="number">0</span>], <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow[<span class="number">0</span>][<span class="number">0</span>]=<span class="string">'zero'</span> <span class="comment">#更改内嵌列表的值，原列表内嵌列表值改变</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>deep[<span class="number">0</span>][<span class="number">0</span>]=<span class="number">5</span> <span class="comment">#对于deep copy的列表，即使修改内嵌列表的值也不会影响原列表</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>deep</span><br><span class="line">[[<span class="number">5</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">1</span>]</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>此外，对于Python来讲，任何列表中嵌入的对象是可修改的，如字典，都会存在这样的问题。</p>
+<h2 id="总结和引申思考"><a href="#总结和引申思考" class="headerlink" title="总结和引申思考"></a>总结和引申思考</h2><p>首先，明确一点，<em>deep copy</em>和<em>shallow copy</em>并不是Python中特有的概念，而是一个与复制对象时对象的成员是否被复制有关的通用的概念。</p>
+<p>根据维基百科中的<a href="https://en.wikipedia.org/wiki/Object_copying" target="_blank" rel="external">Object copying</a>中的描述，我们总结如下：</p>
+<p><img src="http://elbarco.eos.eayun.com/imgs/shallow-copy.png" alt=""></p>
+<p>我们有变量A和变量B指向不同的内存地址，当B被赋值为A时，两个变量指向了同样的内存地址，之后无论是修改A还是B的内容，都会在另一个变量中立即体现出来，因为两者共享内容。</p>
+<p><img src="http://elbarco.eos.eayun.com/imgs/deep-copy.png" alt=""></p>
+<p>我们有变量A和B指向了不同的内容地址，当B被赋值为A时，指向A内存地址的内容被复制到B的内存中，之后无论是修改A还是B的内容，A和B都是保持独立的，因为两者不共享内存，即不共享内容。</p>
+<p>其他语言，如Java，可以参见StackOverFlow上的这一个讨论：<a href="http://stackoverflow.com/questions/869033/how-do-i-copy-an-object-in-java" target="_blank" rel="external">How do I copy an object in Java</a>，后面有机会再详细的梳理一下。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>1.<a href="http://stackoverflow.com/questions/184710/what-is-the-difference-between-a-deep-copy-and-a-shallow-copy" target="_blank" rel="external">What’s the difference between a deep copy and a shallow copy</a><br>2.<a href="https://en.wikipedia.org/wiki/Object_copying" target="_blank" rel="external">Object copying</a><br>3.<a href="http://www.python-course.eu/deep_copy.php" target="_blank" rel="external">Shallow and deep copy</a><br>4.<a href="https://item.jd.com/19176803.html" target="_blank" rel="external">The Quick Python Book, 2nd Edition. Chapter 5.6</a></p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav">
+  
+  
+    <div class="waves-block waves-effect next fr">
+      <a href="/2017/01/21/introduction-to-actor-model/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">并发编程模型之Actor模型</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="nested-lists-and-deep-copies" data-title="从Python中内嵌列表复制说起" data-url="http://elbarco.cn/2017/03/29/nested-lists-and-deep-copies/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="从Python中内嵌列表复制说起" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;写在前面&quot;&gt;&lt;a href=&quot;#写在前面&quot; class=&quot;headerlink&quot; title=&quot;写在前面&quot;&gt;&lt;/a&gt;写在前面&lt;/h2&gt;&lt;p&gt;在学习Python3时，看到了列表的拷贝，于是把这个小课题整理在这里，以作记录。&lt;br&gt;" data-url="http://elbarco.cn/2017/03/29/nested-lists-and-deep-copies/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<script type="text/template" id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</script>
+<script src="/js/search.js"></script>
+
+
+
+
+
+<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-83522316-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</body>
+</html>
