@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Python中的元组和Packing/Unpacking | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Python,Tuple">
+  <meta name="description" content="什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python中的元组和Packing/Unpacking">
+<meta property="og:url" content="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：">
+<meta property="og:updated_time" content="2017-03-30T07:48:41.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python中的元组和Packing/Unpacking">
+<meta name="twitter:description" content="什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/links"  >
+            <i class="icon icon-lg icon-links"></i>Links
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2017</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Python中的元组和Packing/Unpacking</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">Python中的元组和Packing/Unpacking</h1>
+    <h5 class="subtitle">2017-03-30</h5>
+  </div>
+</header>
+    <div class="container body-wrap">
+      
+  <article id="post-packing-and-unpacking-tuples" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tuple/">Tuple</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="Python中的元组和Packing/Unpacking" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;什么是元组&quot;&gt;&lt;a href=&quot;#什么是元组&quot; class=&quot;headerlink&quot; title=&quot;什么是元组&quot;&gt;&lt;/a&gt;什么是元组&lt;/h2&gt;&lt;p&gt;元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号&lt;code&gt;()&lt;/code&gt;包起来，如：&lt;br&gt;" data-url="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#什么是元组"><span class="post-toc-text">什么是元组</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#元组的Packing-Unpacking"><span class="post-toc-text">元组的Packing/Unpacking</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Python中的Packing-Unpacking应用"><span class="post-toc-text">Python中的Packing/Unpacking应用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#for-tuples"><span class="post-toc-text">* for tuples</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#for-dictionaries"><span class="post-toc-text">** for dictionaries</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-text">参考</span></a></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><h2 id="什么是元组"><a href="#什么是元组" class="headerlink" title="什么是元组"></a>什么是元组</h2><p>元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号<code>()</code>包起来，如：<br><a id="more"></a><br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = (<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>) <span class="comment">#具有三个元素的元组</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = (<span class="string">'a'</span>,) <span class="comment">#只有一个元素的元组，注意，必须有一个逗号来标识</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>z = () <span class="comment">#空元组</span></span><br></pre></td></tr></table></figure></p>
+<p>元组的操作跟列表非常类似，如<code>+</code>，<code>*</code>，切片等，在元组中同样适用：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a[:<span class="number">2</span>]</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a * <span class="number">1</span></span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a + (<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="元组的Packing-Unpacking"><a href="#元组的Packing-Unpacking" class="headerlink" title="元组的Packing/Unpacking"></a>元组的Packing/Unpacking</h2><p>Python中允许元组出现在赋值运算符的左侧，这样元组中的每个变量就可以被赋值为右侧对应位置的值，如：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>(a,b,c,d) = (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c</span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure></p>
+<p>上面的写法还可以简化为:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a,b,c,d = <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span></span><br></pre></td></tr></table></figure></p>
+<p>这个用法还可以非常方便的完成交换两个变量的值：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>var1, var2 = var2, var1</span><br></pre></td></tr></table></figure></p>
+<p>在Python3中，还提供了一个扩展的unpacking特性——使用<code>*</code>来标注元素来吸收与其他元素不匹配的任何数量的元素，举例如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b, *c = x</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b, c</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, *b, c = x</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b, c</span><br><span class="line">(<span class="number">1</span>, [<span class="number">2</span>, <span class="number">3</span>], <span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>*a, b, c = x</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b, c</span><br><span class="line">([<span class="number">1</span>, <span class="number">2</span>], <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b, c, d, *e = x</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b, c, d, e</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [])</span><br></pre></td></tr></table></figure></p>
+<p>被标星的元素接收多余的元素作为一个列表，如果没有多余的元素，则会接收一个空列表。</p>
+<h2 id="Python中的Packing-Unpacking应用"><a href="#Python中的Packing-Unpacking应用" class="headerlink" title="Python中的Packing/Unpacking应用"></a>Python中的Packing/Unpacking应用</h2><p>Python中，我们可以使用<code>*</code>（对元组来说）和<code>**</code>（对字典来说）的Packing和Unpacking函数的参数。</p>
+<h3 id="for-tuples"><a href="#for-tuples" class="headerlink" title="* for tuples"></a>* for tuples</h3><p>从下面这个例子说起，我们有一个函数<code>fun()</code>接收四个函数，并打印出来：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fun</span><span class="params">(a, b, c, d)</span>:</span></span><br><span class="line">    print(a, b, c, d)</span><br></pre></td></tr></table></figure></p>
+<p>假设我们有一个list：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; my_list = [1, 2, 3, 4]</span><br></pre></td></tr></table></figure></p>
+<p>调用函数<code>fun()</code>：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>my_list = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>fun(my_list)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">TypeError: fun() missing <span class="number">3</span> required positional arguments: <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="keyword">and</span> <span class="string">'d'</span></span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>会得到报错信息，函数认为我们的<code>my_list</code>是单独的一个参数，而函数还需要额外的三个参数。</p>
+<p>这时候，我们可以使用<code>*</code>来<strong>解包（Unpacking）</strong>列表，使之作为四个参数：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>fun(*my_list)</span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span></span><br></pre></td></tr></table></figure></p>
+<p>这里还有另一个例子，使用内置的<code>range()</code>函数，来演示解包列表的操作：</p>
+<blockquote>
+<p>注，这里使用的是Python3.x，range(3,7)不会直接打印区间的所有值</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">3</span>,<span class="number">7</span>))</span><br><span class="line">[<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>args = [<span class="number">3</span>,<span class="number">7</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(args))</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">TypeError: <span class="string">'list'</span> object cannot be interpreted <span class="keyword">as</span> an integer</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(*args))</span><br><span class="line">[<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br></pre></td></tr></table></figure>
+<p>当我们不知道究竟要传递多少参数给函数时，我们可以使用<strong>打包（Packing）</strong>把所有的参数打包到一个元组中，用下面的例子来演示打包操作。</p>
+<p>我们有函数<code>iSum()</code>来做求和操作<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">iSum</span><span class="params">(*args)</span>:</span></span><br><span class="line">    sum=<span class="number">0</span></span><br><span class="line">    print(args) <span class="comment">#把args打印出来，看是否被打包为一个元组</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(args)):</span><br><span class="line">        sum = sum + args[i]</span><br><span class="line">    <span class="keyword">return</span> sum</span><br></pre></td></tr></table></figure></p>
+<p>测试时，传参个数不等，得到的输出如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(iSum(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>))</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line"><span class="number">15</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(iSum(<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>))</span><br><span class="line">(<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>)</span><br><span class="line"><span class="number">60</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到入参确实被打包成了一个元组，然后循环遍历元组求和。</p>
+<p>如果打包后我们想修改参数，由于元组不可修改，所以需要先转换成列表。下面展示一个打包和解包混合使用的例子。<br>我们有函数<code>func1()</code>用于打印入参，<code>func2()</code>用户修改入参的值：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">func1</span><span class="params">(a,b,c)</span>:</span></span><br><span class="line"><span class="meta">... </span>    print(a,b,c)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">func2</span><span class="params">(*args)</span>:</span></span><br><span class="line"><span class="meta">... </span>    args = list(args)</span><br><span class="line"><span class="meta">... </span>    args[<span class="number">0</span>] = <span class="string">'elbarco.cn'</span></span><br><span class="line"><span class="meta">... </span>    args[<span class="number">1</span>] = <span class="string">'awesome'</span></span><br><span class="line"><span class="meta">... </span>    func1(*args)</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>调用<code>func2()</code>，传递的三个参数，首先打包为一个元组，然后将元组转换为列表，并修改前两个元素的值，再解包为三个参数，打印出结果，如下所示：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>func2(<span class="string">'Hello'</span>,<span class="string">'nice'</span>,<span class="string">'visitors'</span>)</span><br><span class="line">elbarco.cn awesome visitors</span><br></pre></td></tr></table></figure></p>
+<h3 id="for-dictionaries"><a href="#for-dictionaries" class="headerlink" title="** for dictionaries"></a>** for dictionaries</h3><p>对于字典（Dictionary），Packing/Unpacking操作使用<code>**</code>。</p>
+<p>还是使用上面的<code>func1()</code>，如果要打印字典的值，则需要使用<code>**</code>来解包：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; dict = &#123;&apos;a&apos;:1,&apos;b&apos;:3,&apos;c&apos;:5&#125;</span><br><span class="line">&gt;&gt;&gt; func1(**dict)</span><br><span class="line">1 3 5</span><br></pre></td></tr></table></figure></p>
+<p>下面来一个打包的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; def func3(**elbarco):</span><br><span class="line">...     print(type(elbarco))</span><br><span class="line">...     for key in elbarco:</span><br><span class="line">...         print(&quot;%s = %s&quot; % (key, elbarco[key]))</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>传几个参数，用<code>func3()</code>将入参打包为字典，然后在函数中把key和value输出出来，结果如下所示：<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; func3(name='elbarco', location='Beijing', language='Java/Python')</span><br><span class="line">&lt;class 'dict'&gt;</span><br><span class="line">name = elbarco</span><br><span class="line">location = Beijing</span><br><span class="line">language = Java/Python</span><br></pre></td></tr></table></figure></p>
+<p>以上。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>1.<a href="">The Quick Python Book 2nd Edition.Chaptor 5.7.3</a><br>2.<a href="http://www.geeksforgeeks.org/packing-and-unpacking-arguments-in-python/" target="_blank" rel="external">Packing and Unpacking Arguments in Python</a><br>3.<a href="https://hangar.runway7.net/python/packing-unpacking-arguments" target="_blank" rel="external">Packing and Unpacking Arguments in Python</a><br>4.<a href="http://pythoncentral.io/pythons-range-function-explained/" target="_blank" rel="external">Python’s range() Function Explained</a></p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav">
+  
+  
+    <div class="waves-block waves-effect next fr">
+      <a href="/2017/03/29/nested-lists-and-deep-copies/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">从Python中内嵌列表复制说起</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="packing-and-unpacking-tuples" data-title="Python中的元组和Packing/Unpacking" data-url="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="Python中的元组和Packing/Unpacking" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;什么是元组&quot;&gt;&lt;a href=&quot;#什么是元组&quot; class=&quot;headerlink&quot; title=&quot;什么是元组&quot;&gt;&lt;/a&gt;什么是元组&lt;/h2&gt;&lt;p&gt;元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号&lt;code&gt;()&lt;/code&gt;包起来，如：&lt;br&gt;" data-url="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<script type="text/template" id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</script>
+<script src="/js/search.js"></script>
+
+
+
+
+
+<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-83522316-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</body>
+</html>
