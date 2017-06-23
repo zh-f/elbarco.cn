@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决 | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="MongoDB">
+  <meta name="description" content="一、背景近日，同事在对MongoDB的读写压力进行测试，再插入大量数据时，常会遇到MongoDB服务莫名崩溃。于是，这边对日志进行了分析——">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决">
+<meta property="og:url" content="http://elbarco.cn/2017/06/23/mongodb-crashed-with-the-Got-signal-6-Aborted/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="一、背景近日，同事在对MongoDB的读写压力进行测试，再插入大量数据时，常会遇到MongoDB服务莫名崩溃。于是，这边对日志进行了分析——">
+<meta property="og:updated_time" content="2017-06-23T10:13:30.772Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决">
+<meta name="twitter:description" content="一、背景近日，同事在对MongoDB的读写压力进行测试，再插入大量数据时，常会遇到MongoDB服务莫名崩溃。于是，这边对日志进行了分析——">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/links"  >
+            <i class="icon icon-lg icon-links"></i>Links
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2017</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决</h1>
+    <h5 class="subtitle">2017-06-23</h5>
+  </div>
+</header>
+    <div class="container body-wrap">
+      
+  <article id="post-mongodb-crashed-with-the-Got-signal-6-Aborted" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;一、背景&quot;&gt;&lt;a href=&quot;#一、背景&quot; class=&quot;headerlink&quot; title=&quot;一、背景&quot;&gt;&lt;/a&gt;一、背景&lt;/h2&gt;&lt;p&gt;近日，同事在对MongoDB的读写压力进行测试，再插入大量数据时，常会遇到MongoDB服务莫名崩溃。于是，这边对日志进行了分析——&lt;br&gt;" data-url="http://elbarco.cn/2017/06/23/mongodb-crashed-with-the-Got-signal-6-Aborted/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一、背景"><span class="post-toc-text">一、背景</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二、查询分析"><span class="post-toc-text">二、查询分析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三、延伸"><span class="post-toc-text">三、延伸</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四、参考"><span class="post-toc-text">四、参考</span></a></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>近日，同事在对MongoDB的读写压力进行测试，再插入大量数据时，常会遇到MongoDB服务莫名崩溃。于是，这边对日志进行了分析——<br><a id="more"></a><br>发现，在日志中，有如下的一段backtrace：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2017-06-21T11:59:31.290+0800 F -        [conn963] Got signal: 6 (Aborted).</span><br><span class="line"></span><br><span class="line"> 0xf5e669 0xf5dce2 0xf5e096 0x3221032660 0x32210325e5 0x3221033dc5 0xda0c59 0x8dd622 0x8de181 0x8b31d7 0x8d1a17 0x8d34d6 0x9bdc64 0x9bebed 0x9bf8fb 0xb9340a 0xaa3480 0x7e99fd 0xf1badb 0x3221407aa1 0x32210e8aad</span><br><span class="line">----- BEGIN BACKTRACE -----</span><br><span class="line">&#123;&quot;backtrace&quot;:[&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;B5E669&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;B5DCE2&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;B5E096&quot;&#125;,&#123;&quot;b&quot;:&quot;3221000000&quot;,&quot;o&quot;:&quot;32660&quot;&#125;,&#123;&quot;b&quot;:&quot;3221000000&quot;,&quot;o&quot;:&quot;325E5&quot;&#125;,&#123;&quot;b&quot;:&quot;3221000000&quot;,&quot;o&quot;:&quot;33DC5&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;9A0C59&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;4DD622&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;4DE181&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;4B31D7&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;4D1A17&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;4D34D6&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;5BDC64&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;5BEBED&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;5BF8FB&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;79340A&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;6A3480&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;3E99FD&quot;&#125;,&#123;&quot;b&quot;:&quot;400000&quot;,&quot;o&quot;:&quot;B1BADB&quot;&#125;,&#123;&quot;b&quot;:&quot;3221400000&quot;,&quot;o&quot;:&quot;7AA1&quot;&#125;,&#123;&quot;b&quot;:&quot;3221000000&quot;,&quot;o&quot;:&quot;E8AAD&quot;&#125;],&quot;processInfo&quot;:&#123; &quot;mongodbVersion&quot; : &quot;3.0.6&quot;, &quot;gitVersion&quot; : &quot;1ef45a23a4c5e3480ac919b28afcba3c615488f2&quot;, &quot;uname&quot; : &#123; &quot;sysname&quot; : &quot;Linux&quot;, &quot;release&quot; : &quot;2.6.32-642.6.2.el6.x86_64&quot;, &quot;version&quot; : &quot;#1 SMP Wed Oct 26 06:52:09 UTC 2016&quot;, &quot;machine&quot; : &quot;x86_64&quot; &#125;, &quot;somap&quot; : [ &#123; &quot;elfType&quot; : 2, &quot;b&quot; : &quot;400000&quot; &#125;, &#123; &quot;b&quot; : &quot;7FFC4BCCC000&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/lib64/libpthread.so.0&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/lib64/librt.so.1&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/lib64/libdl.so.2&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/usr/lib64/libstdc++.so.6&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/lib64/libm.so.6&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/lib64/libgcc_s.so.1&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/lib64/libc.so.6&quot;, &quot;elfType&quot; : 3 &#125;, &#123; &quot;path&quot; : &quot;/lib64/ld-linux-x86-64.so.2&quot;, &quot;elfType&quot; : 3 &#125; ] &#125;&#125;</span><br><span class="line"> mongod(_ZN5mongo15printStackTraceERSo+0x29) [0xf5e669]</span><br><span class="line"> mongod(+0xB5DCE2) [0xf5dce2]</span><br><span class="line"> mongod(+0xB5E096) [0xf5e096]</span><br><span class="line"> libc.so.6(+0x32660) [0x3221032660]</span><br><span class="line"> libc.so.6(gsignal+0x35) [0x32210325e5]</span><br><span class="line"> libc.so.6(abort+0x175) [0x3221033dc5]</span><br><span class="line"> mongod(_ZN5mongo12SecureRandom6createEv+0x1B9) [0xda0c59]</span><br><span class="line"> mongod(_ZN5mongo31SaslSCRAMSHA1ServerConversation10_firstStepERSt6vectorISsSaISsEEPSs+0x16F2) [0x8dd622]</span><br><span class="line"> mongod(_ZN5mongo31SaslSCRAMSHA1ServerConversation4stepERKNS_10StringDataEPSs+0x2F1) [0x8de181]</span><br><span class="line"> mongod(_ZN5mongo31NativeSaslAuthenticationSession4stepERKNS_10StringDataEPSs+0x27) [0x8b31d7]</span><br><span class="line"> mongod(+0x4D1A17) [0x8d1a17]</span><br><span class="line"> mongod(+0x4D34D6) [0x8d34d6]</span><br><span class="line"> mongod(_ZN5mongo12_execCommandEPNS_16OperationContextEPNS_7CommandERKSsRNS_7BSONObjEiRSsRNS_14BSONObjBuilderEb+0x34) [0x9bdc64]</span><br><span class="line"> mongod(_ZN5mongo7Command11execCommandEPNS_16OperationContextEPS0_iPKcRNS_7BSONObjERNS_14BSONObjBuilderEb+0xC1D) [0x9bebed]</span><br><span class="line"> mongod(_ZN5mongo12_runCommandsEPNS_16OperationContextEPKcRNS_7BSONObjERNS_11_BufBuilderINS_16TrivialAllocatorEEERNS_14BSONObjBuilderEbi+0x28B) [0x9bf8fb]</span><br><span class="line"> mongod(_ZN5mongo8runQueryEPNS_16OperationContextERNS_7MessageERNS_12QueryMessageERKNS_15NamespaceStringERNS_5CurOpES3_+0x77A) [0xb9340a]</span><br><span class="line"> mongod(_ZN5mongo16assembleResponseEPNS_16OperationContextERNS_7MessageERNS_10DbResponseERKNS_11HostAndPortE+0xB10) [0xaa3480]</span><br><span class="line"> mongod(_ZN5mongo16MyMessageHandler7processERNS_7MessageEPNS_21AbstractMessagingPortEPNS_9LastErrorE+0xDD) [0x7e99fd]</span><br><span class="line"> mongod(_ZN5mongo17PortMessageServer17handleIncomingMsgEPv+0x34B) [0xf1badb]</span><br><span class="line"> libpthread.so.0(+0x7AA1) [0x3221407aa1]</span><br><span class="line"> libc.so.6(clone+0x6D) [0x32210e8aad]</span><br><span class="line">-----  END BACKTRACE  -----</span><br></pre></td></tr></table></figure></p>
+<p>除了<code>Got signal: 6 (Aborted)</code>还有点意义，下面的这些trace，完全不知所云。</p>
+<h2 id="二、查询分析"><a href="#二、查询分析" class="headerlink" title="二、查询分析"></a>二、查询分析</h2><p>找到关键词之后，查询这件事情就很简单的了，Google一下，发现在MongoDB的JIRA上，有人提问相同的问题，<a href="https://jira.mongodb.org/browse/SERVER-28001" target="_blank" rel="external">&gt;&gt;传送门</a>，在下面的回复中，提到了，原因是因为我们在插入数据时，打开的文件数量超过了操作系统的<code>ulimit</code>中的配置，并给出了配置的文档说明，<a href="https://docs.mongodb.com/manual/reference/ulimit/" target="_blank" rel="external">&gt;&gt;&gt;传送门</a>，下面简单的总结一下——</p>
+<p>大多数类Unix的操作系统，如Linux和Mac OS X，提供了一些限制和控制系统资源使用的机制，这里的系统资源比如说：线程、文件、网络连接数等等。这个控制即<code>ulimit</code>，用于避免单用户使用过多的系统资源，当然，有些时候<code>ulimit</code>的一些默认值相对较低，所以会影响一些正常的MongoDB操作。</p>
+<p>简单的看一下如何设置资源限制——我们可以使用<code>ulimit</code>命令来检查目前的配置，例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@mongodb-master ~]# ulimit -a</span><br><span class="line">core file size          (blocks, -c) 0</span><br><span class="line">data seg size           (kbytes, -d) unlimited</span><br><span class="line">scheduling priority             (-e) 0</span><br><span class="line">file size               (blocks, -f) unlimited</span><br><span class="line">pending signals                 (-i) 63706</span><br><span class="line">max locked memory       (kbytes, -l) 64</span><br><span class="line">max memory size         (kbytes, -m) unlimited</span><br><span class="line">open files                      (-n) 1024</span><br><span class="line">pipe size            (512 bytes, -p) 8</span><br><span class="line">POSIX message queues     (bytes, -q) 819200</span><br><span class="line">real-time priority              (-r) 0</span><br><span class="line">stack size              (kbytes, -s) 10240</span><br><span class="line">cpu time               (seconds, -t) unlimited</span><br><span class="line">max user processes              (-u) 63706</span><br><span class="line">virtual memory          (kbytes, -v) unlimited</span><br><span class="line">file locks                      (-x) unlimited</span><br></pre></td></tr></table></figure></p>
+<p>在使用<code>ulimit</code>修改具体某个配置项的值时，例如修改open file时，语法为<code>ulimit -n &lt;value&gt;</code>。修改时还要注意，有<code>hard</code>和<code>soft</code>两个选项：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">选项</th>
+<th style="text-align:left">含义</th>
+<th style="text-align:left">例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">-H</td>
+<td style="text-align:left">设置硬资源限制，一旦设置不能增加</td>
+<td style="text-align:left">ulimit -Hs 64，限制硬资源，线程栈大小为64K</td>
+</tr>
+<tr>
+<td style="text-align:left">-S</td>
+<td style="text-align:left">设置软资源限制，设置后可以增加，但是不能超过硬资源设置</td>
+<td style="text-align:left">ulimit -Sn 32，限制软资源，32个文件描述符</td>
+</tr>
+</tbody>
+</table>
+<p>MongoDB官方手册中给出的<code>mongod</code>和<code>mongos</code>的设置推荐值为：</p>
+<ul>
+<li>-f (file size): unlimited</li>
+<li>-t (cpu time): unlimited</li>
+<li>-v (virtual memory): unlimited </li>
+<li>-n (open files): 64000</li>
+<li>-m (memory size): unlimited </li>
+<li>-u (processes/threads): 64000</li>
+</ul>
+<p>所以对照推荐值，修改我们mongodb-master的ulimit配置即可。具体配置的语法，根据不同的Linux发行版本可能不同，可以阅读<a href="https://docs.mongodb.com/manual/reference/ulimit/#review-and-set-resource-limits" target="_blank" rel="external">手册</a>获得帮助。</p>
+<blockquote>
+<p>注：修改后需要对应重启<code>mongod</code>服务。</p>
+</blockquote>
+<h2 id="三、延伸"><a href="#三、延伸" class="headerlink" title="三、延伸"></a>三、延伸</h2><p>ulimit作为对资源使用限制的一种方式，是有其作用范围的，它的作用对象是当前shell进程以及其派生的子进程，也就是说，上面我们配置完open file的值后，如果再打开一个shell终端，再次查看<code>ulimit -a</code>会发现open file的值看起来像“恢复原状”（revert）一样。</p>
+<p>那么问题来了，刚才我们的设置是否生效还如何检查呢？<br>首先，我们要知道修改后重启的<code>mongod</code>服务的PID，然后使用命令：<code>cat /proc/&lt;PID&gt;/limits</code>来查看当前进程的<code>ulimit</code>配置：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@mongodb-master ~]# ps -ef | grep mongo</span><br><span class="line">root      4802     1 42 Jun21 ?        20:52:00 /root/mongodb-linux-x86_64-3.0.6/bin/mongod -f /root/mongodb-linux-x86_64-3.0.6/master.conf</span><br><span class="line">root     29337 28455  0 15:17 pts/0    00:00:00 grep mongo</span><br><span class="line"></span><br><span class="line">[root@mongodb-master ~]# cat /proc/4802/limits</span><br><span class="line">Limit                     Soft Limit           Hard Limit           Units     </span><br><span class="line">Max cpu time              unlimited            unlimited            seconds   </span><br><span class="line">Max file size             unlimited            unlimited            bytes     </span><br><span class="line">Max data size             unlimited            unlimited            bytes     </span><br><span class="line">Max stack size            10485760             unlimited            bytes     </span><br><span class="line">Max core file size        0                    unlimited            bytes     </span><br><span class="line">Max resident set          unlimited            unlimited            bytes     </span><br><span class="line">Max processes             63706                63706                processes </span><br><span class="line">Max open files            64000                64000                files     </span><br><span class="line">Max locked memory         65536                65536                bytes     </span><br><span class="line">Max address space         unlimited            unlimited            bytes     </span><br><span class="line">Max file locks            unlimited            unlimited            locks     </span><br><span class="line">Max pending signals       63706                63706                signals   </span><br><span class="line">Max msgqueue size         819200               819200               bytes     </span><br><span class="line">Max nice priority         0                    0                    </span><br><span class="line">Max realtime priority     0                    0                    </span><br><span class="line">Max realtime timeout      unlimited            unlimited            us</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这里我们的配置是生效的，如果服务重启后，对应是否生效，还需要检查和验证。</p>
+<p>那么，是否有针对某个具体用户的资源加以限制的方法呢？对于CentOS6来说，可以修改系统的<code>/etc/security/limits.conf</code>配置文件，格式如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;domain&gt;      &lt;type&gt;  &lt;item&gt;         &lt;value&gt;</span><br></pre></td></tr></table></figure></p>
+<p>其中，<code>&lt;domain&gt;</code>表示用户或者组的名字，还可以使用<code>*</code>作为通配符，不过<strong>通配符对<code>root</code>用户可是不生效的</strong>，切记。</p>
+<p>不过我尝试各种软硬修改配置文件后，并没有发现<code>ulimit -a</code>有丝毫的变化，真的是扎铁了，老心，也许因为我用的是<code>root</code>用户？欢迎邮件交流：<a href="mailto:zh.f@outlook.com" target="_blank" rel="external">zh.f@outlook.com</a></p>
+<h2 id="四、参考"><a href="#四、参考" class="headerlink" title="四、参考"></a>四、参考</h2><p><a href="https://jira.mongodb.org/browse/SERVER-28001" target="_blank" rel="external">[1].Mongodb Crashed with the Got signal: 6 (Aborted)</a><br><a href="https://docs.mongodb.com/manual/reference/ulimit/" target="_blank" rel="external">[2].Unix ulimit Settings</a><br><a href="https://stackoverflow.com/questions/34588/how-do-i-change-the-number-of-open-files-limit-in-linux" target="_blank" rel="external">[3].How do I change the number of open files limit in Linux?</a><br><a href="http://www.cnblogs.com/wangkangluo1/archive/2012/06/06/2537677.html" target="_blank" rel="external">[4].Linux ulimit命令</a><br><a href="https://serverfault.com/questions/569288/ulimit-n-not-changing-values-limits-conf-has-no-effect" target="_blank" rel="external">[5].ulimit -n not changing - values limits.conf has no effect</a></p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav">
+  
+  
+    <div class="waves-block waves-effect next fr">
+      <a href="/2017/03/30/packing-and-unpacking-tuples/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Python中的元组和Packing/Unpacking</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="mongodb-crashed-with-the-Got-signal-6-Aborted" data-title="Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决" data-url="http://elbarco.cn/2017/06/23/mongodb-crashed-with-the-Got-signal-6-Aborted/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;一、背景&quot;&gt;&lt;a href=&quot;#一、背景&quot; class=&quot;headerlink&quot; title=&quot;一、背景&quot;&gt;&lt;/a&gt;一、背景&lt;/h2&gt;&lt;p&gt;近日，同事在对MongoDB的读写压力进行测试，再插入大量数据时，常会遇到MongoDB服务莫名崩溃。于是，这边对日志进行了分析——&lt;br&gt;" data-url="http://elbarco.cn/2017/06/23/mongodb-crashed-with-the-Got-signal-6-Aborted/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<script type="text/template" id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</script>
+<script src="/js/search.js"></script>
+
+
+
+
+
+<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-83522316-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</body>
+</html>
