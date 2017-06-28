@@ -119,6 +119,49 @@
   <ul class="post-list">
   
     <li class="post-list-item">
+  <article id="post-mongodb-connecttimeout-and-sockettimeout" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/06/28/mongodb-connecttimeout-and-sockettimeout/">由一次服务连接MongoDB超时引发的思考</a>
+    </h3>
+  
+
+
+
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+</div>
+        <time datetime="2017-06-28T09:12:28.000Z" itemprop="datePublished" class="post-tiem">
+  2017-06-28
+</time>
+      </div>
+      <div class="post-content" itemprop="postContent" >
+        
+          <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：<br>
+        
+      </div>
+      <div class="post-footer clearfix">
+        <a href="/2017/06/28/mongodb-connecttimeout-and-sockettimeout/" class="post-more waves-effect waves-button waves-light">MORE</a>
+      </div>
+    
+
+  </article>
+
+
+
+  
+
+  
+
+
+</li>
+  
+    <li class="post-list-item">
   <article id="post-mongodb-crashed-with-the-Got-signal-6-Aborted" class="article article-type-post" itemscope itemprop="blogPost">
     
       
@@ -491,49 +534,6 @@
       </div>
       <div class="post-footer clearfix">
         <a href="/2016/06/30/使用Logrotate管理MongoDB日志/" class="post-more waves-effect waves-button waves-light">MORE</a>
-      </div>
-    
-
-  </article>
-
-
-
-  
-
-  
-
-
-</li>
-  
-    <li class="post-list-item">
-  <article id="post-MongoDB复制集Secondary节点持续Recovering状态解决办法" class="article article-type-post" itemscope itemprop="blogPost">
-    
-      
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/">MongoDB复制集Secondary节点持续Recovering状态解决办法</a>
-    </h3>
-  
-
-
-
-      <div class="post-meat flex-row">
-        <div class="flex-col">
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-</div>
-        <time datetime="2016-04-26T21:51:27.000Z" itemprop="datePublished" class="post-tiem">
-  2016-04-27
-</time>
-      </div>
-      <div class="post-content" itemprop="postContent" >
-        
-          <p>前段时间发现MongoDB Replica Set中的某个Secondary节点一直持续Recovering状态，无法恢复，且上次操作时间（optimeDate）已经是N天前了，经过查看<a href="https://docs.mongodb.org/manual/tutorial/resync-replica-set-member/#replica-set-auto-resync-stale-member">官方文档</a>，得知出现这种情况的原因在于复制集中主节点（Primary）一直写入oplog，而从节点（Secondary）的复制过程远远落后，赶不上主节点的oplog写入，就像赌气的孩子跑步一样，赶不上前面的小伙伴，索性一赌气就不走了……
-        
-      </div>
-      <div class="post-footer clearfix">
-        <a href="/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/" class="post-more waves-effect waves-button waves-light">MORE</a>
       </div>
     
 

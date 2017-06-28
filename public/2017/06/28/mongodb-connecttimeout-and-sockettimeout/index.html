@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>由一次服务连接MongoDB超时引发的思考 | El barco | Just another mediocre programmer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="MongoDB">
+  <meta name="description" content="起因今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="由一次服务连接MongoDB超时引发的思考">
+<meta property="og:url" content="http://elbarco.cn/2017/06/28/mongodb-connecttimeout-and-sockettimeout/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="起因今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：">
+<meta property="og:updated_time" content="2017-06-28T09:53:28.826Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="由一次服务连接MongoDB超时引发的思考">
+<meta name="twitter:description" content="起因今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：">
+  
+    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
+  
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner">
+  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">Fan Zhang</h5>
+        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <ul class="nav">
+    
+        <li class="waves-block">
+          <a href="/"  >
+            <i class="icon icon-lg icon-home"></i>Home
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/archives"  >
+            <i class="icon icon-lg icon-archives"></i>Archives
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/tags"  >
+            <i class="icon icon-lg icon-tags"></i>Tags
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="/links"  >
+            <i class="icon icon-lg icon-links"></i>Links
+          </a>
+        </li>
+    
+        <li class="waves-block">
+          <a href="https://github.com/2hf" target="_blank" >
+            <i class="icon icon-lg icon-github"></i>Github
+          </a>
+        </li>
+    
+  </ul>
+
+  <footer class="footer">
+  <p>El barco &copy; 2017</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+</footer>
+
+</div>
+
+  </nav>
+  <main id="main">
+    <header class="header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">由一次服务连接MongoDB超时引发的思考</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">由一次服务连接MongoDB超时引发的思考</h1>
+    <h5 class="subtitle">2017-06-28</h5>
+  </div>
+</header>
+    <div class="container body-wrap">
+      
+  <article id="post-mongodb-connecttimeout-and-sockettimeout" class="article article-type-post" itemscope itemprop="blogPost">
+    
+      <div class="post-meat flex-row">
+        <div class="flex-col">
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+</div>
+      </div>
+      <div class="post-body">
+
+        <aside class="post-widget" id="post-widget">
+
+          
+          <div class="post-share" id="post-share" data-title="由一次服务连接MongoDB超时引发的思考" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;起因&quot;&gt;&lt;a href=&quot;#起因&quot; class=&quot;headerlink&quot; title=&quot;起因&quot;&gt;&lt;/a&gt;起因&lt;/h2&gt;&lt;p&gt;今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：&lt;br&gt;" data-url="http://elbarco.cn/2017/06/28/mongodb-connecttimeout-and-sockettimeout/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+          
+
+          
+          <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#起因"><span class="post-toc-text">起因</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#探究"><span class="post-toc-text">探究</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Connection-timeout"><span class="post-toc-text">Connection timeout</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Socket-timeout"><span class="post-toc-text">Socket timeout</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-text">参考</span></a></li></ol>
+          </nav>
+          
+        </aside>
+
+        <div class="post-content" itemprop="postContent"><h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Caused by: com.mongodb.MongoException$Network: Operation on server xx.xx.xx.xx:27017 failed</span><br><span class="line">	at com.mongodb.DBTCPConnector.doOperation(DBTCPConnector.java:215) ~[mongo-java-driver-2.13.0.jar:na]</span><br><span class="line">	... 63 common frames omitted</span><br><span class="line">Caused by: java.net.SocketException: Connection reset</span><br><span class="line">	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:118) ~[na:1.7.0_80]</span><br><span class="line">	... 72 common frames omitted</span><br><span class="line">.....</span><br><span class="line">.....</span><br><span class="line">Caused by: com.mongodb.MongoTimeoutException: Timed out after 0 ms while waiting for a server that matches </span><br><span class="line">&#123;serverSelectors=[ReadPreferenceServerSelector&#123;readPreference=primary&#125;, LatencyMinimizingServerSelector&#123;acceptableLatencyDifference=15 ms&#125;]&#125;. </span><br><span class="line">Client view of cluster state is &#123;type=ReplicaSet, servers=[&#123;address=xx.xx.xx.xx:27017, type=ReplicaSetArbiter, averageLatency=1.3 ms, state=Connected&#125;, </span><br><span class="line">&#123;address=xx.xx.xx.xx:27017, type=Unknown, state=Connecting&#125;, </span><br><span class="line">&#123;address=xx.xx.xx.xx:27017, type=ReplicaSetSecondary, averageLatency=1.1 ms, state=Connected&#125;]</span><br><span class="line">	at com.mongodb.BaseCluster.getServer(BaseCluster.java:82) ~[mongo-java-driver-2.13.0.jar:na]</span><br><span class="line">	... 49 common frames omitted</span><br></pre></td></tr></table></figure></p>
+<p>可以看到我们的服务在连接MongoDB时超时——没找到primary节点，在0ms后Timeout，抛出异常，即下面这段异常才是暴露问题的地方：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Caused by: com.mongodb.MongoTimeoutException: Timed out after 0 ms while waiting for a server that matches </span><br><span class="line">...Client view of cluster state is...&#123;address=xx.xx.xx.xx:27017, type=Unknown, state=Connecting&#125;...]</span><br></pre></td></tr></table></figure></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>首先，通过在日志中找到最关键的那一部分，分析得出当时业务异常的问题是业务server到MongoDB Master节点网络稍微有些抖动/延迟，而我们配置的connectTimeout=0ms，所以业务server没有取得replica set中的primary节点，不知道该如何写入数据，才会抛出这个异常。</p>
+<p>这里需要将connectTimeout适当调整即可。</p>
+<h2 id="探究"><a href="#探究" class="headerlink" title="探究"></a>探究</h2><p>在我们的上层，无论何时创建MongoClient，driver会建立和service的连接，应用建立连接的等待时长和客户端请求后等待服务器响应的时长，取决于我们的<code>connection timeout</code>和<code>socket timeout</code>两个参数。</p>
+<h3 id="Connection-timeout"><a href="#Connection-timeout" class="headerlink" title="Connection timeout"></a>Connection timeout</h3><p>这个参数决定了我们的客户端等待建立与服务器建立一个连接的最长时间。一方面，我们希望连接超时时间足够长，这样我们的应用即使在面对较大的服务器负载或者断断续续的网络延迟的情况下，也可以较为可靠的与服务器端建立起一个连接，但是，另一方面，我们又不希望这个值过大，否则应用会<code>hang</code>住，在服务器暂时不可访问的情况下，过度的浪费时间在等待服务器的连接上。 所以设置这个值的大小便是仁者见仁智者见智的事情了。</p>
+<p>这个参数的默认值，在Java的dirver中，<code>com.mongodb.MongoClientOptions.Builder#connectTimeout</code>的默认值是<code>1000*10</code>ms，即10s。</p>
+<p>那在上面我们的案例中，设置为0ms显然是不可理的，网络延迟是不可能不存在的。</p>
+<h3 id="Socket-timeout"><a href="#Socket-timeout" class="headerlink" title="Socket timeout"></a>Socket timeout</h3><p>这个参数决定了我们的客户端等待服务端响应的最长时间，这个timeout参数控制了所有类型的请求——query、write、commands、authentication等等。</p>
+<p>如果我们将数值设置为30s，则客户端不会等服务端响应超过30s钟。所以通常来讲，我们是不会限制这个时间的，这样可以使数据库的操作响应比较自由。</p>
+<p>在大多数的driver中，这个参数都是无限大（或者没有限制的）。这个参数在Java的driver中，<code>com.mongodb.MongoClientOptions.Builder#socketTimeout</code>值是<code>0</code>,用于表示不限制。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.mlab.com/2013/10/do-you-want-a-timeout/" target="_blank" rel="external">[1].Do you want a timeout?</a><br><a href="https://stackoverflow.com/questions/40216639/mongodb-connection-timed-out-error" target="_blank" rel="external">[2].mongodb connection timed out error</a><br><a href="https://mongodb.github.io/mongo-java-driver/3.4/javadoc/com/mongodb/MongoClientOptions.html" target="_blank" rel="external">[3].Class MongoClientOptions</a></p>
+</div>
+
+
+      </div>
+      
+<nav class="post-nav">
+  
+  
+    <div class="waves-block waves-effect next fr">
+      <a href="/2017/06/23/mongodb-crashed-with-the-Got-signal-6-Aborted/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+    
+
+  </article>
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="mongodb-connecttimeout-and-sockettimeout" data-title="由一次服务连接MongoDB超时引发的思考" data-url="http://elbarco.cn/2017/06/28/mongodb-connecttimeout-and-sockettimeout/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"elbarco"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+  
+
+  
+
+
+
+    </div>
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+<div class="global-share" id="global-share" data-title="由一次服务连接MongoDB超时引发的思考" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;起因&quot;&gt;&lt;a href=&quot;#起因&quot; class=&quot;headerlink&quot; title=&quot;起因&quot;&gt;&lt;/a&gt;起因&lt;/h2&gt;&lt;p&gt;今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：&lt;br&gt;" data-url="http://elbarco.cn/2017/06/28/mongodb-connecttimeout-and-sockettimeout/index.html">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<script type="text/template" id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</script>
+<script src="/js/search.js"></script>
+
+
+
+
+
+<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-83522316-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</body>
+</html>
