@@ -1,3 +1,10 @@
+@color-weibo: #E6162D;
+@color-qq: #3D95D5;
+@color-weixin: #2BAD13;
+@color-facebook: #4862A3;
+@color-twitter: #55ACEE;
+@color-google-plus: #db4437;
+
 .share-icons {
     li {
         display: inline-block;
@@ -16,27 +23,27 @@
         color: #fff;
         text-align: center;
         &.weibo {
-            background: #E6162D
+            background: @color-weibo
         }
 
         &.qq {
-            background: #3D95D5
+            background: @color-qq
         }
 
         &.weixin {
-            background: #2BAD13
+            background: @color-weixin
         }
 
         &.facebook {
-            background: #4862A3
+            background: @color-facebook
         }
 
         &.twitter {
-            background: #55ACEE
+            background: @color-twitter
         }
 
-        &.douban {
-            background: #228A31
+        &.google {
+            background: @color-google-plus
         }
 
     }
@@ -67,17 +74,9 @@
         margin: 0 auto;
     }
 
-    .tit {
-        display: none
-    }
-
     li {
         width: 80px;
         text-align: center;
-    }
-
-    .icon {
-
     }
 
     a {
@@ -103,21 +102,57 @@
 
 }
 
-.post-share {
-    margin-bottom: 24px;
-    padding: 8px 12px;
-    background: #eee;
+@share-fab-size: 42px;
+@share-icon-size: @share-fab-size - 8px;
 
-    .tit {
-        margin-bottom: .5em;
+.page-share-fab {
+    display: block;
+    width: @share-fab-size;
+    height: @share-fab-size;
+    line-height: @share-fab-size;
+    color: @primaryColor;
+    background: lighten( @lightPrimaryColor, 10%);
+    .boxShadow();
+}
+
+.page-share-wrap {
+    position: absolute;
+    right: 35px;
+    top: @share-fab-size / -2;
+    z-index: 2;
+    .page-share {
+        visibility: hidden
+    }
+}
+
+.page-share {
+    position: absolute;
+    bottom: @share-fab-size + 6px;
+    right: 4px;
+    text-align: center;
+    width: @share-icon-size;
+
+    &.in {
+        visibility: visible;
+        .share-icons a {
+            opacity: 1;
+            .transform(scale(1));
+        }
     }
 
     .share-icons {
         a {
-            width: 24px;
-            height: 24px;
-            line-height: 24px;
-            .tip();
+            width: @share-icon-size;
+            height: @share-icon-size;
+            line-height: @share-icon-size;
+            font-size: 1.33333em;
+            border-radius: 50%;
+            .tip-left();
+            .boxShadow(.3s);
+            opacity: 0;
+            .transform(scale(0));
+            -webkit-transform-origin: center bottom;
+            transform-origin: center bottom;
 
             &:before {
                 content: '分享到'attr(data-title)
@@ -125,14 +160,19 @@
 
         }
 
-    }
-
-    li {
-        margin-left: .5em;
-        &:first-child {
-            margin-left: 0;
+        li {
+            margin-bottom: 10px;
         }
+
+    }
+}
+
+.wx-share {
+    p {
+        margin: 0 0 15px;
     }
 
-
+    img {
+        width: 200px;
+    }
 }

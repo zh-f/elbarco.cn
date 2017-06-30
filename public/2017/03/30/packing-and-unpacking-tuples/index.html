@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  <title>Python中的元组和Packing/Unpacking | El barco | Just another mediocre programmer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="keywords" content="Python,Tuple">
-  <meta name="description" content="什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Python中的元组和Packing/Unpacking | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python,Tuple">
+    <meta name="description" content="什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python中的元组和Packing/Unpacking">
 <meta property="og:url" content="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html">
@@ -17,75 +30,76 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python中的元组和Packing/Unpacking">
 <meta name="twitter:description" content="什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：">
-  
-    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
-  
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <nav id="menu" class="hide" >
-   <div class="inner">
-  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
-      <i class="icon icon-lg icon-close"></i>
-  </a>
-  <div class="brand-wrap">
-    <div class="brand">
-      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
-      <hgroup class="introduce">
-        <h5 class="nickname">Fan Zhang</h5>
-        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
-      </hgroup>
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
     </div>
   </div>
-  <ul class="nav">
-    
-        <li class="waves-block">
-          <a href="/"  >
-            <i class="icon icon-lg icon-home"></i>Home
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/archives"  >
-            <i class="icon icon-lg icon-archives"></i>Archives
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/tags"  >
-            <i class="icon icon-lg icon-tags"></i>Tags
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/links"  >
-            <i class="icon icon-lg icon-links"></i>Links
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="https://github.com/2hf" target="_blank" >
-            <i class="icon icon-lg icon-github"></i>Github
-          </a>
-        </li>
-    
-  </ul>
+</aside>
 
-  <footer class="footer">
-  <p>El barco &copy; 2017</p>
-  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-</footer>
-
-</div>
-
-  </nav>
-  <main id="main">
-    <header class="header" id="header">
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -96,85 +110,69 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
     </div>
 </header>
-<header class="content-header">
-  <div class="container">
-    <h1 class="author">Python中的元组和Packing/Unpacking</h1>
-    <h5 class="subtitle">2017-03-30</h5>
-  </div>
-</header>
-    <div class="container body-wrap">
-      
-  <article id="post-packing-and-unpacking-tuples" class="article article-type-post" itemscope itemprop="blogPost">
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Python中的元组和Packing/Unpacking</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-03-30T03:02:31.000Z" itemprop="datePublished" class="page-time">
+  2017-03-30
+</time>
+
+
+            
+        </h5>
+    </div>
+
     
-      <div class="post-meat flex-row">
-        <div class="flex-col">
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tuple/">Tuple</a></li></ul>
-</div>
-      </div>
-      <div class="post-body">
 
-        <aside class="post-widget" id="post-widget">
 
-          
-          <div class="post-share" id="post-share" data-title="Python中的元组和Packing/Unpacking" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;什么是元组&quot;&gt;&lt;a href=&quot;#什么是元组&quot; class=&quot;headerlink&quot; title=&quot;什么是元组&quot;&gt;&lt;/a&gt;什么是元组&lt;/h2&gt;&lt;p&gt;元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号&lt;code&gt;()&lt;/code&gt;包起来，如：&lt;br&gt;" data-url="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html">
-    <div class="tit">分享到：</div>
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
-        </a>
-      </li>
-    </ul>
- </div>
+</header>
 
-          
 
-          
-          <nav class="post-toc-wrap" id="post-toc">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#什么是元组"><span class="post-toc-text">什么是元组</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#元组的Packing-Unpacking"><span class="post-toc-text">元组的Packing/Unpacking</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Python中的Packing-Unpacking应用"><span class="post-toc-text">Python中的Packing/Unpacking应用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#for-tuples"><span class="post-toc-text">* for tuples</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#for-dictionaries"><span class="post-toc-text">** for dictionaries</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-text">参考</span></a></li></ol>
-          </nav>
-          
-        </aside>
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#什么是元组"><span class="post-toc-number">1.</span> <span class="post-toc-text">什么是元组</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#元组的Packing-Unpacking"><span class="post-toc-number">2.</span> <span class="post-toc-text">元组的Packing/Unpacking</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Python中的Packing-Unpacking应用"><span class="post-toc-number">3.</span> <span class="post-toc-text">Python中的Packing/Unpacking应用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#for-tuples"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">* for tuples</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#for-dictionaries"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">** for dictionaries</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">4.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-packing-and-unpacking-tuples"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
-        <div class="post-content" itemprop="postContent"><h2 id="什么是元组"><a href="#什么是元组" class="headerlink" title="什么是元组"></a>什么是元组</h2><p>元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号<code>()</code>包起来，如：<br><a id="more"></a><br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = (<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>) <span class="comment">#具有三个元素的元组</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = (<span class="string">'a'</span>,) <span class="comment">#只有一个元素的元组，注意，必须有一个逗号来标识</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>z = () <span class="comment">#空元组</span></span><br></pre></td></tr></table></figure></p>
+    <div class="post-card">
+        <h1 class="post-card-title">Python中的元组和Packing/Unpacking</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-03-30 11:02:31" datetime="2017-03-30T03:02:31.000Z"  itemprop="datePublished">2017-03-30</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="什么是元组"><a href="#什么是元组" class="headerlink" title="什么是元组"></a>什么是元组</h2><p>元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号<code>()</code>包起来，如：<br><a id="more"></a><br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = (<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>) <span class="comment">#具有三个元素的元组</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = (<span class="string">'a'</span>,) <span class="comment">#只有一个元素的元组，注意，必须有一个逗号来标识</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>z = () <span class="comment">#空元组</span></span><br></pre></td></tr></table></figure></p>
 <p>元组的操作跟列表非常类似，如<code>+</code>，<code>*</code>，切片等，在元组中同样适用：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a[:<span class="number">2</span>]</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a * <span class="number">1</span></span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a + (<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure></p>
 <h2 id="元组的Packing-Unpacking"><a href="#元组的Packing-Unpacking" class="headerlink" title="元组的Packing/Unpacking"></a>元组的Packing/Unpacking</h2><p>Python中允许元组出现在赋值运算符的左侧，这样元组中的每个变量就可以被赋值为右侧对应位置的值，如：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>(a,b,c,d) = (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c</span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure></p>
 <p>上面的写法还可以简化为:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a,b,c,d = <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span></span><br></pre></td></tr></table></figure></p>
@@ -204,22 +202,101 @@
 <p>传几个参数，用<code>func3()</code>将入参打包为字典，然后在函数中把key和value输出出来，结果如下所示：<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; func3(name='elbarco', location='Beijing', language='Java/Python')</span><br><span class="line">&lt;class 'dict'&gt;</span><br><span class="line">name = elbarco</span><br><span class="line">location = Beijing</span><br><span class="line">language = Java/Python</span><br></pre></td></tr></table></figure></p>
 <p>以上。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>1.<a href="">The Quick Python Book 2nd Edition.Chaptor 5.7.3</a><br>2.<a href="http://www.geeksforgeeks.org/packing-and-unpacking-arguments-in-python/" target="_blank" rel="external">Packing and Unpacking Arguments in Python</a><br>3.<a href="https://hangar.runway7.net/python/packing-unpacking-arguments" target="_blank" rel="external">Packing and Unpacking Arguments in Python</a><br>4.<a href="http://pythoncentral.io/pythons-range-function-explained/" target="_blank" rel="external">Python’s range() Function Explained</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
 </div>
 
 
-      </div>
-      
-<nav class="post-nav">
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tuple/">Tuple</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/&title=《Python中的元组和Packing/Unpacking》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/&title=《Python中的元组和Packing/Unpacking》 — El barco&source=什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的元组和Packing/Unpacking》 — El barco&url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
   
-    <div class="waves-block waves-effect prev fl">
+    <div class="waves-block waves-effect prev">
       <a href="/2017/06/23/mongodb-crashed-with-the-Got-signal-6-Aborted/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h5 class="title">Got signal:6 (Aborted) 引起的MongoDB崩溃分析解决</h5>
       </a>
     </div>
   
+
   
-    <div class="waves-block waves-effect next fr">
+    <div class="waves-block waves-effect next">
       <a href="/2017/03/29/nested-lists-and-deep-copies/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h5 class="title">从Python中内嵌列表复制说起</h5>
@@ -229,91 +306,181 @@
 </nav>
 
 
+
     
 
-  </article>
 
 
 
-  
-  <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="packing-and-unpacking-tuples" data-title="Python中的元组和Packing/Unpacking" data-url="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"elbarco"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html',
+        sourceId: 'packing-and-unpacking-tuples',
+        productKey: '2e83e552aad1410ba5ac3356da6322a2',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
 </div>
 
-  
-
-  
 
 
+</div>
 
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
     </div>
-  </main>
-<div class="mask" id="mask"></div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-<div class="global-share" id="global-share" data-title="Python中的元组和Packing/Unpacking" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;什么是元组&quot;&gt;&lt;a href=&quot;#什么是元组&quot; class=&quot;headerlink&quot; title=&quot;什么是元组&quot;&gt;&lt;/a&gt;什么是元组&lt;/h2&gt;&lt;p&gt;元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号&lt;code&gt;()&lt;/code&gt;包起来，如：&lt;br&gt;" data-url="http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/index.html">
-    <div class="tit">分享到：</div>
+
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/&title=《Python中的元组和Packing/Unpacking》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/&title=《Python中的元组和Packing/Unpacking》 — El barco&source=什么是元组元组（Tuple）是与列表类似的数据结构，只可被创建，不可被修改，用一对圆括号()包起来，如：" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的元组和Packing/Unpacking》 — El barco&url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/&via=http://elbarco.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/03/30/packing-and-unpacking-tuples/" alt="微信分享二维码">
+</div>
 
-<script src="/js/main.js"></script>
 
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
     <ul class="search-result" id="search-result"></ul>
 </div>
-<script type="text/template" id="search-tpl">
+<template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -323,29 +490,19 @@
         </div>
     </a>
 </li>
-</script>
-<script src="/js/search.js"></script>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-83522316-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
 
 
 </body>

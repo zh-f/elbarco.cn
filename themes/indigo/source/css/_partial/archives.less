@@ -1,56 +1,96 @@
-.archive-year-wrap {
-    width: 80px;
-    font-size: 18px;
+.archive-separator {
+    margin: 35px 0 13px;
+    color: @primaryColor;
+    font-size: 16px;
+    font-weight: bold;
+
+    &:first-child {
+        margin-top: 10px;
+    }
 }
 
-.archive-year {
-    display: block;
-    width: 56px;
-    height: 56px;
-    line-height: 56px;
-    text-align: center;
-    border-radius: 50%;
-    color: #fff !important;
-    background: @primaryColor;
-    box-shadow: @boxShadow;
-}
+.article-card {
+    padding: 16px 20px 0;
+    .card();
 
-.archives {
-    padding-left: 30px;
-    border-left: 3px solid @borderColor;
+    .post-content {
+        word-break: break-all;
+
+        .highlight,
+        > pre {
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 20px;
+        }
+    }
+
+    .post-time {
+        line-height: 24px;
+        font-weight: bold;
+    }
+
+    .post-footer {
+        margin: 0 -20px;
+        padding: 12px 20px 8px;
+    }
+
 }
 
 .archive-article {
+    .post-title {
+        font-size: 18px;
+        margin-bottom: 0;
+        padding-bottom: 16px;
+    }
+}
+.waterfall {
     position: relative;
-    margin: 20px 0;
-    padding: 16px 20px;
-    background: #fff;
-    border-radius: 2px;
-    box-shadow: @boxShadow;
+    margin: 0 -10px -20px;
+    .fade;
+}
+.waterfall-item {
+    position: absolute;
+    width: 50%;
+    padding: 0 10px 20px;
+}
 
-    &:before {
-        position: absolute;
-        top: 0;
-        left: -2.5em;
-        content: '';
-        width: 12px;
-        height: 12px;
-        border: 2px solid @borderColor;
-        background: @lightPrimaryColor;
-        border-radius: 50%;
+@media screen and (max-width:760px) {
+    .archive-article {
+        display: block;
+        margin: 0 -16px;
+        padding: 16px 16px 8px;
+        border-bottom: 1px solid @borderColor;
+        .post-footer {
+            border-top: none;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
     }
 
-    .archive-article-header {
-        margin: 0 0 16px;
+    .article-card {
+        border-radius: 0
     }
 
-    .post-tiem {
-        color: @secondaryTextColor;
+    .archive-separator {
+        margin-top: 16px;
     }
 
-    .post-title,
-    .article-tag-list {
+    .waterfall {
         margin: 0;
+        height: auto!important;
+        opacity: 1;
+        .transform(translateY(0));
     }
 
+    .waterfall-item {
+        position: static;
+        width: 100%;
+        padding: 0;
+    }
+}
+
+@media screen and (max-width:420px) {
+    .archive-article {
+        padding: 16px 16px 0;
+    }
 }

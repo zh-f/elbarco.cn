@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  <title>一个成功的Git分支模型 | El barco | Just another mediocre programmer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="keywords" content="Git">
-  <meta name="description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>一个成功的Git分支模型 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Git">
+    <meta name="description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
 针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个成功的Git分支模型">
@@ -26,75 +39,76 @@
 <meta name="twitter:description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
 针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
 <meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png">
-  
-    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
-  
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <nav id="menu" class="hide" >
-   <div class="inner">
-  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
-      <i class="icon icon-lg icon-close"></i>
-  </a>
-  <div class="brand-wrap">
-    <div class="brand">
-      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
-      <hgroup class="introduce">
-        <h5 class="nickname">Fan Zhang</h5>
-        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
-      </hgroup>
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
     </div>
   </div>
-  <ul class="nav">
-    
-        <li class="waves-block">
-          <a href="/"  >
-            <i class="icon icon-lg icon-home"></i>Home
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/archives"  >
-            <i class="icon icon-lg icon-archives"></i>Archives
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/tags"  >
-            <i class="icon icon-lg icon-tags"></i>Tags
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/links"  >
-            <i class="icon icon-lg icon-links"></i>Links
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="https://github.com/2hf" target="_blank" >
-            <i class="icon icon-lg icon-github"></i>Github
-          </a>
-        </li>
-    
-  </ul>
+</aside>
 
-  <footer class="footer">
-  <p>El barco &copy; 2017</p>
-  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-</footer>
-
-</div>
-
-  </nav>
-  <main id="main">
-    <header class="header" id="header">
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -105,95 +119,90 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
     </div>
 </header>
-<header class="content-header">
-  <div class="container">
-    <h1 class="author">一个成功的Git分支模型</h1>
-    <h5 class="subtitle">2016-03-08</h5>
-  </div>
-</header>
-    <div class="container body-wrap">
-      
-  <article id="post-一个成功的Git分支模型" class="article article-type-post" itemscope itemprop="blogPost">
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">一个成功的Git分支模型</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2016-03-08T02:29:22.000Z" itemprop="datePublished" class="page-time">
+  2016-03-08
+</time>
+
+
+            
+        </h5>
+    </div>
+
     
-      <div class="post-meat flex-row">
-        <div class="flex-col">
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-</div>
-      </div>
-      <div class="post-body">
 
-        <aside class="post-widget" id="post-widget">
 
-          
-          <div class="post-share" id="post-share" data-title="一个成功的Git分支模型" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。&lt;/p&gt;
-&lt;p&gt;针对如何搭建私有Git服务器，我选用的是&lt;a href=&quot;https://about.gitlab.com/&quot;&gt;GitLab&lt;/a&gt;，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章&lt;a href=&quot;http://nvie.com/posts/a-successful-git-branching-model/&quot;&gt;《A successful Git branching model》&lt;/a&gt;讲述如何合理的使用Git branch进行开发和版本管理。&lt;/p&gt;" data-url="http://elbarco.cn/2016/03/08/一个成功的Git分支模型/index.html">
-    <div class="tit">分享到：</div>
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
-        </a>
-      </li>
-    </ul>
- </div>
+</header>
 
-          
 
-          
-          <nav class="post-toc-wrap" id="post-toc">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#详细展开"><span class="post-toc-text">详细展开</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#主要分支"><span class="post-toc-text">主要分支</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#支持性分支"><span class="post-toc-text">支持性分支</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#功能特性分支"><span class="post-toc-text">功能特性分支</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#发布用分支"><span class="post-toc-text">发布用分支</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#补丁分支"><span class="post-toc-text">补丁分支</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-text">结语</span></a></li></ol>
-          </nav>
-          
-        </aside>
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#详细展开"><span class="post-toc-number">2.</span> <span class="post-toc-text">详细展开</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#主要分支"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">主要分支</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#支持性分支"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">支持性分支</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#功能特性分支"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">功能特性分支</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#发布用分支"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">发布用分支</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#补丁分支"><span class="post-toc-number">2.2.3.</span> <span class="post-toc-text">补丁分支</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-number">3.</span> <span class="post-toc-text">结语</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-一个成功的Git分支模型"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
-        <div class="post-content" itemprop="postContent"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。</p>
+    <div class="post-card">
+        <h1 class="post-card-title">一个成功的Git分支模型</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2016-03-08 10:29:22" datetime="2016-03-08T02:29:22.000Z"  itemprop="datePublished">2016-03-08</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。</p>
 <p>针对如何搭建私有Git服务器，我选用的是<a href="https://about.gitlab.com/" target="_blank" rel="external">GitLab</a>，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">《A successful Git branching model》</a>讲述如何合理的使用Git branch进行开发和版本管理。</p>
 <a id="more"></a>
-<p>先来张图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png" alt="分支模型全貌"></p>
+<p>先来张图：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png" alt="分支模型全貌" title="">
+                </div>
+                <div class="image-caption">分支模型全貌</div>
+            </figure></p>
 <h2 id="详细展开"><a href="#详细展开" class="headerlink" title="详细展开"></a>详细展开</h2><h3 id="主要分支"><a href="#主要分支" class="headerlink" title="主要分支"></a>主要分支</h3><p>在这个模型中，中央仓库持有两个生命周期无限长的主要分支：</p>
 <ul>
 <li><code>master</code></li>
 <li><code>develop</code></li>
 </ul>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/main-branches%402x.png" alt="主要分支"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/main-branches%402x.png" alt="主要分支" title="">
+                </div>
+                <div class="image-caption">主要分支</div>
+            </figure>
 <p>我们认为，<code>origin/master</code>这个主要分支上，源码的<code>HEAD</code>永远保持生产就绪的状态。<code>origin/develop</code>这个主要分支的源码<code>HEAD</code>则永远代表了最新提交的开发变更，所以也被称为是“集成分支”。该分支可以用于每晚的自动化构建所使用。</p>
 <p>当<code>develop</code>分支的代码能够到达一个稳定点，并且已经准备好进行版本发布，所以的变更应当合并到<code>master</code>上，并且用版本号标注。具体操作后详细谈到。</p>
 <p>因此，每当变更最终合并到<code>master</code>分支，这就是一个新的生产版本。对待这个分支，要极其严格，所以理论上来讲，可以使用一个Git hook脚本来进行自动化构建，每当有新内容提交到<code>master</code>，脚本自动将软件发布到成产环境。</p>
@@ -208,7 +217,13 @@
 <h4 id="功能特性分支"><a href="#功能特性分支" class="headerlink" title="功能特性分支"></a>功能特性分支</h4><blockquote>
 <p>分支来源：<code>develop</code><br>合并目标：<code>develop</code><br>命名惯例：除<code>master</code>、<code>develop</code>、<code>release-*</code>或者<code>hotfix-*</code>之外的任何名字均可</p>
 </blockquote>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/fb%402x.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/fb%402x.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p>功能特性分支（或者有时被称作专题分支）被用于开发接下来或者将来版本的新功能、新特性。当开始开发一项功能时，目标发布用分支并未明确，但只要功能在开发中，这个分支就存在，最终会合并回<code>develop</code>（意味着即将发布的版本中一定会包含该功能）或者被废弃（这当然是一种令人十分失望的情况）。</p>
 <p>功能特性分支仅存在与开发的代码仓库，并不在<code>origin</code>。</p>
 <p><em>创建一个功能特性分支</em></p>
@@ -218,7 +233,13 @@
 <p>完成的功能特性被合并到<code>develop</code>分支上，表示该功能要添加到即将发布的版本中：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch <span class="string">'develop'</span></span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">Updating ea1b82a..05e9557</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git branch <span class="_">-d</span> myfeature</span><br><span class="line">Deleted branch myfeature (was 05e9557).</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
 <p><code>--no-ff</code>表示合并总是创建新的提交对象，这样可以避免在合并分支时丢失历史信息，对比图如下：</p>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/merge-without-ff%402x.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/merge-without-ff%402x.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p>显而易见，这就是证据啊，证据！:joy:</p>
 <h4 id="发布用分支"><a href="#发布用分支" class="headerlink" title="发布用分支"></a>发布用分支</h4><blockquote>
 <p>分支来源：<code>develop</code><br>合并目标：<code>develop</code>和<code>master</code><br>命名惯例：<code>release-*</code></p>
@@ -247,7 +268,13 @@
 <h4 id="补丁分支"><a href="#补丁分支" class="headerlink" title="补丁分支"></a>补丁分支</h4><blockquote>
 <p>分支来源：<code>master</code><br>合并目标：<code>develop</code>和<code>master</code><br>命名惯例：<code>hotfix-*</code></p>
 </blockquote>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/hotfix-branches%402x.png" alt="Hoxfix branches"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/hotfix-branches%402x.png" alt="Hoxfix branches" title="">
+                </div>
+                <div class="image-caption">Hoxfix branches</div>
+            </figure>
 <p>这类分支与发布用分支很类似，不过补丁分支的产生是为了快速响应生产环境中的紧急问题。当线上遭遇紧急缺陷需要立刻解决，则需要在对应标记的<code>master</code>分支上拉出一个补丁分支。</p>
 <p>在某一位或者几位开发者修复线上问题的同时，<code>develop</code>分支可以继续进行。</p>
 <p><em>创建一个补丁分支</em></p>
@@ -269,22 +296,102 @@
 <blockquote>
 <p>原文作者Twitter：<a href="http://twitter.com/nvie" target="_blank" rel="external">@nvie</a> </p>
 </blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
 </div>
 
 
-      </div>
-      
-<nav class="post-nav">
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/&title=《一个成功的Git分支模型》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/&title=《一个成功的Git分支模型》 — El barco&source=前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
+针对如何搭建..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《一个成功的Git分支模型》 — El barco&url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
   
-    <div class="waves-block waves-effect prev fl">
+    <div class="waves-block waves-effect prev">
       <a href="/2016/03/09/如何在CentOS7上安装和配置VNCServer/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h5 class="title">如何在CentOS7上安装和配置VNCServer</h5>
       </a>
     </div>
   
+
   
-    <div class="waves-block waves-effect next fr">
+    <div class="waves-block waves-effect next">
       <a href="/2016/03/07/英雄联盟中的随机行为优化/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h5 class="title">英雄联盟中的随机行为优化</h5>
@@ -294,92 +401,182 @@
 </nav>
 
 
+
     
 
-  </article>
 
 
 
-  
-  <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="一个成功的Git分支模型" data-title="一个成功的Git分支模型" data-url="http://elbarco.cn/2016/03/08/一个成功的Git分支模型/index.html"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"elbarco"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://elbarco.cn/2016/03/08/一个成功的Git分支模型/index.html',
+        sourceId: '一个成功的Git分支模型',
+        productKey: '2e83e552aad1410ba5ac3356da6322a2',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
 </div>
 
-  
-
-  
 
 
+</div>
 
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
     </div>
-  </main>
-<div class="mask" id="mask"></div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-<div class="global-share" id="global-share" data-title="一个成功的Git分支模型" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。&lt;/p&gt;
-&lt;p&gt;针对如何搭建私有Git服务器，我选用的是&lt;a href=&quot;https://about.gitlab.com/&quot;&gt;GitLab&lt;/a&gt;，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章&lt;a href=&quot;http://nvie.com/posts/a-successful-git-branching-model/&quot;&gt;《A successful Git branching model》&lt;/a&gt;讲述如何合理的使用Git branch进行开发和版本管理。&lt;/p&gt;" data-url="http://elbarco.cn/2016/03/08/一个成功的Git分支模型/index.html">
-    <div class="tit">分享到：</div>
+
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/&title=《一个成功的Git分支模型》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/&title=《一个成功的Git分支模型》 — El barco&source=前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
+针对如何搭建..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《一个成功的Git分支模型》 — El barco&url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/&via=http://elbarco.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2016/03/08/一个成功的Git分支模型/" alt="微信分享二维码">
+</div>
 
-<script src="/js/main.js"></script>
 
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
     <ul class="search-result" id="search-result"></ul>
 </div>
-<script type="text/template" id="search-tpl">
+<template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -389,29 +586,19 @@
         </div>
     </a>
 </li>
-</script>
-<script src="/js/search.js"></script>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-83522316-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
 
 
 </body>

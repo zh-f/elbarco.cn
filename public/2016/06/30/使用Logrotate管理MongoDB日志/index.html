@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  <title>使用Logrotate管理MongoDB日志 | El barco | Just another mediocre programmer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="keywords" content="MongoDB,Logrotate">
-  <meta name="description" content="痛点前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日志，开发和运维人员查看日志变的十分不方便，所以需要寻求使日志自动切换轮转的方式。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>使用Logrotate管理MongoDB日志 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="MongoDB,Logrotate">
+    <meta name="description" content="痛点前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日志，开发和运维人员查看日志变的十分不方便，所以需要寻求使日志自动切换轮转的方式。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用Logrotate管理MongoDB日志">
 <meta property="og:url" content="http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/index.html">
@@ -17,75 +30,76 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Logrotate管理MongoDB日志">
 <meta name="twitter:description" content="痛点前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日志，开发和运维人员查看日志变的十分不方便，所以需要寻求使日志自动切换轮转的方式。">
-  
-    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
-  
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <nav id="menu" class="hide" >
-   <div class="inner">
-  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
-      <i class="icon icon-lg icon-close"></i>
-  </a>
-  <div class="brand-wrap">
-    <div class="brand">
-      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
-      <hgroup class="introduce">
-        <h5 class="nickname">Fan Zhang</h5>
-        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
-      </hgroup>
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
     </div>
   </div>
-  <ul class="nav">
-    
-        <li class="waves-block">
-          <a href="/"  >
-            <i class="icon icon-lg icon-home"></i>Home
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/archives"  >
-            <i class="icon icon-lg icon-archives"></i>Archives
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/tags"  >
-            <i class="icon icon-lg icon-tags"></i>Tags
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/links"  >
-            <i class="icon icon-lg icon-links"></i>Links
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="https://github.com/2hf" target="_blank" >
-            <i class="icon icon-lg icon-github"></i>Github
-          </a>
-        </li>
-    
-  </ul>
+</aside>
 
-  <footer class="footer">
-  <p>El barco &copy; 2017</p>
-  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-</footer>
-
-</div>
-
-  </nav>
-  <main id="main">
-    <header class="header" id="header">
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -96,85 +110,69 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
     </div>
 </header>
-<header class="content-header">
-  <div class="container">
-    <h1 class="author">使用Logrotate管理MongoDB日志</h1>
-    <h5 class="subtitle">2016-06-30</h5>
-  </div>
-</header>
-    <div class="container body-wrap">
-      
-  <article id="post-使用Logrotate管理MongoDB日志" class="article article-type-post" itemscope itemprop="blogPost">
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">使用Logrotate管理MongoDB日志</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2016-06-30T07:26:03.000Z" itemprop="datePublished" class="page-time">
+  2016-06-30
+</time>
+
+
+            
+        </h5>
+    </div>
+
     
-      <div class="post-meat flex-row">
-        <div class="flex-col">
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Logrotate/">Logrotate</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-</div>
-      </div>
-      <div class="post-body">
 
-        <aside class="post-widget" id="post-widget">
 
-          
-          <div class="post-share" id="post-share" data-title="使用Logrotate管理MongoDB日志" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;痛点&quot;&gt;&lt;a href=&quot;#痛点&quot; class=&quot;headerlink&quot; title=&quot;痛点&quot;&gt;&lt;/a&gt;痛点&lt;/h2&gt;&lt;p&gt;前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日志，开发和运维人员查看日志变的十分不方便，所以需要寻求使日志自动切换轮转的方式。" data-url="http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/index.html">
-    <div class="tit">分享到：</div>
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
-        </a>
-      </li>
-    </ul>
- </div>
+</header>
 
-          
 
-          
-          <nav class="post-toc-wrap" id="post-toc">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#痛点"><span class="post-toc-text">痛点</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#选型"><span class="post-toc-text">选型</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Logrotate"><span class="post-toc-text">Logrotate</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#简介"><span class="post-toc-text">简介</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置说明"><span class="post-toc-text">配置说明</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用Logrotate管理MongoDB日志"><span class="post-toc-text">使用Logrotate管理MongoDB日志</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#找到日志文件及PID记录文件"><span class="post-toc-text">找到日志文件及PID记录文件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#编写配置文件"><span class="post-toc-text">编写配置文件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#验证"><span class="post-toc-text">验证</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#特别指出"><span class="post-toc-text">特别指出</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-text">结语</span></a></li></ol>
-          </nav>
-          
-        </aside>
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#痛点"><span class="post-toc-number">1.</span> <span class="post-toc-text">痛点</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#选型"><span class="post-toc-number">2.</span> <span class="post-toc-text">选型</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Logrotate"><span class="post-toc-number">3.</span> <span class="post-toc-text">Logrotate</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#简介"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">简介</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置说明"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">配置说明</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用Logrotate管理MongoDB日志"><span class="post-toc-number">4.</span> <span class="post-toc-text">使用Logrotate管理MongoDB日志</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#找到日志文件及PID记录文件"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">找到日志文件及PID记录文件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#编写配置文件"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">编写配置文件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#验证"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">验证</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#特别指出"><span class="post-toc-number">4.4.</span> <span class="post-toc-text">特别指出</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-number">5.</span> <span class="post-toc-text">结语</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-使用Logrotate管理MongoDB日志"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
-        <div class="post-content" itemprop="postContent"><h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><p>前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日志，开发和运维人员查看日志变的十分不方便，所以需要寻求使日志自动切换轮转的方式。<a id="more"></a></p>
+    <div class="post-card">
+        <h1 class="post-card-title">使用Logrotate管理MongoDB日志</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2016-06-30 15:26:03" datetime="2016-06-30T07:26:03.000Z"  itemprop="datePublished">2016-06-30</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><p>前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日志，开发和运维人员查看日志变的十分不方便，所以需要寻求使日志自动切换轮转的方式。<a id="more"></a></p>
 <h2 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h2><p>通过查看MongoDB官方文档，知悉MongoDB提供了几种轮转日志文件的策略，详见<a href="https://docs.mongodb.com/manual/tutorial/rotate-log-files/" target="_blank" rel="external">这里</a>（据说新版本的MongoDB已经完成了自动的日志轮转功能？）。其中，可以使用MongoDB提供的<a href="https://docs.mongodb.com/manual/reference/command/logRotate/#dbcmd.logRotate" target="_blank" rel="external"><code>logRotate</code></a>命令或者通过向<code>mongod</code>进程发送<code>SIGUSR1</code>信号来实现。</p>
 <p>然而看很多文章中均表示，MongoDB本身提供的logRotate机制存在很多问题，比如由于其不稳定性，会造成日志轮换中mongodb进程终止，不提供旧日志的压缩，即使轮转切换日志，还是占用了很多磁盘空间；日志文件重命名格式<code>mongodb.log.2016-10-22T17-44-44</code>不友好等等。所以我们在选择时就会变得很小心，尽量避免使用其内置logRotate。</p>
 <p>被广泛认可的方案是通过<a href="http://linux.die.net/man/8/logrotate" target="_blank" rel="external">Logrotate</a>进行日志管理，其中可以执行脚本实现向<code>mongod</code>进程发送<code>SIGUSR1</code>信号。</p>
@@ -225,22 +223,101 @@
 <p>上面的第二条命令，可以递归的设置上下文，如果我们传入的是一个目录，则目录下的所有子目录及文件都会被递归的统一设置。</p>
 <p>关于这个问题的说明，可以<a href="https://access.redhat.com/solutions/39006" target="_blank" rel="external">点击这里</a>查看更多说明和解释。</p>
 <h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>至此，我们边完成了使用Logrotate来管理MongoDB日志了。可以看到，Logrotate十分强大，在使用时，可以通过<code>man logrotate</code>查看一下具体参数，知其然并知其所以然，让其更好地为我们所用。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
 </div>
 
 
-      </div>
-      
-<nav class="post-nav">
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Logrotate/">Logrotate</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/&title=《使用Logrotate管理MongoDB日志》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/&title=《使用Logrotate管理MongoDB日志》 — El barco&source=痛点前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Logrotate管理MongoDB日志》 — El barco&url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
   
-    <div class="waves-block waves-effect prev fl">
+    <div class="waves-block waves-effect prev">
       <a href="/2016/07/01/使用Logrotate管理MongoDB日志-后记/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h5 class="title">使用Logrotate管理MongoDB日志-后记</h5>
       </a>
     </div>
   
+
   
-    <div class="waves-block waves-effect next fr">
+    <div class="waves-block waves-effect next">
       <a href="/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h5 class="title">MongoDB复制集Secondary节点持续Recovering状态解决办法</h5>
@@ -250,91 +327,181 @@
 </nav>
 
 
+
     
 
-  </article>
 
 
 
-  
-  <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="使用Logrotate管理MongoDB日志" data-title="使用Logrotate管理MongoDB日志" data-url="http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/index.html"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"elbarco"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/index.html',
+        sourceId: '使用Logrotate管理MongoDB日志',
+        productKey: '2e83e552aad1410ba5ac3356da6322a2',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
 </div>
 
-  
-
-  
 
 
+</div>
 
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
     </div>
-  </main>
-<div class="mask" id="mask"></div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-<div class="global-share" id="global-share" data-title="使用Logrotate管理MongoDB日志" data-pic="/img/avatar.png" data-summary="&lt;h2 id=&quot;痛点&quot;&gt;&lt;a href=&quot;#痛点&quot; class=&quot;headerlink&quot; title=&quot;痛点&quot;&gt;&lt;/a&gt;痛点&lt;/h2&gt;&lt;p&gt;前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日志，开发和运维人员查看日志变的十分不方便，所以需要寻求使日志自动切换轮转的方式。" data-url="http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/index.html">
-    <div class="tit">分享到：</div>
+
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/&title=《使用Logrotate管理MongoDB日志》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/&title=《使用Logrotate管理MongoDB日志》 — El barco&source=痛点前段时间需要查询MongoDB日志，惊觉MongoDB的日志并没有配置自动切换轮转，这会导致在繁忙的业务下，日志增长量惊人。面对海量的MongoDB日..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Logrotate管理MongoDB日志》 — El barco&url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/&via=http://elbarco.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2016/06/30/使用Logrotate管理MongoDB日志/" alt="微信分享二维码">
+</div>
 
-<script src="/js/main.js"></script>
 
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
     <ul class="search-result" id="search-result"></ul>
 </div>
-<script type="text/template" id="search-tpl">
+<template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -344,29 +511,19 @@
         </div>
     </a>
 </li>
-</script>
-<script src="/js/search.js"></script>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-83522316-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
 
 
 </body>

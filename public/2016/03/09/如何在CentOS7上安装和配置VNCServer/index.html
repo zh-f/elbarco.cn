@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  <title>如何在CentOS7上安装和配置VNCServer | El barco | Just another mediocre programmer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="keywords" content="Linux,CentOS7">
-  <meta name="description" content="原文地址：传送门转载自：Linux.cn
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>如何在CentOS7上安装和配置VNCServer | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Linux,CentOS7">
+    <meta name="description" content="原文地址：传送门转载自：Linux.cn
 
 这是一个关于怎样在你的 CentOS 7 上安装配置 VNC 服务的教程。当然这个教程也适合 RHEL 7 。在这个教程里，我们将学习什么是 VNC 以及怎样在 CentOS 7 上安装配置 VNC 服务器。">
 <meta property="og:type" content="article">
@@ -33,75 +46,76 @@
 
 这是一个关于怎样在你的 CentOS 7 上安装配置 VNC 服务的教程。当然这个教程也适合 RHEL 7 。在这个教程里，我们将学习什么是 VNC 以及怎样在 CentOS 7 上安装配置 VNC 服务器。">
 <meta name="twitter:image" content="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112812oz6l6tnr6trnmluc.png">
-  
-    <link rel="alternative" href="/atom.xml" title="El barco" type="application/atom+xml">
-  
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <nav id="menu" class="hide" >
-   <div class="inner">
-  <a href="javascript:;" class="header-icon waves-circle-light" id="menu-off">
-      <i class="icon icon-lg icon-close"></i>
-  </a>
-  <div class="brand-wrap">
-    <div class="brand">
-      <a href="./" class="avatar"><img src="/img/avatar.png"></a>
-      <hgroup class="introduce">
-        <h5 class="nickname">Fan Zhang</h5>
-        <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
-      </hgroup>
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
     </div>
   </div>
-  <ul class="nav">
-    
-        <li class="waves-block">
-          <a href="/"  >
-            <i class="icon icon-lg icon-home"></i>Home
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/archives"  >
-            <i class="icon icon-lg icon-archives"></i>Archives
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/tags"  >
-            <i class="icon icon-lg icon-tags"></i>Tags
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="/links"  >
-            <i class="icon icon-lg icon-links"></i>Links
-          </a>
-        </li>
-    
-        <li class="waves-block">
-          <a href="https://github.com/2hf" target="_blank" >
-            <i class="icon icon-lg icon-github"></i>Github
-          </a>
-        </li>
-    
-  </ul>
+</aside>
 
-  <footer class="footer">
-  <p>El barco &copy; 2017</p>
-  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-</footer>
-
-</div>
-
-  </nav>
-  <main id="main">
-    <header class="header" id="header">
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -112,95 +126,82 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="Input keywords">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
     </div>
 </header>
-<header class="content-header">
-  <div class="container">
-    <h1 class="author">如何在CentOS7上安装和配置VNCServer</h1>
-    <h5 class="subtitle">2016-03-09</h5>
-  </div>
-</header>
-    <div class="container body-wrap">
-      
-  <article id="post-如何在CentOS7上安装和配置VNCServer" class="article article-type-post" itemscope itemprop="blogPost">
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">如何在CentOS7上安装和配置VNCServer</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2016-03-09T09:22:56.000Z" itemprop="datePublished" class="page-time">
+  2016-03-09
+</time>
+
+
+            
+        </h5>
+    </div>
+
     
-      <div class="post-meat flex-row">
-        <div class="flex-col">
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CentOS7/">CentOS7</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-</div>
-      </div>
-      <div class="post-body">
 
-        <aside class="post-widget" id="post-widget">
 
-          
-          <div class="post-share" id="post-share" data-title="如何在CentOS7上安装和配置VNCServer" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
-&lt;p&gt;原文地址：&lt;a href=&quot;http://linoxide.com/linux-how-to/install-configure-vnc-server-centos-7-0/&quot;&gt;传送门&lt;/a&gt;&lt;br&gt;转载自：&lt;a href=&quot;https://linux.cn/article-5335-1.html&quot;&gt;Linux.cn&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;这是一个关于怎样在你的 CentOS 7 上安装配置 &lt;a href=&quot;http://en.wikipedia.org/wiki/Virtual_Network_Computing&quot;&gt;VNC&lt;/a&gt; 服务的教程。当然这个教程也适合 RHEL 7 。在这个教程里，我们将学习什么是 VNC 以及怎样在 CentOS 7 上安装配置 &lt;a href=&quot;http://en.wikipedia.org/wiki/Virtual_Network_Computing&quot;&gt;VNC 服务器&lt;/a&gt;。&lt;/p&gt;" data-url="http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/index.html">
-    <div class="tit">分享到：</div>
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
-        </a>
-      </li>
-    </ul>
- </div>
+</header>
 
-          
 
-          
-          <nav class="post-toc-wrap" id="post-toc">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#安装-X-Window"><span class="post-toc-text">安装 X-Window</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#安装-VNC-服务器"><span class="post-toc-text">安装 VNC 服务器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置-VNC"><span class="post-toc-text">配置 VNC</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#开启服务"><span class="post-toc-text">开启服务</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#防火墙设置"><span class="post-toc-text">防火墙设置</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#用-VNC-客户端连接服务器"><span class="post-toc-text">用 VNC 客户端连接服务器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a></li></ol>
-          </nav>
-          
-        </aside>
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#安装-X-Window"><span class="post-toc-number">1.</span> <span class="post-toc-text">安装 X-Window</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#安装-VNC-服务器"><span class="post-toc-number">2.</span> <span class="post-toc-text">安装 VNC 服务器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置-VNC"><span class="post-toc-number">3.</span> <span class="post-toc-text">配置 VNC</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#开启服务"><span class="post-toc-number">4.</span> <span class="post-toc-text">开启服务</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#防火墙设置"><span class="post-toc-number">5.</span> <span class="post-toc-text">防火墙设置</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#用-VNC-客户端连接服务器"><span class="post-toc-number">6.</span> <span class="post-toc-text">用 VNC 客户端连接服务器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">7.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-如何在CentOS7上安装和配置VNCServer"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
-        <div class="post-content" itemprop="postContent"><blockquote>
+    <div class="post-card">
+        <h1 class="post-card-title">如何在CentOS7上安装和配置VNCServer</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2016-03-09 17:22:56" datetime="2016-03-09T09:22:56.000Z"  itemprop="datePublished">2016-03-09</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <blockquote>
 <p>原文地址：<a href="http://linoxide.com/linux-how-to/install-configure-vnc-server-centos-7-0/" target="_blank" rel="external">传送门</a><br>转载自：<a href="https://linux.cn/article-5335-1.html" target="_blank" rel="external">Linux.cn</a></p>
 </blockquote>
 <p>这是一个关于怎样在你的 CentOS 7 上安装配置 <a href="http://en.wikipedia.org/wiki/Virtual_Network_Computing" target="_blank" rel="external">VNC</a> 服务的教程。当然这个教程也适合 RHEL 7 。在这个教程里，我们将学习什么是 VNC 以及怎样在 CentOS 7 上安装配置 <a href="http://en.wikipedia.org/wiki/Virtual_Network_Computing" target="_blank" rel="external">VNC 服务器</a>。</p>
 <a id="more"></a>
 <p>我们都知道，作为一个系统管理员，大多数时间是通过网络管理服务器的。在管理服务器的过程中很少会用到图形界面，多数情况下我们只是用 SSH 来完成我们的管理任务。在这篇文章里，我们将配置 VNC 来提供一个连接我们 CentOS 7 服务器的方法。VNC 允许我们开启一个远程图形会话来连接我们的服务器，这样我们就可以通过网络远程访问服务器的图形界面了。</p>
 <p>VNC 服务器是一个自由开源软件，它可以让用户可以远程访问服务器的桌面环境。另外连接 VNC 服务器需要使用 VNC viewer 这个客户端。</p>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112812oz6l6tnr6trnmluc.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112812oz6l6tnr6trnmluc.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p>一些 VNC 服务器的优点：</p>
 <ul>
 <li>远程的图形管理方式让工作变得简单方便。</li>
@@ -218,30 +219,72 @@
 </blockquote>
 <h3 id="安装-X-Window"><a href="#安装-X-Window" class="headerlink" title="安装 X-Window"></a>安装 X-Window</h3><p>首先我们需要安装 <a href="http://en.wikipedia.org/wiki/X_Window_System" target="_blank" rel="external">X-Window</a>，在终端中运行下面的命令，安装会花费一点时间。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum check-update</span><br><span class="line"># yum groupinstall &quot;X Window System&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815zz6kgdkqznknnqqf.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815zz6kgdkqznknnqqf.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install gnome-classic-session gnome-terminal nautilus-open-terminal control-center liberation-mono-fonts</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815pgyhigy0ycpccz0c.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815pgyhigy0ycpccz0c.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">### 设置默认启动图形界面</span><br><span class="line"># unlink /etc/systemd/system/default.target</span><br><span class="line"># ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112816e4dvx6zui4z9ugz4.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112816e4dvx6zui4z9ugz4.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># reboot</span><br></pre></td></tr></table></figure>
 <p>在服务器重启之后，我们就有了一个工作着的 CentOS 7 桌面环境了。</p>
 <p>现在，我们要在服务器上安装 VNC 服务器了。</p>
 <h3 id="安装-VNC-服务器"><a href="#安装-VNC-服务器" class="headerlink" title="安装 VNC 服务器"></a>安装 VNC 服务器</h3><p>现在要在我们的 CentOS 7 上安装 VNC 服务器了。我们需要执行下面的命令。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install tigervnc-server -y</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817b0m2tj40jjs0120l.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817b0m2tj40jjs0120l.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <h3 id="配置-VNC"><a href="#配置-VNC" class="headerlink" title="配置 VNC"></a>配置 VNC</h3><p>然后，我们需要在 <code>/etc/systemd/system/</code> 目录里创建一个配置文件。我们可以将 <code>/lib/systemd/sytem/vncserver@.service</code> 拷贝一份配置文件范例过来。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cp /lib/systemd/system/vncserver@.service /etc/systemd/system/vncserver@:1.service</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817khh66mhmndtlg1h6.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817khh66mhmndtlg1h6.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p>接着我们用自己最喜欢的编辑器打开 <code>/etc/systemd/system/vncserver@:1.service</code> ，找到下面这几行，用自己的用户名替换掉 。举例来说，我的用户名是 <code>linoxide</code> 所以我用 <code>linoxide</code> 来替换掉 ：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ExecStart=/sbin/runuser -l &lt;USER&gt; -c &quot;/usr/bin/vncserver %i&quot;</span><br><span class="line">PIDFile=/home/&lt;USER&gt;/.vnc/%H%i.pid</span><br></pre></td></tr></table></figure>
 <p>替换成</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ExecStart=/sbin/runuser -l linoxide -c &quot;/usr/bin/vncserver %i&quot;</span><br><span class="line">PIDFile=/home/linoxide/.vnc/%H%i.pid</span><br></pre></td></tr></table></figure>
 <p>如果是 root 用户则</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ExecStart=/sbin/runuser -l root -c &quot;/usr/bin/vncserver %i&quot;</span><br><span class="line">PIDFile=/root/.vnc/%H%i.pid</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818a5s5i5pdok2g5dyr.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818a5s5i5pdok2g5dyr.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p>好了，下面重启 <code>systemd</code>.</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># systemctl daemon-reload</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">最后还要设置一下用户的 VNC 密码。要设置某个用户的密码，必须要有能通过 sudo 切换到用户的权限，这里我用 `linoxide` 的权限，执行`su linoxide`就可以了。</span><br><span class="line"></span><br><span class="line">```shell</span><br><span class="line"># su linoxide</span><br><span class="line">$ sudo vncpasswd</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818f4rw9i46yt9carg9.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818f4rw9i46yt9carg9.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p><strong style="color:red">确保你输入的密码多于6个字符。</strong></p>
 <h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>用下面的命令（永久地）开启服务：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl enable vncserver@:1.service</span><br></pre></td></tr></table></figure>
@@ -249,7 +292,13 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl start vncserver@:1.service</span><br></pre></td></tr></table></figure>
 <h3 id="防火墙设置"><a href="#防火墙设置" class="headerlink" title="防火墙设置"></a>防火墙设置</h3><p>我们需要配置防火墙来让 VNC 服务正常工作。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo firewall-cmd --permanent --add-service vnc-server</span><br><span class="line">$ sudo systemctl restart firewalld.service</span><br></pre></td></tr></table></figure>
-<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112819xd57amrcrqdvrdrj.png" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112819xd57amrcrqdvrdrj.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p>现在就可以用 IP 和端口号（LCTT 译注：例如 192.168.1.1:1 ，这里的端口不是服务器的端口，而是视 VNC 连接数的多少从1开始排序）来连接 VNC 服务器了。</p>
 <h3 id="用-VNC-客户端连接服务器"><a href="#用-VNC-客户端连接服务器" class="headerlink" title="用 VNC 客户端连接服务器"></a>用 VNC 客户端连接服务器</h3><p>好了，现在已经完成了 VNC 服务器的安装了。要使用 VNC 连接服务器，我们还需要一个在本地计算机上安装的仅供连接远程计算机使用的 VNC 客户端。</p>
 <p>你可以用像 <a href="http://www.tightvnc.com/" target="_blank" rel="external">Tightvnc viewer</a> 和 <a href="https://www.realvnc.com/" target="_blank" rel="external">Realvnc viewer</a> 的客户端来连接到服务器。</p>
@@ -265,22 +314,104 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># systemctl disable vncserver@:1.service</span><br></pre></td></tr></table></figure>
 <p>关闭防火墙。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># systemctl stop firewalld.service</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
 </div>
 
 
-      </div>
-      
-<nav class="post-nav">
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CentOS7/">CentOS7</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/&title=《如何在CentOS7上安装和配置VNCServer》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/&title=《如何在CentOS7上安装和配置VNCServer》 — El barco&source=
+原文地址：传送门转载自：Linux.cn
+
+这是一个关于怎样在你的 CentOS 7 上安装配置 VNC 服务的教程。当然这个教程也适合 RHEL 7 ..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《如何在CentOS7上安装和配置VNCServer》 — El barco&url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
   
-    <div class="waves-block waves-effect prev fl">
+    <div class="waves-block waves-effect prev">
       <a href="/2016/03/10/基于Redis的Tomcat集群Session共享/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h5 class="title">基于Redis的Tomcat集群Session共享</h5>
       </a>
     </div>
   
+
   
-    <div class="waves-block waves-effect next fr">
+    <div class="waves-block waves-effect next">
       <a href="/2016/03/08/一个成功的Git分支模型/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h5 class="title">一个成功的Git分支模型</h5>
@@ -290,94 +421,184 @@
 </nav>
 
 
+
     
 
-  </article>
 
 
 
-  
-  <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="如何在CentOS7上安装和配置VNCServer" data-title="如何在CentOS7上安装和配置VNCServer" data-url="http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/index.html"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"elbarco"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/index.html',
+        sourceId: '如何在CentOS7上安装和配置VNCServer',
+        productKey: '2e83e552aad1410ba5ac3356da6322a2',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
 </div>
 
-  
-
-  
 
 
+</div>
 
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
     </div>
-  </main>
-<div class="mask" id="mask"></div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-<div class="global-share" id="global-share" data-title="如何在CentOS7上安装和配置VNCServer" data-pic="/img/avatar.png" data-summary="&lt;blockquote&gt;
-&lt;p&gt;原文地址：&lt;a href=&quot;http://linoxide.com/linux-how-to/install-configure-vnc-server-centos-7-0/&quot;&gt;传送门&lt;/a&gt;&lt;br&gt;转载自：&lt;a href=&quot;https://linux.cn/article-5335-1.html&quot;&gt;Linux.cn&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;这是一个关于怎样在你的 CentOS 7 上安装配置 &lt;a href=&quot;http://en.wikipedia.org/wiki/Virtual_Network_Computing&quot;&gt;VNC&lt;/a&gt; 服务的教程。当然这个教程也适合 RHEL 7 。在这个教程里，我们将学习什么是 VNC 以及怎样在 CentOS 7 上安装配置 &lt;a href=&quot;http://en.wikipedia.org/wiki/Virtual_Network_Computing&quot;&gt;VNC 服务器&lt;/a&gt;。&lt;/p&gt;" data-url="http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/index.html">
-    <div class="tit">分享到：</div>
+
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/&title=《如何在CentOS7上安装和配置VNCServer》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/&title=《如何在CentOS7上安装和配置VNCServer》 — El barco&source=
+原文地址：传送门转载自：Linux.cn
+
+这是一个关于怎样在你的 CentOS 7 上安装配置 VNC 服务的教程。当然这个教程也适合 RHEL 7 ..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《如何在CentOS7上安装和配置VNCServer》 — El barco&url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/&via=http://elbarco.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2016/03/09/如何在CentOS7上安装和配置VNCServer/" alt="微信分享二维码">
+</div>
 
-<script src="/js/main.js"></script>
 
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
     <ul class="search-result" id="search-result"></ul>
 </div>
-<script type="text/template" id="search-tpl">
+<template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -387,29 +608,19 @@
         </div>
     </a>
 </li>
-</script>
-<script src="/js/search.js"></script>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="http://s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-83522316-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
 
 
 </body>

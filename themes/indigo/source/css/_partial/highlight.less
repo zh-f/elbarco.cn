@@ -10,15 +10,15 @@
 @h-aqua: #3e999f;
 @h-blue: #4271ae;
 @h-purple: #8959a8;
-@h-fs: 12px;
+@h-fs: 14px;
 
 .codeBlock() {
-    overflow-x: auto;
     position: relative;
-    background: @h-background;
-    padding: 10px 15px;
+    overflow-x: auto;
+    padding: 20px;
+    font-size: @h-fs;
     line-height: @h-fs*1.6;
-    border-radius: 2px;
+    background: @h-background;
 }
 
 .line-numbers() {
@@ -43,6 +43,12 @@
 
         pre {
             margin: 0;
+            padding: 0;
+        }
+
+        .line {
+            height: @h-fs*1.6;
+            line-height: @h-fs*1.6;
         }
 
         table {
@@ -77,17 +83,8 @@
             .line-numbers();
             text-align: right;
             padding-right: 20px;
-
-            .line {
-                text-shadow: none
-            }
-
         }
 
-        .line {
-            font-size: @h-fs;
-            height: @h-fs * 1.6;
-        }
 
     }
 
@@ -164,9 +161,11 @@ pre {
     .xml .pi,
     .xml .doctype,
     .html .doctype,
+    .selector-pseudo,
     .css .id,
     .css .class,
-    .css .pseudo {
+    .css .pseudo,
+    .tag .name {
         color: @h-red
     }
 
@@ -183,7 +182,8 @@ pre {
     .attribute,
     .label,
     .ruby .class .title,
-    .css .rules .attribute {
+    .css .rules .attribute,
+    .tag .attr {
         color: @h-green
     }
 
@@ -196,6 +196,7 @@ pre {
         color: @h-blue
     }
 
+    .selector-tag,
     .css .hexcolor,
     .css .tag {
         color: @h-aqua
@@ -212,9 +213,18 @@ pre {
         color: @h-blue
     }
 
+    .selector-id,
+    .selector-class,
     .keyword,
     .javascript .function {
         color: @h-purple
     }
 
+}
+@media screen and(max-width:760px) {
+    .post-content .highlight {
+        margin-left: -16px;
+        margin-right: -16px;
+        padding: 20px 16px;
+    }
 }

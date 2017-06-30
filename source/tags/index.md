@@ -1,4 +1,4 @@
-type: "tags"
 noDate: true
 comments: false
+reward: false
 ---
