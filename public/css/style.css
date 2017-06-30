@@ -4676,10 +4676,11 @@ pre .javascript .function {
   line-height: 56px;
   font-size: 20px;
   color: #fff;
-  background: #f44336;
+  background: #e13d2f;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   -webkit-transition: 0.4s ease-in-out;
   transition: 0.4s ease-in-out;
+  border-radius: 0.2em;
 }
 .page-reward-btn:hover,
 .page-reward-btn:active {
