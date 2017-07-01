@@ -11,7 +11,7 @@ title: Links
 
 * 高文：[www.wencst.com](http://www.wencst.com/)
 
-* 壮壮：[l-zz.cn](http://l-zz/cn)
+* 壮壮：[l-zz.cn](http://l-zz.cn)
 
 * dwong：[www.dwong.in](http://www.dwong.in/)
 
