@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/certification-based-replication.png">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/repl-api.png">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/primary-componet.png">
-<meta property="og:updated_time" content="2017-07-01T03:04:55.000Z">
+<meta property="og:updated_time" content="2017-06-30T08:39:21.426Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Galera Cluster for MySQL介绍">
 <meta name="twitter:description" content="关于数据库复制数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——">
@@ -179,23 +179,11 @@
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <h2 id="关于数据库复制"><a href="#关于数据库复制" class="headerlink" title="关于数据库复制"></a>关于数据库复制</h2><p>数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——<br><a id="more"></a></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/master-slave-repl.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/master-slave-repl.png" alt=""></p>
 <ul>
 <li>Master/Slave Replication</li>
 </ul>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/multi-master-repl.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/multi-master-repl.png" alt=""></p>
 <ul>
 <li>Multi-master Replication</li>
 </ul>
@@ -215,24 +203,12 @@
 <li>行级锁并行复制</li>
 <li>不需要写binlog</li>
 </ol>
-<h2 id="Galera-Cluster-for-MySQL架构"><a href="#Galera-Cluster-for-MySQL架构" class="headerlink" title="Galera Cluster for MySQL架构"></a>Galera Cluster for MySQL架构</h2><p>使用了Galera之后，客户端和Galera节点之间交互的时序图如下所示：<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/certification-based-replication.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<h2 id="Galera-Cluster-for-MySQL架构"><a href="#Galera-Cluster-for-MySQL架构" class="headerlink" title="Galera Cluster for MySQL架构"></a>Galera Cluster for MySQL架构</h2><p>使用了Galera之后，客户端和Galera节点之间交互的时序图如下所示：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/certification-based-replication.png" alt=""></p>
 <p>当客户端执行COMMIT命令，但实际提交未发生前，所有的数据库同一事务中的变更和变更行的主键会被收集到一个<code>write-set</code>中，紧接着，数据库节点就会将<code>write-set</code>发送到所有的其他节点。</p>
 <p>之后，<code>write-set</code>会使用主键执行一次验证，这个操作在集群的每个节点上都会进行，验证操作决定了是否可以应用<code>write-set</code>。如果验证未通过，则节点丢掉<code>write-set</code>并且集群回滚；如果验证通过，则事务提交，并且<code>write-set</code>会被应用到集群的其他节点。</p>
 <p>上面这中复制方式又称为“基于认证的复制”（Certification Based Replication）。</p>
 <p>那么Galera Cluster内部又是如何工作的呢？</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/repl-api.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/repl-api.png" alt=""></p>
 <p>如上图所示，Galera Cluster有四个组件组成：</p>
 <ul>
 <li>DBMS - Galera Cluster支持MySQL、MariaDB和Percona XtraDB</li>
@@ -243,13 +219,7 @@
 <p>这里就不一一展开具体解释了，详细的可以参见<a href="http://galeracluster.com/documentation-webpages/architecture.html#wsrep-api" target="_blank" rel="external">Replication API</a></p>
 <h2 id="部分关键字解释"><a href="#部分关键字解释" class="headerlink" title="部分关键字解释"></a>部分关键字解释</h2><h3 id="Primary-Componet"><a href="#Primary-Componet" class="headerlink" title="Primary Componet"></a>Primary Componet</h3><p>除了单一节点故障之外，集群可能会由于网络原因分裂成几个组件，在这种情况下，为了避免冲突，只有一个组件可以继续修改数据库状态，而这个组件，就称为Primary Component。</p>
 <p>Primary Component其实是一个集群，当发生集群分裂的时候，Galera Cluster会执行一个特殊的权重算法，来选举一个组件作为Primary Component，如下图所示：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://7xrgsx.com1.z0.glb.clouddn.com/primary-componet.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/primary-componet.png" alt=""></p>
 <p>如果集群具有偶数个节点，则会存在脑裂的风险。如果由于网络导致集群被分裂成恰好数量相等的两个cluster，则每个cluster都有可能保持自己的权重，并且两个都会变成non-primary状态。</p>
 <p>所以为了能够实现自动故障转移，需要至少三个节点——</p>
 <ul>

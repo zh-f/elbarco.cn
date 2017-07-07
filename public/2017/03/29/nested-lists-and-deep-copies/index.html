@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/nested-list-03.png">
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/shallow-copy.png">
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/deep-copy.png">
-<meta property="og:updated_time" content="2017-07-01T03:04:55.000Z">
+<meta property="og:updated_time" content="2017-06-30T08:39:21.427Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从Python中内嵌列表复制说起">
 <meta name="twitter:description" content="写在前面在学习Python3时，看到了列表的拷贝，于是把这个小课题整理在这里，以作记录。">
@@ -183,22 +183,10 @@
 <p>当然，这一特性可以用于按照我们自己的方式扩展到更多维的矩阵。</p>
 <p>大部分情况下，内嵌列表如果只是这样使用，我们需要关心的也就到此为止了。但是因为有变量引用对象，而对象本身又是可被修改的情况，比如列表中内嵌列表，而内嵌列表本身是可被修改的，我们还会遇到下面提到的问题，我们通过例子来演示。</p>
 <p>创建一个含有内嵌列表的列表<code>original</code>：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested = [<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original = [nested, <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
-<p>列表<code>original</code>的第一个元素指向了列表<code>nested</code>，如图所示：<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/nested-list-01.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<p>列表<code>original</code>的第一个元素指向了列表<code>nested</code>，如图所示：<br><img src="http://elbarco.eos.eayun.com/imgs/nested-list-01.png" alt=""></p>
 <p>列表<code>nested</code>的修改可以通过直接修改其本身，也可以通过修改列表<code>original</code>来实现，即：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested[<span class="number">0</span>] = <span class="string">'zero'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested</span><br><span class="line">[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
 <p>如果我们将<code>nested</code>赋值为其他列表，则<code>nested</code>和<code>original</code>之间的连接就会断掉，即：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>nested = [<span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
-<p>如图所示：<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/nested-list-02.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<p>如图所示：<br><img src="http://elbarco.eos.eayun.com/imgs/nested-list-02.png" alt=""></p>
 <p>除了上面提到的直接赋值的方式，列表的拷贝我们还可以使用——</p>
 <ul>
 <li><p>全切片(full slice)</p>
@@ -211,32 +199,14 @@
 <p>但是无论上面哪种复制方式，只要列表中存在嵌入列表，就会存在这种问题，我们把这种复制称之为“浅拷贝”，即<em>shallow copy</em>，与之相对的，是“深拷贝”，即<em>deep copy</em>。</p>
 <h2 id="对列表的深拷贝"><a href="#对列表的深拷贝" class="headerlink" title="对列表的深拷贝"></a>对列表的深拷贝</h2><p>对于含有内嵌列表的列表来讲，如果我们需要把内嵌列表也一并拷贝，则需要使用<code>copy</code>模块的<code>deepcopy</code>功能。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>original = [[<span class="number">0</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow = original[:]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> copy</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>deep = copy.deepcopy(original)</span><br></pre></td></tr></table></figure>
-<p>复制后两个列表的构成其实如下图所示：<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/nested-list-03.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<p>复制后两个列表的构成其实如下图所示：<br><img src="http://elbarco.eos.eayun.com/imgs/nested-list-03.png" alt=""></p>
 <p>在得到列表<code>shallow</code>和列表<code>deep</code>后，我们去尝试修改列表中的值和内嵌列表的值，并看看效果如何：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow[<span class="number">1</span>]=<span class="number">2</span> <span class="comment">#更改列表中非内嵌列表的值，原列表值不变</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow</span><br><span class="line">[[<span class="number">0</span>], <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="number">0</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow[<span class="number">0</span>][<span class="number">0</span>]=<span class="string">'zero'</span> <span class="comment">#更改内嵌列表的值，原列表内嵌列表值改变</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>shallow</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>deep[<span class="number">0</span>][<span class="number">0</span>]=<span class="number">5</span> <span class="comment">#对于deep copy的列表，即使修改内嵌列表的值也不会影响原列表</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>deep</span><br><span class="line">[[<span class="number">5</span>], <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>original</span><br><span class="line">[[<span class="string">'zero'</span>], <span class="number">1</span>]</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure></p>
 <p>此外，对于Python来讲，任何列表中嵌入的对象是可修改的，如字典，都会存在这样的问题。</p>
 <h2 id="总结和引申思考"><a href="#总结和引申思考" class="headerlink" title="总结和引申思考"></a>总结和引申思考</h2><p>首先，明确一点，<em>deep copy</em>和<em>shallow copy</em>并不是Python中特有的概念，而是一个与复制对象时对象的成员是否被复制有关的通用的概念。</p>
 <p>根据维基百科中的<a href="https://en.wikipedia.org/wiki/Object_copying" target="_blank" rel="external">Object copying</a>中的描述，我们总结如下：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/shallow-copy.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://elbarco.eos.eayun.com/imgs/shallow-copy.png" alt=""></p>
 <p>我们有变量A和变量B指向不同的内存地址，当B被赋值为A时，两个变量指向了同样的内存地址，之后无论是修改A还是B的内容，都会在另一个变量中立即体现出来，因为两者共享内容。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/deep-copy.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://elbarco.eos.eayun.com/imgs/deep-copy.png" alt=""></p>
 <p>我们有变量A和B指向了不同的内容地址，当B被赋值为A时，指向A内存地址的内容被复制到B的内存中，之后无论是修改A还是B的内容，A和B都是保持独立的，因为两者不共享内存，即不共享内容。</p>
 <p>其他语言，如Java，可以参见StackOverFlow上的这一个讨论：<a href="http://stackoverflow.com/questions/869033/how-do-i-copy-an-object-in-java" target="_blank" rel="external">How do I copy an object in Java</a>，后面有机会再详细的梳理一下。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>1.<a href="http://stackoverflow.com/questions/184710/what-is-the-difference-between-a-deep-copy-and-a-shallow-copy" target="_blank" rel="external">What’s the difference between a deep copy and a shallow copy</a><br>2.<a href="https://en.wikipedia.org/wiki/Object_copying" target="_blank" rel="external">Object copying</a><br>3.<a href="http://www.python-course.eu/deep_copy.php" target="_blank" rel="external">Shallow and deep copy</a><br>4.<a href="https://item.jd.com/19176803.html" target="_blank" rel="external">The Quick Python Book, 2nd Edition. Chapter 5.6</a></p>

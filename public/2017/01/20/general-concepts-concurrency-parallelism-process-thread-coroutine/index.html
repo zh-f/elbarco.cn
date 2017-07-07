@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/concurrency-vs-parallelism-1.png">
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/concurrency-vs-parallelism-2.png">
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/con_and_par.jpg">
-<meta property="og:updated_time" content="2017-07-01T03:04:55.000Z">
+<meta property="og:updated_time" content="2017-06-30T08:39:21.425Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="几个概念：并发、并行、进程、线程和协程">
 <meta name="twitter:description" content="“有了协程框架再也不用关注线程池调度问题”，在阿里双十一电子书《不一样的技术创新》中看到这样一句话。">
@@ -178,32 +178,14 @@
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>“有了协程框架再也不用关注线程池调度问题”，在阿里双十一电子书<a href="https://102.alibaba.com/newsInfo.htm?newsId=28&amp;channel=127" target="_blank" rel="external">《不一样的技术创新》</a>中看到这样一句话。<a id="more"></a>看到这句话的时候，内心活动是这样的——当我们还在玩线程池的时候，阿里的爸爸们已经在研究调度问题并有解决方案了。所以保持对这句话的质疑和思考，有了今天的整理和学习，为进一步学习协程框架，如<a href="http://akka.io/" target="_blank" rel="external">Akka</a>起一个头。</p>
 <h2 id="并发和并行"><a href="#并发和并行" class="headerlink" title="并发和并行"></a>并发和并行</h2><p>在多线程编程中，并发（Concurrency）和并行（Parallelism）这两个概念时常会被提到，但是这两个概念却不是一个意思。</p>
-<h3 id="并发（Concurrency）"><a href="#并发（Concurrency）" class="headerlink" title="并发（Concurrency）"></a>并发（Concurrency）</h3><p>并发指的是应用程序同时处理多个任务，多个任务都能同时取得进展。<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/concurrency-vs-parallelism-1.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<h3 id="并发（Concurrency）"><a href="#并发（Concurrency）" class="headerlink" title="并发（Concurrency）"></a>并发（Concurrency）</h3><p>并发指的是应用程序同时处理多个任务，多个任务都能同时取得进展。<br><img src="http://elbarco.eos.eayun.com/imgs/concurrency-vs-parallelism-1.png" alt=""></p>
 <p>比如吃饭的时候，电话来了，停下手和嘴去接电话，打完电话继续吃饭，这叫并发。</p>
-<h3 id="并行（Parallelism）"><a href="#并行（Parallelism）" class="headerlink" title="并行（Parallelism）"></a>并行（Parallelism）</h3><p>并行指的是应用可以将任务拆成更小的子任务，而这些子任务可以同时平行着被处理。<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/concurrency-vs-parallelism-2.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<h3 id="并行（Parallelism）"><a href="#并行（Parallelism）" class="headerlink" title="并行（Parallelism）"></a>并行（Parallelism）</h3><p>并行指的是应用可以将任务拆成更小的子任务，而这些子任务可以同时平行着被处理。<br><img src="http://elbarco.eos.eayun.com/imgs/concurrency-vs-parallelism-2.png" alt=""></p>
 <p>比如吃饭的同时，我还能打电话，这就是并行。</p>
 <h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><p>由上面可以看出，并发依赖于应用如何处理多任务。应用同时只能处理一个任务，处理完在进行下一个任务，这叫顺序地（Sequentially）执行；如果应用同时能处理多个任务，这就叫并发地。</p>
 <p>另一方面，并行，则依赖于应用如何处理每个独立的任务。应用可以顺序的将任务从头至尾的执行完，也可以将任务分解成子任务，而子任务可以平行执行。</p>
 <p>并发与顺序相对，而并行是并发的子集。</p>
-<p>这里还有一个更形象的例子：<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/con_and_par.jpg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<p>这里还有一个更形象的例子：<br><img src="http://elbarco.eos.eayun.com/imgs/con_and_par.jpg" alt=""></p>
 <h2 id="进程、线程和协程"><a href="#进程、线程和协程" class="headerlink" title="进程、线程和协程"></a>进程、线程和协程</h2><h3 id="进程（Process）"><a href="#进程（Process）" class="headerlink" title="进程（Process）"></a>进程（Process）</h3><p>是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。</p>
 <h3 id="线程（Thread）"><a href="#线程（Thread）" class="headerlink" title="线程（Thread）"></a>线程（Thread）</h3><p>线程，有时被称为轻量级进程(Lightweight Process，LWP），是程序执行流的最小单元。一个标准的线程由线程ID，当前指令指针(PC），寄存器集合和堆栈组成。</p>
 <h3 id="协程（Coroutine-Fiber）"><a href="#协程（Coroutine-Fiber）" class="headerlink" title="协程（Coroutine, Fiber）"></a>协程（Coroutine, Fiber）</h3><p>协程，又称为微线程，在Lua、Python、Go中有所体现。这里参考<a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/0013868328689835ecd883d910145dfa8227b539725e5ed000" target="_blank" rel="external">廖雪峰的文章</a>，举个例子：<br>如果有两个子程序A和B：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">A</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'1'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'2'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">B</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'x'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'y'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'z'</span></span><br></pre></td></tr></table></figure></p>

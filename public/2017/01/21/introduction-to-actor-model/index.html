@@ -28,7 +28,7 @@
 <meta property="og:description" content="上一篇文章《几个概念：并发、并行、进程、线程和协程》中，对并发和并行的概念做了一个简单的解释，而本文中则从两种并发编程模型讲起，简单的介绍一下Actor模型。">
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/shared-memory.png">
 <meta property="og:image" content="http://elbarco.eos.eayun.com/imgs/message-passing.png">
-<meta property="og:updated_time" content="2017-07-01T03:04:55.000Z">
+<meta property="og:updated_time" content="2017-06-30T08:39:21.426Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="并发编程模型之Actor模型">
 <meta name="twitter:description" content="上一篇文章《几个概念：并发、并行、进程、线程和协程》中，对并发和并行的概念做了一个简单的解释，而本文中则从两种并发编程模型讲起，简单的介绍一下Actor模型。">
@@ -178,13 +178,7 @@
             <p>上一篇文章<a href="https://elbarco.cn/2017/01/20/general-concepts-concurrency-parallelism-process-thread-coroutine/">《几个概念：并发、并行、进程、线程和协程》</a>中，对并发和并行的概念做了一个简单的解释，而本文中则从两种并发编程模型讲起，简单的介绍一下Actor模型。</p>
 <a id="more"></a>
 <h2 id="两种并发编程模型"><a href="#两种并发编程模型" class="headerlink" title="两种并发编程模型"></a>两种并发编程模型</h2><p>并发编程中有两类常见的模型：共享内存和消息传递。</p>
-<h3 id="共享内存模型"><a href="#共享内存模型" class="headerlink" title="共享内存模型"></a>共享内存模型</h3><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/shared-memory.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<h3 id="共享内存模型"><a href="#共享内存模型" class="headerlink" title="共享内存模型"></a>共享内存模型</h3><p><img src="http://elbarco.eos.eayun.com/imgs/shared-memory.png" alt=""></p>
 <p>在并发编程的共享内存模型中，各组件通过读写内存中的共享对象进行交互。</p>
 <p>共享内存模型的其他示例：</p>
 <ul>
@@ -192,13 +186,7 @@
 <li>A、B两个运行在同一电脑上的程序，共享同一文件系统，其中文件可以读写</li>
 <li>A、B是同一Java程序中的两个线程，共享相同的Java对象。</li>
 </ul>
-<h3 id="消息传递模型"><a href="#消息传递模型" class="headerlink" title="消息传递模型"></a>消息传递模型</h3><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://elbarco.eos.eayun.com/imgs/message-passing.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<h3 id="消息传递模型"><a href="#消息传递模型" class="headerlink" title="消息传递模型"></a>消息传递模型</h3><p><img src="http://elbarco.eos.eayun.com/imgs/message-passing.png" alt=""></p>
 <p>在消息传递模型中，并发模块通过通信信道将消息发送到彼此进行交互。发出的消息会在队列中等待处理。</p>
 <p>消息传递模型的示例还有：</p>
 <ul>
