@@ -77,13 +77,13 @@ toc:
 postMessage: 尊重原创，转载请标注作者及原文链接，感谢~
 
 # 站长统计，如要开启，输入CNZZ站点id，如 cnzz: 1255152447
-cnzz: false
+cnzz: 1257688433
 
 # 百度统计，如要开启，改为你的 key
-baidu_tongji: false
+baidu_tongji: eacacdefbe98e3b19a0b75b243dbeb5c
 
 # 腾讯分析，如要开启，输入站点id
-tajs: false
+tajs: 62987721
 
 # google
 google_analytics: false
@@ -99,9 +99,9 @@ less:
 # 是否开启 disqus
 disqus_shortname: false
 # 是否开启友言评论, 填写友言用户id
-uyan_uid: false
+uyan_uid: 2138463
 # 是否开启网易云跟帖， 填写app sdk中的app key
-wangyi_ygt: 2e83e552aad1410ba5ac3356da6322a2
+wangyi_ygt: false
 # 是否使用 gitment，https://github.com/imsun/gitment
 gitment: false
 # gitment:
