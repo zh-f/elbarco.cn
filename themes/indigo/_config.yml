@@ -97,9 +97,9 @@ less:
 
 # 以下评论插件开启一个即可
 # 是否开启 disqus
-disqus_shortname: false
+disqus_shortname: elbarco-cn
 # 是否开启友言评论, 填写友言用户id
-uyan_uid: 2138463
+uyan_uid: false
 # 是否开启网易云跟帖， 填写app sdk中的app key
 wangyi_ygt: false
 # 是否使用 gitment，https://github.com/imsun/gitment
