@@ -51,7 +51,7 @@
 <meta property="og:image" content="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818a5s5i5pdok2g5dyr.png">
 <meta property="og:image" content="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818f4rw9i46yt9carg9.png">
 <meta property="og:image" content="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112819xd57amrcrqdvrdrj.png">
-<meta property="og:updated_time" content="2016-06-30T13:31:50.000Z">
+<meta property="og:updated_time" content="2017-06-30T08:39:21.430Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何在CentOS7上安装和配置VNCServer">
 <meta name="twitter:description" content="原文地址：传送门转载自：Linux.cn
@@ -207,13 +207,7 @@
 <a id="more"></a>
 <p>我们都知道，作为一个系统管理员，大多数时间是通过网络管理服务器的。在管理服务器的过程中很少会用到图形界面，多数情况下我们只是用 SSH 来完成我们的管理任务。在这篇文章里，我们将配置 VNC 来提供一个连接我们 CentOS 7 服务器的方法。VNC 允许我们开启一个远程图形会话来连接我们的服务器，这样我们就可以通过网络远程访问服务器的图形界面了。</p>
 <p>VNC 服务器是一个自由开源软件，它可以让用户可以远程访问服务器的桌面环境。另外连接 VNC 服务器需要使用 VNC viewer 这个客户端。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112812oz6l6tnr6trnmluc.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112812oz6l6tnr6trnmluc.png" alt=""></p>
 <p>一些 VNC 服务器的优点：</p>
 <ul>
 <li>远程的图形管理方式让工作变得简单方便。</li>
@@ -231,72 +225,30 @@
 </blockquote>
 <h3 id="安装-X-Window"><a href="#安装-X-Window" class="headerlink" title="安装 X-Window"></a>安装 X-Window</h3><p>首先我们需要安装 <a href="http://en.wikipedia.org/wiki/X_Window_System" target="_blank" rel="external">X-Window</a>，在终端中运行下面的命令，安装会花费一点时间。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum check-update</span><br><span class="line"># yum groupinstall &quot;X Window System&quot;</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815zz6kgdkqznknnqqf.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815zz6kgdkqznknnqqf.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install gnome-classic-session gnome-terminal nautilus-open-terminal control-center liberation-mono-fonts</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815pgyhigy0ycpccz0c.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112815pgyhigy0ycpccz0c.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">### 设置默认启动图形界面</span><br><span class="line"># unlink /etc/systemd/system/default.target</span><br><span class="line"># ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112816e4dvx6zui4z9ugz4.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112816e4dvx6zui4z9ugz4.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># reboot</span><br></pre></td></tr></table></figure>
 <p>在服务器重启之后，我们就有了一个工作着的 CentOS 7 桌面环境了。</p>
 <p>现在，我们要在服务器上安装 VNC 服务器了。</p>
 <h3 id="安装-VNC-服务器"><a href="#安装-VNC-服务器" class="headerlink" title="安装 VNC 服务器"></a>安装 VNC 服务器</h3><p>现在要在我们的 CentOS 7 上安装 VNC 服务器了。我们需要执行下面的命令。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install tigervnc-server -y</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817b0m2tj40jjs0120l.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817b0m2tj40jjs0120l.png" alt=""></p>
 <h3 id="配置-VNC"><a href="#配置-VNC" class="headerlink" title="配置 VNC"></a>配置 VNC</h3><p>然后，我们需要在 <code>/etc/systemd/system/</code> 目录里创建一个配置文件。我们可以将 <code>/lib/systemd/sytem/vncserver@.service</code> 拷贝一份配置文件范例过来。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cp /lib/systemd/system/vncserver@.service /etc/systemd/system/vncserver@:1.service</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817khh66mhmndtlg1h6.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112817khh66mhmndtlg1h6.png" alt=""></p>
 <p>接着我们用自己最喜欢的编辑器打开 <code>/etc/systemd/system/vncserver@:1.service</code> ，找到下面这几行，用自己的用户名替换掉 。举例来说，我的用户名是 <code>linoxide</code> 所以我用 <code>linoxide</code> 来替换掉 ：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ExecStart=/sbin/runuser -l &lt;USER&gt; -c &quot;/usr/bin/vncserver %i&quot;</span><br><span class="line">PIDFile=/home/&lt;USER&gt;/.vnc/%H%i.pid</span><br></pre></td></tr></table></figure>
 <p>替换成</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ExecStart=/sbin/runuser -l linoxide -c &quot;/usr/bin/vncserver %i&quot;</span><br><span class="line">PIDFile=/home/linoxide/.vnc/%H%i.pid</span><br></pre></td></tr></table></figure>
 <p>如果是 root 用户则</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ExecStart=/sbin/runuser -l root -c &quot;/usr/bin/vncserver %i&quot;</span><br><span class="line">PIDFile=/root/.vnc/%H%i.pid</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818a5s5i5pdok2g5dyr.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818a5s5i5pdok2g5dyr.png" alt=""></p>
 <p>好了，下面重启 <code>systemd</code>.</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># systemctl daemon-reload</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">最后还要设置一下用户的 VNC 密码。要设置某个用户的密码，必须要有能通过 sudo 切换到用户的权限，这里我用 `linoxide` 的权限，执行`su linoxide`就可以了。</span><br><span class="line"></span><br><span class="line">```shell</span><br><span class="line"># su linoxide</span><br><span class="line">$ sudo vncpasswd</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818f4rw9i46yt9carg9.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112818f4rw9i46yt9carg9.png" alt=""></p>
 <p><strong style="color:red">确保你输入的密码多于6个字符。</strong></p>
 <h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>用下面的命令（永久地）开启服务：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl enable vncserver@:1.service</span><br></pre></td></tr></table></figure>
@@ -304,13 +256,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl start vncserver@:1.service</span><br></pre></td></tr></table></figure>
 <h3 id="防火墙设置"><a href="#防火墙设置" class="headerlink" title="防火墙设置"></a>防火墙设置</h3><p>我们需要配置防火墙来让 VNC 服务正常工作。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo firewall-cmd --permanent --add-service vnc-server</span><br><span class="line">$ sudo systemctl restart firewalld.service</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112819xd57amrcrqdvrdrj.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="https://dn-linuxcn.qbox.me/data/attachment/album/201504/26/112819xd57amrcrqdvrdrj.png" alt=""></p>
 <p>现在就可以用 IP 和端口号（LCTT 译注：例如 192.168.1.1:1 ，这里的端口不是服务器的端口，而是视 VNC 连接数的多少从1开始排序）来连接 VNC 服务器了。</p>
 <h3 id="用-VNC-客户端连接服务器"><a href="#用-VNC-客户端连接服务器" class="headerlink" title="用 VNC 客户端连接服务器"></a>用 VNC 客户端连接服务器</h3><p>好了，现在已经完成了 VNC 服务器的安装了。要使用 VNC 连接服务器，我们还需要一个在本地计算机上安装的仅供连接远程计算机使用的 VNC 客户端。</p>
 <p>你可以用像 <a href="http://www.tightvnc.com/" target="_blank" rel="external">Tightvnc viewer</a> 和 <a href="https://www.realvnc.com/" target="_blank" rel="external">Realvnc viewer</a> 的客户端来连接到服务器。</p>
