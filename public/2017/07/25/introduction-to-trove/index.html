@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>OpenStack DBaaS组件Trove简介 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="OpenStack,Trove,Translation">
+    <meta name="description" content="Trove架构Trove包含下面几个主要组件：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenStack DBaaS组件Trove简介">
+<meta property="og:url" content="http://elbarco.cn/2017/07/25/introduction-to-trove/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="Trove架构Trove包含下面几个主要组件：">
+<meta property="og:updated_time" content="2017-07-25T08:14:44.040Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenStack DBaaS组件Trove简介">
+<meta name="twitter:description" content="Trove架构Trove包含下面几个主要组件：">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">OpenStack DBaaS组件Trove简介</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">OpenStack DBaaS组件Trove简介</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-07-25T08:02:28.000Z" itemprop="datePublished" class="page-time">
+  2017-07-25
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Trove架构"><span class="post-toc-number">1.</span> <span class="post-toc-text">Trove架构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#API-Server"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">API Server</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Message-Bus"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">Message Bus</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Task-Manager"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">Task Manager</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Guest-Agent"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">Guest Agent</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Conductor"><span class="post-toc-number">1.5.</span> <span class="post-toc-text">Conductor</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码仓库"><span class="post-toc-number">2.</span> <span class="post-toc-text">代码仓库</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装部署"><span class="post-toc-number">3.</span> <span class="post-toc-text">安装部署</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#说明"><span class="post-toc-number">4.</span> <span class="post-toc-text">说明</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-introduction-to-trove"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">OpenStack DBaaS组件Trove简介</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-07-25 16:02:28" datetime="2017-07-25T08:02:28.000Z"  itemprop="datePublished">2017-07-25</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="Trove架构"><a href="#Trove架构" class="headerlink" title="Trove架构"></a>Trove架构</h2><p>Trove包含下面几个主要组件：<a id="more"></a></p>
+<ul>
+<li>API Server</li>
+<li>Message Bus</li>
+<li>Task Manager</li>
+<li>Guest Agent</li>
+<li>Conductor</li>
+</ul>
+<h3 id="API-Server"><a href="#API-Server" class="headerlink" title="API Server"></a>API Server</h3><p>API endpoint（trove-api）本质上是一个HTTP的Web服务，具备处理鉴权、授权、与数据存储相关的基本命令和控制功能。根据数据库不同，API还有一些不同的扩展。</p>
+<p>API Server与两个系统沟通——与Task Manager沟通，来处理复杂的异步任务；直接与Guest Agent沟通来处理简单的任务比如获取MySQL用户列表等，这部分操作均是同步的。API Server不做任何重大/复杂的事情，它的任务就是接收请求，将其转化为消息，校验它们，并将这些消息转发到任务管理器（Task Manager）和访客代理（Guest Agent）。</p>
+<ul>
+<li>一个RESTful风格的组件</li>
+<li>入口 - <code>Trove/bin/trove-api</code></li>
+<li>使用WSGI launcher，由<code>Trove/etc/trove/api-paste.ini</code>配置<ul>
+<li>定义了过滤器管道、令牌认证、速率限制等</li>
+<li>定义了app_factory为<code>trove.common.api:app_factory</code>提供给trove应用</li>
+</ul>
+</li>
+<li>API 类（WSGI Router）将REST路径连接到相应的Controller上<ul>
+<li>Controller的实现在相关的模块下（如versions/instance/flavor/limits）的<code>service.py</code>中</li>
+</ul>
+</li>
+<li>Controller通常将实现重定向到<code>models.py</code>中的一个类</li>
+<li>另一些组件（Task Manager，Guest Agent）的api模块通过RabbitMQ发送请求</li>
+</ul>
+<h3 id="Message-Bus"><a href="#Message-Bus" class="headerlink" title="Message Bus"></a>Message Bus</h3><p>这部分组件仿照了Nova架构。Message Bus其实就是一个消息队列。</p>
+<p>一个典型的消息传递事件从API服务器接收到用户的请求开始。API服务器认证用户确保用户具备执行响应命令的权限。对请求中涉及到的对象的可用性进行评估，如果可用，将请求路由到相关Worker的排队引擎。Workers不断根据自己的角色监听消息队列，当这种监听产生一个工作请求时，Worker将对该任务进行任务分配并开始执行。完成任务后，Worker将响应发送到消息队列，由API服务器接受并中继到始发用户的队列。在整个过程中，数据库记录根据需要会被查询、添加或者删除。</p>
+<h3 id="Task-Manager"><a href="#Task-Manager" class="headerlink" title="Task Manager"></a>Task Manager</h3><p>Task Manager（trove-taskmanager）就是干粗活累活的家伙，比如配置一台实例，管理实例生命周期和在实例上进行操作。任务管理器接收来自API Server的消息，通过同意消息进行响应，并开始执行任务。有几个复杂的任务，比如重新分配数据库规格和创建实例等，他们均需要通过HTTP请求调用OpenStack的服务，同时也需要轮询服务，知道实例变为活动状态，并且还向客户代理发送消息。任务管理器处理在多个分布式系统中发生的进程流。</p>
+<p>任务管理器是有状态的，它在其系统内部运行复杂的流程。如果在状态处理期间任务管理器节点脱机，则操作将失败。任务流系统将最终实现为长时间运行运行的任务。（The Task Flow system will be eventually implemented for long running tasks.）</p>
+<ul>
+<li>这是一个监听RabbitMQ topic的服务</li>
+<li>入口 - <code>Trove/bin/trove-taskmanager</code></li>
+<li>作为一个RpcService运行，通过<code>Trove/etc/trove/trove-taskmanager.conf.sample</code>配置文件进行配置，定义了<code>trove.taskmanager.manager.Manager</code>作为manager，基本上这是通过队列到达的请求的入口点</li>
+<li>如上所述，使用TaskManager的api模块，使用<code>_cast()</code>或者<code>_call()</code>（同步/异步）将对该组件的请求从另一个组件推送到MQ中，并放置方法命作为一个参数</li>
+<li><code>Trove/openstack/common/rpc/dispatcher.py</code> 中的<code>RpcDispatcher.dispatch()</code>通过反射的方式调用Manager中合适的方法</li>
+<li>然后，Manager将该处理重定向到<code>models.py</code>模块中的一个对象，它使用context和instance_id从相关类加载一个对象</li>
+<li>实际的处理一般在<code>models.py</code>中完成</li>
+</ul>
+<h3 id="Guest-Agent"><a href="#Guest-Agent" class="headerlink" title="Guest Agent"></a>Guest Agent</h3><p>客户代理（Guest Agent，trove-guestagent）运行在客户实例内部，负责管理和执行数据存储本身的操作。它负责使数据存储在线，这可能是一个复杂的任务。热支持（Heat support）将来将成为Trove的默认配置和仪器引擎，从而减少了将数据存储库联机的任务。Guest Agent还通过Conductor（指挥器）向API Server发送心跳信息。</p>
+<p>每个数据存储器都实现有一个客户端代理，负责为该数据存储器执行特定人物。比如Redis的客户代理行为与MySQL的客户代理行为就会不同。不过他们必须履行诸如创建和调整规格的基础操作。</p>
+<ul>
+<li>与Task Manager类似，服务运行起来监听RabbitMQ topic</li>
+<li>Guest Agent在每个数据库实例中运行，所以使用专有的RabbitMQ topic（通过实例ID来标识）</li>
+<li>入口 - <code>Trove/bin/trove-guestagent</code></li>
+<li>作为一个RpcService运行，通过<code>Trove/etc/trove/trove-guestagent.conf.sample</code>配置文件进行配置，定义了<code>trove.guestagent.manager.Manager</code>作为manager，基本上这是通过队列到达的请求的入口点</li>
+<li>如上所述，使用Guest Agent的api模块，使用<code>_cast()</code>或者<code>_call()</code>（同步/异步）将对该组件的请求从另一个组件推送到MQ中，并放置方法命作为一个参数</li>
+<li><code>Trove/openstack/common/rpc/dispatcher.py</code> 中的<code>RpcDispatcher.dispatch()</code>通过反射的方式调用Manager中合适的方法</li>
+<li>然后，Manager将对对象的处理重定向到<code>dbaas.py</code>中</li>
+<li>实际处理一般在<code>dbaas.py</code>中完成</li>
+</ul>
+<h3 id="Conductor"><a href="#Conductor" class="headerlink" title="Conductor"></a>Conductor</h3><p>指挥器（Conductor）是运行在宿主机上的饿一个服务，负责接收客户实例中的消息，并在宿主机上更新信息，比如，实例的状态和当前备份的状态。有了指挥器，用户的实例不需要直接连接到宿主机的数据库。指挥器通过Message Bus监听RPC消息，并执行相关的操作。指挥器与客户代理有些类似，因为它是一个监听RabbitMQ主题的服务，不同的是Conductor运行在宿主机上，而非客户实例内部。客户代理通过将消息放入配置的消息队列——conductor_queue，默认为<code>trove-conductor</code>——来与指挥器进行信息交互。</p>
+<ul>
+<li>入口 - <code>Trove/bin/trove-conductor</code></li>
+<li>作为一个RpcService运行，通过<code>Trove/etc/trove/trove-conductor.conf.sample</code>配置文件进行配置，定义了<code>trove.conductor.manager.Manager</code>作为Manager</li>
+<li>如上面的客户代理类似，请求通过其他组件使用_cast()（异步的）推送到消息队列。一般来讲，消息格式为<code>{&quot;method&quot;: &quot;&lt;method_name&gt;&quot;, &quot;args&quot;: {&lt;arguments&gt;}}</code></li>
+<li>实际的数据库更新操作由<code>trove/conductor/manager.py</code>完成</li>
+<li>“heartbeat”操作更新实例的状态，通常由Guest Agent来报告实例状态，如从NEW到BUILDING到ACTIVE等等</li>
+<li>“update_backup”方法修改备份的详情，包括它的当前状态、备份大小、类型和校验码（checksum）</li>
+</ul>
+<h2 id="代码仓库"><a href="#代码仓库" class="headerlink" title="代码仓库"></a>代码仓库</h2><ul>
+<li>Trove Server (<a href="https://github.com/openstack/trove" target="_blank" rel="external">https://github.com/openstack/trove</a>)</li>
+<li>Trove Integration (<a href="https://github.com/openstack/trove-integration" target="_blank" rel="external">https://github.com/openstack/trove-integration</a>)</li>
+<li>Trove Client (<a href="https://github.com/openstack/python-troveclient" target="_blank" rel="external">https://github.com/openstack/python-troveclient</a>)</li>
+</ul>
+<h2 id="安装部署"><a href="#安装部署" class="headerlink" title="安装部署"></a>安装部署</h2><ul>
+<li>How to install trove as part of devstack: <a href="https://wiki.openstack.org/wiki/Trove/installation" target="_blank" rel="external">trove/installation</a></li>
+<li>How to use trove-integration: <a href="https://wiki.openstack.org/wiki/Trove/trove-integration" target="_blank" rel="external">trove/trove-integration</a></li>
+<li>How to set up unit tests to run with tox: <a href="https://wiki.openstack.org/wiki/Trove/unit-testing" target="_blank" rel="external">trove/unit-testing</a></li>
+<li>How to set up a testing environment and run redstack tests after installation: <a href="https://wiki.openstack.org/wiki/Trove/integration-testing" target="_blank" rel="external">trove/integration-testing</a></li>
+<li>How to set up your Mac dev environment to debug: <a href="https://wiki.openstack.org/wiki/Trove/dev-env" target="_blank" rel="external">trove/dev-env</a></li>
+<li>Releasing python-troveclient <a href="https://wiki.openstack.org/wiki/Trove/release-python-troveclient" target="_blank" rel="external">trove/release-python-troveclient</a></li>
+<li>Creating release notes with Reno <a href="https://wiki.openstack.org/wiki/Trove/create-release-notes-with-reno" target="_blank" rel="external">trove/create-release-notes-with-reno</a></li>
+</ul>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>翻译自<a href="https://wiki.openstack.org/wiki/Trove" target="_blank" rel="external">Trove wiki</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Translation/">Translation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Trove/">Trove</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/07/25/introduction-to-trove/&title=《OpenStack DBaaS组件Trove简介》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/07/25/introduction-to-trove/&title=《OpenStack DBaaS组件Trove简介》 — El barco&source=Trove架构Trove包含下面几个主要组件：" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/07/25/introduction-to-trove/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《OpenStack DBaaS组件Trove简介》 — El barco&url=http://elbarco.cn/2017/07/25/introduction-to-trove/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/07/25/introduction-to-trove/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/06/28/mongodb-connecttimeout-and-sockettimeout/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">由一次服务连接MongoDB超时引发的思考</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/07/25/introduction-to-trove/&title=《OpenStack DBaaS组件Trove简介》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/07/25/introduction-to-trove/&title=《OpenStack DBaaS组件Trove简介》 — El barco&source=Trove架构Trove包含下面几个主要组件：" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/07/25/introduction-to-trove/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《OpenStack DBaaS组件Trove简介》 — El barco&url=http://elbarco.cn/2017/07/25/introduction-to-trove/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/07/25/introduction-to-trove/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/07/25/introduction-to-trove/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
