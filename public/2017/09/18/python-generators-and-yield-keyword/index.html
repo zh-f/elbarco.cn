@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Python中的生成器和yield关键字 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python,yield">
+    <meta name="description" content="前言我们都知道yield语句用于定义生成器，替代函数的return语句来向其调用者提供结果，并且不破坏局部变量。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python中的生成器和yield关键字">
+<meta property="og:url" content="http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="前言我们都知道yield语句用于定义生成器，替代函数的return语句来向其调用者提供结果，并且不破坏局部变量。">
+<meta property="og:updated_time" content="2017-09-18T10:05:26.680Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python中的生成器和yield关键字">
+<meta name="twitter:description" content="前言我们都知道yield语句用于定义生成器，替代函数的return语句来向其调用者提供结果，并且不破坏局部变量。">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Python中的生成器和yield关键字</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Python中的生成器和yield关键字</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-18T08:49:46.000Z" itemprop="datePublished" class="page-time">
+  2017-09-18
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关于Python生成器"><span class="post-toc-number">2.</span> <span class="post-toc-text">关于Python生成器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用Python的yield关键字"><span class="post-toc-number">3.</span> <span class="post-toc-text">使用Python的yield关键字</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#更多的例子"><span class="post-toc-number">4.</span> <span class="post-toc-text">更多的例子</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">5.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-python-generators-and-yield-keyword"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Python中的生成器和yield关键字</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-18 16:49:46" datetime="2017-09-18T08:49:46.000Z"  itemprop="datePublished">2017-09-18</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我们都知道<code>yield</code>语句用于定义生成器，替代函数的<code>return</code>语句来向其调用者提供结果，并且不破坏局部变量。<a id="more"></a>与函数不同的是，每次调用时，生成器会以新的变量集开始，继续执行它被关闭的执行。</p>
+<h2 id="关于Python生成器"><a href="#关于Python生成器" class="headerlink" title="关于Python生成器"></a>关于Python生成器</h2><p>Python中的生成器的目的是能够即时的按照我们的要求逐个计算一系列结果。举个最简单的例子，生成器可以用作列表，列表中的每个元素会在用到的时候的方式被计算（lazily）：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 定义列表</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>the_list = [<span class="number">2</span>**i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>)]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 类型检查，确实是一个列表</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>type(the_list)</span><br><span class="line">&lt;type <span class="string">'list'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> j <span class="keyword">in</span> the_list:</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">print</span> j</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">4</span></span><br><span class="line"><span class="number">8</span></span><br><span class="line"><span class="number">16</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 列表长度为5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>len(the_list)</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 定义一个生成器，注意是'()'而不是'[]'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>the_gen = (x+x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">5</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 类型检查，确实是一个生成器</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>type(the_gen)</span><br><span class="line">&lt;type <span class="string">'generator'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 遍历生成器中的元素，并打印</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> j <span class="keyword">in</span> the_gen:</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">print</span> j</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">4</span></span><br><span class="line"><span class="number">6</span></span><br><span class="line"><span class="number">8</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 看起来好像跟列表似的，那如果我们来检查一下长度……</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>len(the_gen)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">TypeError: object of type <span class="string">'generator'</span> has no len()</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>从上面的例子，可以看出，遍历列表和遍历生成器是一样的。不过，尽管生成器可遍历的，但是却不是一个数据集合，因此没有长度的属性。数据集合（比如列表、元组、集合等）将数据存储在内存中，所以我们需要时就可以获得；生成器即时的计算结果，然后下一次迭代时就把上一次结果“忘掉了”，所以生成器没有对自己结果集的任何概述。</p>
+<p>正因为生成器有这个特性——不需要同时在内存中保留数据集合中的全部元素——所以非常适合内存敏感的任务。当我们不需要完整的结果时，逐个的计算结果值的做法就显得十分有用，对调用者即时的返回中间结果，直到满足一些要求然后停止处理。</p>
+<h2 id="使用Python的yield关键字"><a href="#使用Python的yield关键字" class="headerlink" title="使用Python的yield关键字"></a>使用Python的<code>yield</code>关键字</h2><p>这里我们有一个很好的例子，就是当我们在搜索时，我们不需要等所有的结果都被查找出来。比如在文件系统中搜索时，用户更希望能即时的看到结果，而不是等搜索工具遍历每个文件，然后返回所有的结果。再比如，用Google搜索的用户会一直翻到最后一页吗？</p>
+<p>这里我们就可以使用<code>yield</code>关键字/语句来定义一个生成器。<code>yield</code>指令应当放在生成器立即返回结果给调用者并且等待下次调用发生的地方。举个例子，我们先定义一个用于在大文件中逐行搜索关键字的生成器：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">search</span><span class="params">(keyword, filename)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Generator started'</span></span><br><span class="line">    f = open(filename,<span class="string">'r'</span>)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">        <span class="keyword">if</span> keyword <span class="keyword">in</span> line:</span><br><span class="line">            <span class="keyword">yield</span> line</span><br><span class="line">    f.close()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在data.txt中搜索yield关键字</span></span><br><span class="line">the_gen = search(<span class="string">'yield'</span>, <span class="string">'data.txt'</span>)</span><br><span class="line"><span class="comment"># 检查the_gen的类型</span></span><br><span class="line"><span class="keyword">print</span> type(the_gen)</span><br><span class="line"><span class="comment"># 也可以用the_gen.next()或next(the_gen)遍历</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> the_gen:</span><br><span class="line">    <span class="keyword">print</span> i</span><br></pre></td></tr></table></figure></p>
+<p>最终，我们得到的the_gen的类型是<code>&lt;type &#39;generator&#39;&gt;</code>，遍历the_gen得到<code>data.txt</code>中包含<code>yield</code>关键字的每一行，输出结果为：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;type &apos;generator&apos;&gt;</span><br><span class="line">Generator started</span><br><span class="line">Using the Python &quot;yield&quot; keyword</span><br><span class="line"></span><br><span class="line">The yield instruction should be put into a place... </span><br><span class="line"></span><br><span class="line">Since the yield keyword is only used with generators...</span><br></pre></td></tr></table></figure></p>
+<h2 id="更多的例子"><a href="#更多的例子" class="headerlink" title="更多的例子"></a>更多的例子</h2><p>生成器的应用有很多，比如扮演传送带的角色，一个比较好的例子即缓冲区：获取大量的数据并将其以小数据块进行处理：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">buffered_read</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        buffer = fetch_big_chunk()</span><br><span class="line">        <span class="keyword">for</span> small_chunk <span class="keyword">in</span> buffer:</span><br><span class="line">            <span class="keyword">yield</span> small_chunk</span><br></pre></td></tr></table></figure></p>
+<p>最后我们再看一个经典例子——给定数字N，使用生成器给出前N个斐波那契序列（Fibonacci）数字：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fibonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    curr = <span class="number">1</span></span><br><span class="line">    prev = <span class="number">0</span></span><br><span class="line">    counter = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> counter &lt; n:</span><br><span class="line">        <span class="keyword">yield</span> curr</span><br><span class="line">        prev, curr = curr, prev + curr</span><br><span class="line">        counter += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">f = fibonacci(<span class="number">6</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> f:</span><br><span class="line">        <span class="keyword">print</span> i</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">8</span></span><br></pre></td></tr></table></figure></p>
+<p>直到<code>counter = n</code>，停止while循环。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1].<a href="http://pythoncentral.io/python-generators-and-yield-keyword/" target="_blank" rel="external">Python generators and the yield keyword</a><br>[2].<a href="https://stackoverflow.com/questions/231767/what-does-the-yield-keyword-do" target="_blank" rel="external">What does the “yield” keyword do?</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yield/">yield</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/&title=《Python中的生成器和yield关键字》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/&title=《Python中的生成器和yield关键字》 — El barco&source=前言我们都知道yield语句用于定义生成器，替代函数的return语句来向其调用者提供结果，并且不破坏局部变量。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的生成器和yield关键字》 — El barco&url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/07/25/introduction-to-trove/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">OpenStack DBaaS组件Trove简介</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/&title=《Python中的生成器和yield关键字》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/&title=《Python中的生成器和yield关键字》 — El barco&source=前言我们都知道yield语句用于定义生成器，替代函数的return语句来向其调用者提供结果，并且不破坏局部变量。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的生成器和yield关键字》 — El barco&url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
