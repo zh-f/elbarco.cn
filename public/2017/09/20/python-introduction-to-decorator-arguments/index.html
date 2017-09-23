@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Python中的装饰器——装饰器参数篇 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python,decorator">
+    <meta name="description" content="先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python中的装饰器——装饰器参数篇">
+<meta property="og:url" content="http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是">
+<meta property="og:updated_time" content="2017-09-23T07:48:18.991Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python中的装饰器——装饰器参数篇">
+<meta name="twitter:description" content="先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Python中的装饰器——装饰器参数篇</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Python中的装饰器——装饰器参数篇</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-20T08:52:14.000Z" itemprop="datePublished" class="page-time">
+  2017-09-20
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#先举个例子"><span class="post-toc-number">1.</span> <span class="post-toc-text">先举个例子</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#还有这种操作？"><span class="post-toc-number">2.</span> <span class="post-toc-text">还有这种操作？</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-number">3.</span> <span class="post-toc-text">结语</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-python-introduction-to-decorator-arguments"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Python中的装饰器——装饰器参数篇</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-20 16:52:14" datetime="2017-09-20T08:52:14.000Z"  itemprop="datePublished">2017-09-20</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="先举个例子"><a href="#先举个例子" class="headerlink" title="先举个例子"></a>先举个例子</h2><p>在<a href="https://elbarco.cn/2017/09/20/python-introduction-to-decorators-with-examples/">上一篇文章</a>中，我们提到的装饰器的例子有一个共同的特点，就是<a id="more"></a>只接收被装饰的方法作为参数。但是在很多时候，装饰器本身接收更多的参数是非常有用的。但是如何做到呢？我们先回想一下基本的装饰器，它在内部声明一个方法，然后将这个内部方法返回，即被装饰器返回的callable。如果要使装饰器接收更多的参数，我们就要再包装一层——即接收参数的”装饰器”并不是真正的装饰器，而是一个返回装饰器的函数，而真正的装饰器负责接收被装饰的方法作为参数，然后装饰方法，返回一个callable。 还是用前面<code>json_output</code>的例子，简单改造一下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JSONOutputError</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, message)</span>:</span></span><br><span class="line">        self._message = message</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._message</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">json_output</span><span class="params">(indent=None, sort_keys=False)</span>:</span></span><br><span class="line">    <span class="string">"""Run the decorated function, serialize the result of that function</span><br><span class="line">    to JSON, and return the JSON string.</span><br><span class="line">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">actual_decorator</span><span class="params">(decorated)</span>:</span></span><br><span class="line"><span class="meta">        @functools.wraps(decorated)</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">inner</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                result = decorated(*args, **kwargs)</span><br><span class="line">            <span class="keyword">except</span> JSONOutputError <span class="keyword">as</span> ex:</span><br><span class="line">                result = &#123;</span><br><span class="line">                    <span class="string">'state'</span>: <span class="string">'error'</span>,</span><br><span class="line">                    <span class="string">'message'</span>: str(ex),</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">return</span> json.dumps(result, indent=indent, sort_keys=sort_keys)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> actual_decorator</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，在<code>json_output</code>中，传入了两个参数<code>indent</code>和<code>sort_keys</code>, 返回的是装饰器<code>actual_decorator</code>，而在<code>inner</code>中用到了传入的两个参数，用于JSON格式化时的缩进和Key的排序展示，来看这个装饰器的效果：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@json_output(indent=4, sort_keys=True)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># output </span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"a"</span>: <span class="string">"1"</span>, </span><br><span class="line">    <span class="string">"status"</span>: <span class="string">"done"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="还有这种操作？"><a href="#还有这种操作？" class="headerlink" title="还有这种操作？"></a>还有这种操作？</h2><p>通过上面的例子，可以看到，装饰器是<code>actual_decorator</code>而不是<code>json_output</code>，那么问题来了，如果<code>json_output</code>不是装饰器而只是一个返回装饰器的函数，为什么可以像装饰器一样使用？</p>
+<p>问题的关键在于操作的顺序。具体来说，<code>json_output(indent=4,sort_keys=True)</code>的调用在前，@操作符应用在后，那么这个函数的结果就会被当作装饰器使用。即先调用<code>json_output</code>，其中定义了装饰器<code>actual_decorator</code>，并且由<code>json_output</code>返回，则此时再应用@操作符就等价于：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@actual_decorator</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这不就相当于在一个函数上应用装饰器嘛！</p>
+<p>重要的一点是要意识到，当我们引入新的<code>json_output</code>函数时，实际上引入了一个后向不兼容的修改。</p>
+<p>为什么这么说？因为现在这里有一个预期的额外函数调用。如果这里我们不想给<code>json_output</code>传递参数，那么我们依然要<strong>调用</strong>这个函数，即程序必须这么写：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@json_output()</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>号外：一定要注意<strong>圆括号</strong>！因为这表示函数是被调用，然后函数结果被应用@。</p>
+</blockquote>
+<p>上面的代码，不等同于，注意，是不等同于下面的写法：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@json_output</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># print do_nothing() output</span></span><br><span class="line">TypeError: actual_decorator() takes exactly <span class="number">1</span> argument (<span class="number">0</span> given)</span><br></pre></td></tr></table></figure></p>
+<p>这里有两个问题：其一是比较让人疑惑，因为一旦习惯于见到没有括号的装饰器，见到类似<code>json_output</code>这种就会觉得反常；其二是如果旧的装饰器已经应用了其他很多地方，如果修改了这个装饰器类似上面的例子，那么其他应用的地方要一并修改，因为这是一个后向不兼容的更改。</p>
+<p>理想情况下，我们希望装饰器在程序中对于下列三种应用方式都能兼容：</p>
+<ul>
+<li>@json_output</li>
+<li>@json_output()</li>
+<li>@json_output(indent=4, sort_keys=True)</li>
+</ul>
+<p>实时证明，这是可行的，只需要让装饰器根据参数来改变其行为即可。下面，我们改写一下<code>json_output</code>：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">json_output</span><span class="params">(decorated_=None, indent=None, sort_keys=False)</span>:</span></span><br><span class="line">    <span class="string">"""Run the decorated function, serialize the result of that function</span><br><span class="line">    to JSON, and return the JSON string.</span><br><span class="line">    """</span></span><br><span class="line">    <span class="keyword">if</span> decorated_ <span class="keyword">and</span> (indent <span class="keyword">or</span> sort_keys):</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">'Unexpected arguments.'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">actual_decorator</span><span class="params">(func)</span>:</span></span><br><span class="line"><span class="meta">        @functools.wraps(func)</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">inner</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                result = func(*args, **kwargs)</span><br><span class="line">            <span class="keyword">except</span> JSONOutputError <span class="keyword">as</span> ex:</span><br><span class="line">                result = &#123;</span><br><span class="line">                    <span class="string">'state'</span>: <span class="string">'error'</span>,</span><br><span class="line">                    <span class="string">'message'</span>: str(ex),</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">return</span> json.dumps(result, indent=indent, sort_keys=sort_keys)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> inner</span><br><span class="line">    <span class="keyword">if</span> decorated_:</span><br><span class="line">        <span class="keyword">return</span> actual_decorator(decorated_)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> actual_decorator</span><br></pre></td></tr></table></figure></p>
+<p>注意，我们为<code>json_output</code>增加了一个入参，<code>decorated_=None</code>，因为我们不希望同时传递被装饰的方法和关键字参数，所以在<code>json_output</code>中先做检查，来确保我们要么只传递被装饰的方法作为参数，要么只传递关键字参数。接着，<code>actual_decorator</code>是实际的装饰器。最终，如果设置了<code>decorated_</code>，即采用<code>@json_output</code>这种方式去修饰do_nothing方法（等价于<code>do_nothing = json_output(decorated_=do_nothing)</code>），则此时的<code>json_output</code>就是一个装饰器，那么我们应该返回的是<code>actual_decorator(decorated_)</code>；如果没有设置<code>decorated_</code>，则这就是一个方法，即可以通过<code>@json_output()</code>或<code>@json_output(indent=4)</code>的方式应用到<code>do_nothing()</code>上去——<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line">do_nothing = json_output(decorated_=do_nothing)</span><br><span class="line"><span class="keyword">print</span> do_nothing()</span><br><span class="line"><span class="comment"># 1 - output</span></span><br><span class="line">&#123;<span class="string">"status"</span>: <span class="string">"done"</span>, <span class="string">"a"</span>: <span class="string">"1"</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2</span></span><br><span class="line"><span class="meta">@json_output</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> do_nothing()</span><br><span class="line"><span class="comment"># 2 - output</span></span><br><span class="line">&#123;<span class="string">"status"</span>: <span class="string">"done"</span>, <span class="string">"a"</span>: <span class="string">"1"</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3</span></span><br><span class="line"><span class="meta">@json_output()</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> do_nothing()</span><br><span class="line"><span class="comment"># 3 - output</span></span><br><span class="line">&#123;<span class="string">"status"</span>: <span class="string">"done"</span>, <span class="string">"a"</span>: <span class="string">"1"</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4</span></span><br><span class="line"><span class="meta">@json_output(indent=4, sort_keys=True)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> do_nothing()</span><br><span class="line"><span class="comment"># 4 - output</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"a"</span>: <span class="string">"1"</span>, </span><br><span class="line">    <span class="string">"status"</span>: <span class="string">"done"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line">do_nothing = json_output(decorated_=do_nothing, indent=<span class="number">4</span>)</span><br><span class="line"><span class="keyword">print</span> do_nothing()</span><br><span class="line"><span class="comment"># 5 - output</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"/decorators/output.py"</span>, line <span class="number">77</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    do_nothing = json_output(decorated_=do_nothing, indent=<span class="number">4</span>)</span><br><span class="line">  File <span class="string">"/decorators/output.py"</span>, line <span class="number">18</span>, <span class="keyword">in</span> json_output</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">'Unexpected arguments.'</span>)</span><br><span class="line">RuntimeError: Unexpected arguments.</span><br></pre></td></tr></table></figure></p>
+<p>1、2等价，json_output就是一个实实在在的装饰器；3、4中，json_output就是一个方法。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>本篇中，我们知道了如何给”装饰器”传递更多的参数，同时也学到了如何让”装饰器”更灵活，以适应不同的应用形式。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/decorator/">decorator</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&source=先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的装饰器——装饰器参数篇》 — El barco&url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/09/20/python-introduction-to-decorators-with-examples/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Python中的装饰器——初识篇</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&source=先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的装饰器——装饰器参数篇》 — El barco&url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
