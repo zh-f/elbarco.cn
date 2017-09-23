@@ -176,7 +176,7 @@ Traceback (most recent call last):
 RuntimeError: Unexpected arguments.
 ```
 
-1、2等价，json_output就是一个实实在在的装饰器；3、4中，json_output则并不是真正意义上的一个装饰器。
+1、2等价，json_output就是一个实实在在的装饰器；3、4中的json_output则是一个带参数的装饰器。
 
 ## 结语
 
