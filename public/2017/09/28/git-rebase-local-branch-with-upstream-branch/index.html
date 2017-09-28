@@ -25,23 +25,23 @@
     
     
     
-    <title>MongoDB复制集Secondary节点持续Recovering状态解决办法 | El barco | Just another mediocre programmer</title>
+    <title>Git中使用rebase命令更新本地分支 | El barco | Just another mediocre programmer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
     
     
-    <meta name="keywords" content="MongoDB">
-    <meta name="description" content="前段时间发现MongoDB Replica Set中的某个Secondary节点一直持续Recovering状态，无法恢复，且上次操作时间（optimeDate）已经是N天前了，经过查看官方文档，得知出现这种情况的原因在于复制集中主节点（Primary）一直写入oplog，而从节点（Secondary）的复制过程远远落后，赶不上主节点的oplog写入，就像赌气的孩子跑步一样，赶不上前面的小伙伴，索">
+    <meta name="keywords" content="Git,rebase">
+    <meta name="description" content="最近在开发trove中，因为误提交，本地项目的devel分支已经与上游的的devel分支不一致了">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MongoDB复制集Secondary节点持续Recovering状态解决办法">
-<meta property="og:url" content="http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/index.html">
+<meta property="og:title" content="Git中使用rebase命令更新本地分支">
+<meta property="og:url" content="http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/index.html">
 <meta property="og:site_name" content="El barco">
-<meta property="og:description" content="前段时间发现MongoDB Replica Set中的某个Secondary节点一直持续Recovering状态，无法恢复，且上次操作时间（optimeDate）已经是N天前了，经过查看官方文档，得知出现这种情况的原因在于复制集中主节点（Primary）一直写入oplog，而从节点（Secondary）的复制过程远远落后，赶不上主节点的oplog写入，就像赌气的孩子跑步一样，赶不上前面的小伙伴，索">
-<meta property="og:updated_time" content="2017-06-30T08:39:21.402Z">
+<meta property="og:description" content="最近在开发trove中，因为误提交，本地项目的devel分支已经与上游的的devel分支不一致了">
+<meta property="og:updated_time" content="2017-09-28T07:47:57.736Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MongoDB复制集Secondary节点持续Recovering状态解决办法">
-<meta name="twitter:description" content="前段时间发现MongoDB Replica Set中的某个Secondary节点一直持续Recovering状态，无法恢复，且上次操作时间（optimeDate）已经是N天前了，经过查看官方文档，得知出现这种情况的原因在于复制集中主节点（Primary）一直写入oplog，而从节点（Secondary）的复制过程远远落后，赶不上主节点的oplog写入，就像赌气的孩子跑步一样，赶不上前面的小伙伴，索">
+<meta name="twitter:title" content="Git中使用rebase命令更新本地分支">
+<meta name="twitter:description" content="最近在开发trove中，因为误提交，本地项目的devel分支已经与上游的的devel分支不一致了">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -116,7 +116,7 @@
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
-        <div class="flex-col header-title ellipsis">MongoDB复制集Secondary节点持续Recovering状态解决办法</div>
+        <div class="flex-col header-title ellipsis">Git中使用rebase命令更新本地分支</div>
         
         <div class="search-wrap" id="search-wrap">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
@@ -138,11 +138,11 @@
 <header class="content-header post-header">
 
     <div class="container fade-scale">
-        <h1 class="title">MongoDB复制集Secondary节点持续Recovering状态解决办法</h1>
+        <h1 class="title">Git中使用rebase命令更新本地分支</h1>
         <h5 class="subtitle">
             
-                <time datetime="2016-04-26T21:51:27.000Z" itemprop="datePublished" class="page-time">
-  2016-04-27
+                <time datetime="2017-09-28T06:34:49.000Z" itemprop="datePublished" class="page-time">
+  2017-09-28
 </time>
 
 
@@ -158,13 +158,13 @@
 
 <div class="container body-wrap">
     
-<article id="post-MongoDB复制集Secondary节点持续Recovering状态解决办法"
+<article id="post-git-rebase-local-branch-with-upstream-branch"
   class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
-        <h1 class="post-card-title">MongoDB复制集Secondary节点持续Recovering状态解决办法</h1>
+        <h1 class="post-card-title">Git中使用rebase命令更新本地分支</h1>
         <div class="post-meta">
-            <time class="post-time" title="2016-04-27 05:51:27" datetime="2016-04-26T21:51:27.000Z"  itemprop="datePublished">2016-04-27</time>
+            <time class="post-time" title="2017-09-28 14:34:49" datetime="2017-09-28T06:34:49.000Z"  itemprop="datePublished">2017-09-28</time>
 
             
 
@@ -177,20 +177,16 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <p>前段时间发现MongoDB Replica Set中的某个Secondary节点一直持续Recovering状态，无法恢复，且上次操作时间（optimeDate）已经是N天前了，经过查看<a href="https://docs.mongodb.org/manual/tutorial/resync-replica-set-member/#replica-set-auto-resync-stale-member" target="_blank" rel="external">官方文档</a>，得知出现这种情况的原因在于复制集中主节点（Primary）一直写入oplog，而从节点（Secondary）的复制过程远远落后，赶不上主节点的oplog写入，就像赌气的孩子跑步一样，赶不上前面的小伙伴，索性一赌气就不走了……<a id="more"></a>当遇到这种情况的时候，是不可能指望从节点自己恢复的，需要我们手动重新同步（initial sync）。</p>
-<p>官方给出了两种执行重新同步的方式——</p>
-<ul>
-<li>完全清空数据目录然后重启mongod服务</li>
-<li>在其他成员的数据目录下拷贝最近的数据然后重启mongod服务</li>
-</ul>
-<p>这里，偷懒不想打包scp数据，索性采用了第一种方式：</p>
-<ol>
-<li>停止mongod服务：可在mongo shell中执行<code>db.shutdownServer()</code>来关闭mongod服务，也可以在shell中直接敲<code>mongod --shutdown</code>，或者简单粗暴直接<code>kill -2 &lt;PID&gt;</code>（这里不推荐<code>-9</code>，会造成下次启动不起来的情况，需要删除dbPath目录下的<code>mongo.lock</code>再尝试重新启动）。</li>
-<li>对旧的dbPath的目录重命名，以做备份</li>
-<li>启动mongod，指向新的空的dbPath目录</li>
-</ol>
-<p>简单三步，MongoDB就会重新进行初始化同步，受限于数据量和网络环境等因素的影响，重新同步时间有长有短。重新同步完毕后，打开mongo shell查看复制集状态，一般情况下，这个从节点状态就会恢复正常了。然后要做的就是验证主从数据一致性，确保没问题之后，重命名过的dbPath目录可以删除了。</p>
-<p>第二种方式，利用其它成员的最近数据进行启动的操作可见<a href="https://docs.mongodb.org/manual/tutorial/resync-replica-set-member/#replica-set-resync-by-copying" target="_blank" rel="external">官方文档</a>，这里就不赘述了。</p>
+            <p>最近在开发<code>trove</code>中，因为误提交，本地项目的<code>devel</code>分支已经与上游的的<code>devel</code>分支不一致了<a id="more"></a>。为了更好的创建分支，或者后面进行<code>cherry-pick</code>准备打包，都需要将本地的分支与上游的分支做一下rebase。</p>
+<blockquote>
+<p>注：上游指的是<a href="https://github.com/eayunstack/trove" target="_blank" rel="external"><code>eayunstack/trove</code></a>，本地指的是<a href="https://github.com/2hf/trove" target="_blank" rel="external"><code>2hf/trove</code></a></p>
+</blockquote>
+<p>首先，我们要添加<code>upstream</code>远程仓库：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git remote</span><br><span class="line">origin</span><br><span class="line">$ git remote add upstream git@github.com:eayunstack/trove.git</span><br><span class="line">$ git remote -v</span><br><span class="line">origin  git@github.com:2hf/trove.git (fetch)</span><br><span class="line">origin  git@github.com:2hf/trove.git (push)</span><br><span class="line">upstream        git@github.com:eayunstack/trove.git (fetch)</span><br><span class="line">upstream        git@github.com:eayunstack/trove.git (push)</span><br></pre></td></tr></table></figure></p>
+<p>然后更新<code>upstream</code>：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git fetch upstream</span><br></pre></td></tr></table></figure></p>
+<p>此时远程仓库已经准备就绪了，这时候我们就可以rebase本地的分支了。两种做法：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># option one</span><br><span class="line">$ git checkout devel</span><br><span class="line">$ git rebase -i upstream/devel</span><br><span class="line"></span><br><span class="line"># option two</span><br><span class="line">$ git checkout devel</span><br><span class="line">$ git reset --hard upstream/devel</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注：如果之前<code>2hf/devel</code>分支已经做过push了，为了保持与上游一致，需要<code>git push -f</code>。</p>
+</blockquote>
 
         </div>
 
@@ -219,7 +215,7 @@
 
         <div class="post-footer">
             
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rebase/">rebase</a></li></ul>
 
 
             
@@ -229,7 +225,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/&title=《MongoDB复制集Secondary节点持续Recovering状态解决办法》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/&title=《Git中使用rebase命令更新本地分支》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -239,22 +235,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/&title=《MongoDB复制集Secondary节点持续Recovering状态解决办法》 — El barco&source=前段时间发现MongoDB Replica Set中的某个Secondary节点一直持续Recovering状态，无法恢复，且上次操作时间（optimeD..." data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/&title=《Git中使用rebase命令更新本地分支》 — El barco&source=最近在开发trove中，因为误提交，本地项目的devel分支已经与上游的的devel分支不一致了" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MongoDB复制集Secondary节点持续Recovering状态解决办法》 — El barco&url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/&via=http://elbarco.cn" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Git中使用rebase命令更新本地分支》 — El barco&url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/&via=http://elbarco.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -274,21 +270,14 @@
     </div>
 
     
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2016/06/30/使用Logrotate管理MongoDB日志/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h5 class="title">使用Logrotate管理MongoDB日志</h5>
-      </a>
-    </div>
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
   
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2016/03/12/为CentOS6-5安装Kernel3-10/" id="post-next" class="post-nav-link">
+      <a href="/2017/09/20/python-introduction-to-decorator-arguments/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h5 class="title">为CentOS6.5安装Kernel3.10</h5>
+        <h5 class="title">Python中的装饰器——装饰器参数篇</h5>
       </a>
     </div>
   
@@ -402,7 +391,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/&title=《MongoDB复制集Secondary节点持续Recovering状态解决办法》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/&title=《Git中使用rebase命令更新本地分支》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -412,22 +401,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/&title=《MongoDB复制集Secondary节点持续Recovering状态解决办法》 — El barco&source=前段时间发现MongoDB Replica Set中的某个Secondary节点一直持续Recovering状态，无法恢复，且上次操作时间（optimeD..." data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/&title=《Git中使用rebase命令更新本地分支》 — El barco&source=最近在开发trove中，因为误提交，本地项目的devel分支已经与上游的的devel分支不一致了" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MongoDB复制集Secondary节点持续Recovering状态解决办法》 — El barco&url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/&via=http://elbarco.cn" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Git中使用rebase命令更新本地分支》 — El barco&url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/&via=http://elbarco.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -438,7 +427,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2016/04/27/MongoDB复制集Secondary节点持续Recovering状态解决办法/" alt="微信分享二维码">
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/" alt="微信分享二维码">
 </div>
 
 
