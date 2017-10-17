@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>学习和认识Trove Strategies | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="OpenStack,Trove">
+    <meta name="description" content="在Trove的上篇文章中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习和认识Trove Strategies">
+<meta property="og:url" content="http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="在Trove的上篇文章中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/openstack-dbaas-trove.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/mysql-backup-flow.png">
+<meta property="og:updated_time" content="2017-10-17T10:20:52.201Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习和认识Trove Strategies">
+<meta name="twitter:description" content="在Trove的上篇文章中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：">
+<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/openstack-dbaas-trove.png">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">学习和认识Trove Strategies</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">学习和认识Trove Strategies</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-17T07:28:57.000Z" itemprop="datePublished" class="page-time">
+  2017-10-17
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Trove-strategies"><span class="post-toc-number">1.</span> <span class="post-toc-text">Trove strategies</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#MySQL备份功能中的策略"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">MySQL备份功能中的策略</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#其他策略应用场景"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">其他策略应用场景</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-number">2.</span> <span class="post-toc-text">结语</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">3.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-introduction-to-trove-strategies"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">学习和认识Trove Strategies</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-17 15:28:57" datetime="2017-10-17T07:28:57.000Z"  itemprop="datePublished">2017-10-17</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>在Trove的<a href="https://elbarco.cn/2017/07/25/introduction-to-trove/">上篇文章</a>中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：<br><a id="more"></a><br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/openstack-dbaas-trove.png" alt=""></p>
+<p>看图，可以简单回顾一下，Trove这个基于OpenStack中的计算、存储、网络、镜像等之上的一个DBaaS项目，图中可以看到它的几个组件，以及它跟其他OpenStack组件的交互。</p>
+<h2 id="Trove-strategies"><a href="#Trove-strategies" class="headerlink" title="Trove strategies"></a>Trove strategies</h2><p>对于Trove来讲，其目标就是提供一个数据库无关的功能集，并且可以在框架内实现扩展，这里我们就引入了Trove的Strategies，即策略。 策略是Trove中的一个设计结构，允许开发人员在Trove作为整体框架的前提下，建立指定抽象的新的实现来扩展Trove，举个🌰来说明——</p>
+<p>我们知道，无论是MySQL、PostgreSQL等关系型数据库，还是其他的非关系型数据库比如MongoDB、Redis，均提供备份的功能。然而不同数据库的备份功能又有所差别，甚至同一个数据库具有不同的集中方式来产生一个备份。下面结合MySQL备份的消息流转图来说明：</p>
+<h3 id="MySQL备份功能中的策略"><a href="#MySQL备份功能中的策略" class="headerlink" title="MySQL备份功能中的策略"></a>MySQL备份功能中的策略</h3><p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/mysql-backup-flow.png" alt=""></p>
+<p>客户端通过Trove API发起备份的请求，通过阅读代码我们知道调用的API的方法是<code>trove.backup.service.BackupController#create</code>，API通过消息队列发起对Task Manager中<code>create_backup</code>的异步调用（见<code>trove.taskmanager.api.API#create_backup</code>）:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_backup</span><span class="params">(self, backup_info, instance_id)</span>:</span></span><br><span class="line">    LOG.debug(<span class="string">"Making async call to create a backup for instance: %s"</span> %</span><br><span class="line">              instance_id)</span><br><span class="line"></span><br><span class="line">    self._cast(<span class="string">"create_backup"</span>, self.version_cap,</span><br><span class="line">               backup_info=backup_info,</span><br><span class="line">               instance_id=instance_id)</span><br></pre></td></tr></table></figure></p>
+<p>然后Task Manager中（见<code>trove.taskmanager.manager.Manager#create_backup</code>）:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_backup</span><span class="params">(self, context, backup_info, instance_id)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> EndNotification(context, backup_id=backup_info[<span class="string">'id'</span>]):</span><br><span class="line">        instance_tasks = models.BuiltInstanceTasks.load(context,</span><br><span class="line">                                                        instance_id)</span><br><span class="line">        instance_tasks.create_backup(backup_info)</span><br></pre></td></tr></table></figure></p>
+<p>其中又调用了BuildInstanceTasks中的<code>create_backup</code>方法，这里实际发起了对Guest Agent中备份创建的调用：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_backup</span><span class="params">(self, backup_info)</span>:</span></span><br><span class="line">    LOG.info(_(<span class="string">"Initiating backup for instance %s."</span>) % self.id)</span><br><span class="line">    self.guest.create_backup(backup_info)</span><br></pre></td></tr></table></figure></p>
+<p>对于MySQL来讲，Guest Agent中我们肯定要去找<code>trove.guestagent.datastore.mysql_common.manager.MySqlManager</code>，那么对应的方法就是：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_backup</span><span class="params">(self, context, backup_info)</span>:</span></span><br><span class="line">    <span class="string">"""</span><br><span class="line">    Entry point for initiating a backup for this guest agents db instance.</span><br><span class="line">    The call currently blocks until the backup is complete or errors. If</span><br><span class="line">    device_path is specified, it will be mounted based to a point specified</span><br><span class="line">    in configuration.</span><br><span class="line"></span><br><span class="line">    :param backup_info: a dictionary containing the db instance id of the</span><br><span class="line">                        backup task, location, type, and other data.</span><br><span class="line">    """</span></span><br><span class="line">    <span class="keyword">with</span> EndNotification(context):</span><br><span class="line">        backup.backup(context, backup_info)</span><br></pre></td></tr></table></figure></p>
+<p>我们在去看看<code>backup.backup(context, backup_info)</code>（见<code>trove.guestagent.backup.backup</code>）：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> trove.guestagent.backup.backupagent <span class="keyword">import</span> BackupAgent</span><br><span class="line"></span><br><span class="line">AGENT = BackupAgent()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">backup</span><span class="params">(context, backup_info)</span>:</span></span><br><span class="line">    <span class="string">"""</span><br><span class="line">    Main entry point for starting a backup based on the given backup id.  This</span><br><span class="line">    will create a backup for this DB instance and will then store the backup</span><br><span class="line">    in a configured repository (e.g. Swift)</span><br><span class="line"></span><br><span class="line">    :param context:     the context token which contains the users details</span><br><span class="line">    :param backup_id:   the id of the persisted backup object</span><br><span class="line">    """</span></span><br><span class="line">    <span class="keyword">return</span> AGENT.execute_backup(context, backup_info)</span><br></pre></td></tr></table></figure></p>
+<p>其中，对实际执行备份，使用的是<code>trove.guestagent.backup.backupagent.BackupAgent</code>中的<code>execute_backup</code>：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">CONFIG_MANAGER = CONF.get(<span class="string">'mysql'</span></span><br><span class="line">                          <span class="keyword">if</span> <span class="keyword">not</span> CONF.datastore_manager</span><br><span class="line">                          <span class="keyword">else</span> CONF.datastore_manager)</span><br><span class="line"></span><br><span class="line">STRATEGY = CONFIG_MANAGER.backup_strategy</span><br><span class="line">BACKUP_NAMESPACE = CONFIG_MANAGER.backup_namespace</span><br><span class="line">RESTORE_NAMESPACE = CONFIG_MANAGER.restore_namespace</span><br><span class="line">RUNNER = get_backup_strategy(STRATEGY, BACKUP_NAMESPACE)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BackupAgent</span><span class="params">(object)</span>:</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute_backup</span><span class="params">(self, context, backup_info,</span><br><span class="line">                       runner=RUNNER, extra_opts=EXTRA_OPTS,</span><br><span class="line">                       incremental_runner=INCREMENTAL_RUNNER)</span>:</span></span><br><span class="line"></span><br><span class="line">        LOG.debug(<span class="string">"Running backup %(id)s."</span>, backup_info)</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        self.stream_backup_to_storage(context, backup_info, runner, storage,</span><br><span class="line">                                      parent_metadata, extra_opts)</span><br></pre></td></tr></table></figure></p>
+<p>注意<code>BACKUP_NAMESPACE</code>指明了策略的命名空间，这里的<code>RUNNER</code>，才是实际加载备份策略的地方，当然，要根据<code>/trove/common/cfg.py</code>中的配置：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cfg.StrOpt(<span class="string">'backup_namespace'</span>,</span><br><span class="line">           default=<span class="string">'trove.guestagent.strategies.backup.mysql_impl'</span>,</span><br><span class="line">           help=<span class="string">'Namespace to load backup strategies from.'</span>,</span><br><span class="line">           deprecated_name=<span class="string">'backup_namespace'</span>,</span><br><span class="line">           deprecated_group=<span class="string">'DEFAULT'</span>),</span><br><span class="line">cfg.StrOpt(<span class="string">'backup_strategy'</span>, default=<span class="string">'InnoBackupEx'</span>,</span><br><span class="line">           help=<span class="string">'Default strategy to perform backups.'</span>,</span><br><span class="line">           deprecated_name=<span class="string">'backup_strategy'</span>,</span><br><span class="line">           deprecated_group=<span class="string">'DEFAULT'</span>),</span><br></pre></td></tr></table></figure></p>
+<p>当然，这部分配置我们是可以在<code>trove-guestagent.conf</code>中配置的：<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line"># ========== Datastore Specific Configuration Options ==========</span><br><span class="line">...</span><br><span class="line">[mysql]</span><br><span class="line"># For mysql, the following are the defaults for backup, and restore:</span><br><span class="line">backup_strategy = InnoBackupEx</span><br><span class="line">backup_namespace = trove.guestagent.strategies.backup.mysql_impl</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>那我们就知道，其实MySQL的备份使用的是<code>trove.guestagent.strategies.backup.mysql_impl.InnoBackupEx</code>：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InnoBackupEx</span><span class="params">(base.BackupRunner)</span>:</span></span><br><span class="line">    <span class="string">"""Implementation of Backup Strategy for InnoBackupEx."""</span></span><br><span class="line">    __strategy_name__ = <span class="string">'innobackupex'</span></span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cmd</span><span class="params">(self)</span>:</span></span><br><span class="line">        cmd = (<span class="string">'sudo innobackupex'</span></span><br><span class="line">               <span class="string">' --stream=xbstream'</span></span><br><span class="line">               <span class="string">' %(extra_opts)s '</span> +</span><br><span class="line">               self.user_and_pass +</span><br><span class="line">               MySqlApp.get_data_dir() +</span><br><span class="line">               <span class="string">' 2&gt;/tmp/innobackupex.log'</span></span><br><span class="line">               )</span><br><span class="line">        <span class="keyword">return</span> cmd + self.zip_cmd + self.encrypt_cmd</span><br><span class="line"></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<p>这里额外说一下，究竟是在哪里触发执行的备份呢？</p>
+<p>在前面<code>self.stream_backup_to_storage(context, backup_info, runner, storage,                                    parent_metadata, extra_opts)</code>中，使用了<code>with</code>来执行<code>runner</code>：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stream_backup_to_storage</span><span class="params">(self, context, backup_info, runner, storage,</span><br><span class="line">                             parent_metadata=&#123;&#125;, extra_opts=EXTRA_OPTS)</span>:</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> runner(filename=backup_id, extra_opts=extra_opts,</span><br><span class="line">                    **parent_metadata) <span class="keyword">as</span> bkup:</span><br><span class="line">            LOG.debug(<span class="string">"Starting backup %s."</span>, backup_id)</span><br><span class="line">            ...</span><br></pre></td></tr></table></figure></p>
+<p>即这里，调用了<code>InnoBackupEx</code>的构造方法，而<code>InnoBackupEx</code>是继承自<code>BackupRunner</code>，则：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BackupRunner</span><span class="params">(Strategy)</span>:</span></span><br><span class="line">    <span class="string">"""Base class for Backup Strategy implementations."""</span></span><br><span class="line">    __strategy_type__ = <span class="string">'backup_runner'</span></span><br><span class="line">    __strategy_ns__ = <span class="string">'trove.guestagent.strategies.backup'</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># The actual system call to run the backup</span></span><br><span class="line">    cmd = <span class="keyword">None</span></span><br><span class="line">    is_zipped = CONF.backup_use_gzip_compression</span><br><span class="line">    is_encrypted = CONF.backup_use_openssl_encryption</span><br><span class="line">    encrypt_key = CONF.backup_aes_cbc_key</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, filename, **kwargs)</span>:</span></span><br><span class="line">        self.base_filename = filename</span><br><span class="line">        self.process = <span class="keyword">None</span></span><br><span class="line">        self.pid = <span class="keyword">None</span></span><br><span class="line">        kwargs.update(&#123;<span class="string">'filename'</span>: filename&#125;)</span><br><span class="line">        self.command = self.cmd % kwargs</span><br><span class="line">        super(BackupRunner, self).__init__()</span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_run</span><span class="params">(self)</span>:</span></span><br><span class="line">        LOG.debug(<span class="string">"BackupRunner running cmd: %s"</span>, self.command)</span><br><span class="line">        self.process = subprocess.Popen(self.command, shell=<span class="keyword">True</span>,</span><br><span class="line">                                        stdout=subprocess.PIPE,</span><br><span class="line">                                        stderr=subprocess.PIPE,</span><br><span class="line">                                        preexec_fn=os.setsid)</span><br><span class="line">        self.pid = self.process.pid</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""Start up the process."""</span></span><br><span class="line">        self._run_pre_backup()</span><br><span class="line">        self._run()</span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<p>看到这里，我们就知道备份执行是在哪里触发的了——首先，在构造方法中，通过<code>self.command = self.cmd % kwargs</code>获取了<code>InnoBackupEx</code>中的<code>cmd</code>，然后因为我们使用<code>with</code>来调用，则会调用<code>__enter__(self)</code>方法，其中的<code>_run(self)</code>中使用<code>Popen</code>协程来真正的执行。后面补充一篇对<code>eventlent</code>和<code>Popen</code>的学习心得。</p>
+<h3 id="其他策略应用场景"><a href="#其他策略应用场景" class="headerlink" title="其他策略应用场景"></a>其他策略应用场景</h3><p>除了上面例子中的MySQL备份功能，Trove的Strategies还可以通过扩展Guest Agent、API和Task Manager等来实现集群的功能，比如下面列举了MongoDB中的扩展：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cfg.StrOpt(<span class="string">'api_strategy'</span>,</span><br><span class="line">           default=<span class="string">'trove.common.strategies.cluster.experimental.'</span></span><br><span class="line">           <span class="string">'mongodb.api.MongoDbAPIStrategy'</span>,</span><br><span class="line">           help=<span class="string">'Class that implements datastore-specific API logic.'</span>),</span><br><span class="line">cfg.StrOpt(<span class="string">'taskmanager_strategy'</span>,</span><br><span class="line">           default=<span class="string">'trove.common.strategies.cluster.experimental.mongodb.'</span></span><br><span class="line">           <span class="string">'taskmanager.MongoDbTaskManagerStrategy'</span>,</span><br><span class="line">           help=<span class="string">'Class that implements datastore-specific task manager '</span></span><br><span class="line">                <span class="string">'logic.'</span>),</span><br><span class="line">cfg.StrOpt(<span class="string">'guestagent_strategy'</span>,</span><br><span class="line">           default=<span class="string">'trove.common.strategies.cluster.experimental.'</span></span><br><span class="line">           <span class="string">'mongodb.guestagent.MongoDbGuestAgentStrategy'</span>,</span><br><span class="line">           help=<span class="string">'Class that implements datastore-specific Guest Agent API '</span></span><br><span class="line">                <span class="string">'logic.'</span>),</span><br></pre></td></tr></table></figure></p>
+<p>当用户请求API<code>trove.cluster.service.ClusterController#create</code>，对MongoDB创建集群时，经过各种调用，会去执行<code>trove.common.strategies.cluster.experimental.mongodb.api.MongoDbCluster#create</code>来创建MongoDB的Cluster。后面的具体流程我们这里就在赘述了，感兴趣的童鞋可以去阅读一下代码。不过目前在MongoDB集群功能中，还没有区分Replica set和Shard，需要紧跟上游或者自己实现（有位同事最近在做这项功能，还是很有希望提交上游的……这就跑题了😂）</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>本文主要以MySQL备份的代码过程为例，讲解了Trove中的Strategies的应用，了解其基本原理和几个使用场景，同时在看代码的过程中，遇到的新的知识点<code>eventlet</code>和<code>eventlet.green.subprocess.Popen</code>，值得我们去学习和研究一番。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1].<a href="http://www.apress.com/us/book/9781484212226" target="_blank" rel="external">OpenStack Trove by Amrith Kumar</a><br>[2].<a href="https://www.tesora.com/openstack-trove-architecture/" target="_blank" rel="external">OpenStack Architecture</a><br>[3].<a href="https://github.com/openstack/trove" target="_blank" rel="external">openstack/trove</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Trove/">Trove</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/&title=《学习和认识Trove Strategies》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/&title=《学习和认识Trove Strategies》 — El barco&source=在Trove的上篇文章中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《学习和认识Trove Strategies》 — El barco&url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/09/28/git-rebase-local-branch-with-upstream-branch/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Git中使用rebase命令更新本地分支</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/&title=《学习和认识Trove Strategies》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/&title=《学习和认识Trove Strategies》 — El barco&source=在Trove的上篇文章中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《学习和认识Trove Strategies》 — El barco&url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/10/17/introduction-to-trove-strategies/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
