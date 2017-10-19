@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Python中的Coroutine | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python,Coroutines">
+    <meta name="description" content="在展开对eventlet的学习之前，我们先来学习一下Python的Coroutine。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python中的Coroutine">
+<meta property="og:url" content="http://elbarco.cn/2017/10/18/python-coroutines/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="在展开对eventlet的学习之前，我们先来学习一下Python的Coroutine。">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/coroutine-pipline.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/coroutine-pipline-filter.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/coroutine-pipline-branchy.png">
+<meta property="og:image" content="http://7xq1r1.com1.z0.glb.clouddn.com/broadcast-multiple-printer.png">
+<meta property="og:image" content="http://7xq1r1.com1.z0.glb.clouddn.com/broadcast-one-printer.png">
+<meta property="og:updated_time" content="2017-10-19T08:05:02.399Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python中的Coroutine">
+<meta name="twitter:description" content="在展开对eventlet的学习之前，我们先来学习一下Python的Coroutine。">
+<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/coroutine-pipline.png">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Python中的Coroutine</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="搜尋">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Python中的Coroutine</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-18T08:15:00.000Z" itemprop="datePublished" class="page-time">
+  2017-10-18
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前情回顾"><span class="post-toc-number">1.</span> <span class="post-toc-text">前情回顾</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#For…example"><span class="post-toc-number">2.</span> <span class="post-toc-text">For…example?</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#协程的执行"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">协程的执行</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#协程的关闭"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">协程的关闭</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#协程中抛出异常"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">协程中抛出异常</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#简单梳理一下"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">简单梳理一下</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#More-I-want-MORE"><span class="post-toc-number">3.</span> <span class="post-toc-text">More, I want MORE!</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#通通连起来"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">通通连起来</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#管道中的过滤器"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">管道中的过滤器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#管道连接更多的管道"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">管道连接更多的管道</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#从数据处理到并发编程"><span class="post-toc-number">4.</span> <span class="post-toc-text">从数据处理到并发编程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">5.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-python-coroutines"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Python中的Coroutine</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-18 16:15:00" datetime="2017-10-18T08:15:00.000Z"  itemprop="datePublished">2017-10-18</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>在展开对<code>eventlet</code>的学习之前，我们先来学习一下Python的Coroutine。</p>
+<a id="more"></a>
+<h2 id="前情回顾"><a href="#前情回顾" class="headerlink" title="前情回顾"></a>前情回顾</h2><p>在<a href="https://elbarco.cn/2017/09/18/python-generators-and-yield-keyword/">这篇文章</a>中，已经学习过了Python中的Generator和yield关键字，如果对生成器和yield还有疑问，可以通过上面的连接回顾一下。</p>
+<h2 id="For…example"><a href="#For…example" class="headerlink" title="For…example?"></a>For…example?</h2><p>这里，就以一个生成器的例子来展开本篇的学习内容吧：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grep</span><span class="params">(pattern)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Looking for "%s"'</span> % pattern</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        line = (<span class="keyword">yield</span>)</span><br><span class="line">        <span class="keyword">if</span> pattern <span class="keyword">in</span> line:</span><br><span class="line">            <span class="keyword">print</span> line</span><br></pre></td></tr></table></figure></p>
+<p>首先思考一个问题，执行上面的函数函数的输出是什么？</p>
+<h3 id="协程的执行"><a href="#协程的执行" class="headerlink" title="协程的执行"></a>协程的执行</h3><p>当我们常用yiled关键字的时候，不可避免的，总会遇到Coroutine，即协程。正如上面的例子，函数能做的不仅是生成值，还可以“消费”（consume）发送给它的值：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>g = grep(<span class="string">'python'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.next()</span><br><span class="line">Looking <span class="keyword">for</span> <span class="string">"python"</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.send(<span class="string">'Awesome, it is dope!'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.send(<span class="string">'python generators rock!'</span>)</span><br><span class="line">python generators rock!</span><br></pre></td></tr></table></figure></p>
+<p>当我们直接调用<code>grep(&#39;python&#39;)</code>时，什么输出也没有产生，因为coroutine只对<code>next()</code>和<code>send()</code>方法进行响应。即，<code>g.next()</code>时，coroutine开始运行（或者通过<code>send(None)</code>来预启动协程），然后使协程提前执行到第一个yield表达式——<code>line = (yield)</code>，此时，协程已经准备好了接收一个值，当我们发送含有python的字符串时，就可以打印出这个字符串。</p>
+<p>不过，每次调用<code>.next()</code>有点太麻烦，我们可以用装饰器包装这个coroutine来解决：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">coroutine</span><span class="params">(func)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        cr = func(*args, **kwargs)</span><br><span class="line">        cr.next()</span><br><span class="line">        <span class="keyword">return</span> cr</span><br><span class="line">    <span class="keyword">return</span> start</span><br><span class="line"></span><br><span class="line"><span class="meta">@coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grep</span><span class="params">(pattern)</span>:</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<h3 id="协程的关闭"><a href="#协程的关闭" class="headerlink" title="协程的关闭"></a>协程的关闭</h3><p>协程可能会无限运行，我们可以使用<code>.close()</code>来关闭。另外，<code>close()</code>是可以被捕获的——通过<code>GeneratorExit</code>异常：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grep</span><span class="params">(pattern)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Looking for "%s"'</span> % pattern</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            line = (<span class="keyword">yield</span>)</span><br><span class="line">            <span class="keyword">if</span> pattern <span class="keyword">in</span> line:</span><br><span class="line">                <span class="keyword">print</span> line</span><br><span class="line">    <span class="keyword">except</span> GeneratorExit:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Going away. Bye!'</span></span><br></pre></td></tr></table></figure></p>
+<p>不要忽略这个异常，通过上面的写法可以确保coroutine能够正常清理和退出。执行后效果如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>g = grep(<span class="string">'python'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.next()</span><br><span class="line">Looking <span class="keyword">for</span> <span class="string">"python"</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.send(<span class="string">'Awesome, it is dope!'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.send(<span class="string">'python generators rock!'</span>)</span><br><span class="line">python generators rock!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.close()</span><br><span class="line">Going away. Bye!</span><br></pre></td></tr></table></figure></p>
+<h3 id="协程中抛出异常"><a href="#协程中抛出异常" class="headerlink" title="协程中抛出异常"></a>协程中抛出异常</h3><p>在协程中，是允许抛出异常的：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>g = grep(<span class="string">'python'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.next()</span><br><span class="line">Looking <span class="keyword">for</span> <span class="string">"python"</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.send(<span class="string">'Awesome, it is dope!'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.send(<span class="string">'python generators rock!'</span>)</span><br><span class="line">python generators rock!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.throw(RuntimeError, <span class="string">"It's a RuntimeError!"</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line"> File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line"> File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">4</span>, <span class="keyword">in</span> grep</span><br><span class="line">RuntimeError: It<span class="string">'s a RuntimeError!</span></span><br></pre></td></tr></table></figure></p>
+<p>注意，异常是在yield表达式处产生的，而且跟普通异常一样是可以被捕获和处理的。</p>
+<h3 id="简单梳理一下"><a href="#简单梳理一下" class="headerlink" title="简单梳理一下"></a>简单梳理一下</h3><p>经过上面的例子，我们可以简单的梳理如下：</p>
+<ul>
+<li>Generator产生数据用于迭代</li>
+<li>Coroutine是数据的消费者</li>
+<li>不要把这两个概念弄混</li>
+</ul>
+<h2 id="More-I-want-MORE"><a href="#More-I-want-MORE" class="headerlink" title="More, I want MORE!"></a>More, I want MORE!</h2><h3 id="通通连起来"><a href="#通通连起来" class="headerlink" title="通通连起来"></a>通通连起来</h3><p>Coroutine还可以用于构造pipeline（管道），即把好多coroutine连起来，通过<code>send()</code>方法来传递数据。</p>
+<p>对于pipeline来讲，我们需要一个函数来驱动，我们暂且称之为<code>source</code>。另外还需要一个端点（end-point）来终止整个管道，我们暂且称之为<code>sink</code>，下面举个例子，用coroutine写一个类似<code>tail -f</code>的功能：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">follow</span><span class="params">(the_file, target)</span>:</span></span><br><span class="line">    <span class="comment"># Go to the end of the file</span></span><br><span class="line">    the_file.seek(<span class="number">0</span>, <span class="number">2</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        line = the_file.readline()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> line:</span><br><span class="line">            time.sleep(<span class="number">0.1</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        target.send(line)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">printer</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        line = (<span class="keyword">yield</span>)</span><br><span class="line">        <span class="keyword">print</span> line</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    f = open(<span class="string">"data.txt"</span>)</span><br><span class="line">    follow(f, printer())</span><br></pre></td></tr></table></figure></p>
+<p>这样，我们在执行时，打开data.txt写入信息，就会在控制台看到输出。在这个例子中，<code>follow()</code>用于逐行读取，然后把数据发送到<code>printer()</code>协程中，过程如图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/coroutine-pipline.png" alt=""></p>
+<p>在这里，<code>source</code>就是<code>follow()</code>，<code>sink</code>就是<code>printer()</code>。</p>
+<h3 id="管道中的过滤器"><a href="#管道中的过滤器" class="headerlink" title="管道中的过滤器"></a>管道中的过滤器</h3><p>在这个例子基础上，我们还可增加一个协程用做过滤器（filter），只要对对前面的<code>grep()</code>稍作改造，然后调用的时候注意一下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grep</span><span class="params">(pattern, target)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Looking for "%s"'</span> % pattern</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            line = (<span class="keyword">yield</span>)</span><br><span class="line">            <span class="keyword">if</span> pattern <span class="keyword">in</span> line:</span><br><span class="line">                target.send(line)</span><br><span class="line">    <span class="keyword">except</span> GeneratorExit:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Going away. Bye!'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    f = open(<span class="string">"data.txt"</span>)</span><br><span class="line">    follow(f, grep(<span class="string">'python'</span>, printer()))</span><br></pre></td></tr></table></figure></p>
+<p>启动后，<code>grep()</code>这个协程负责只有在data.txt中写入行含有<code>python</code>才会把当前行数据发送到<code>printer()</code>，由其在控制台打印出来，过程如图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/coroutine-pipline-filter.png" alt=""></p>
+<blockquote>
+<p>注：coroutine和generator的关键区别在于生成器使用迭代器在管道中拉取数据；协程通过send()向管道中推送数据。</p>
+</blockquote>
+<h3 id="管道连接更多的管道"><a href="#管道连接更多的管道" class="headerlink" title="管道连接更多的管道"></a>管道连接更多的管道</h3><p>有了协程，我们可以将数据发送到更多的地方……<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/coroutine-pipline-branchy.png" alt=""></p>
+<p>那么我们就来一个🌰，下列代码实现了一个广播的coroutine，将数据推送到批量的coroutines中：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">broadcast</span><span class="params">(targets)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        item = (<span class="keyword">yield</span>)</span><br><span class="line">        <span class="keyword">for</span> target <span class="keyword">in</span> targets:</span><br><span class="line">            target.send(item)</span><br></pre></td></tr></table></figure></p>
+<p>根据调用方式的不同，实际上会产生两种效果广播的情况——<br>①发送到不同的printer()<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">follow(f, broadcast([grep(<span class="string">'python'</span>, printer()),</span><br><span class="line">                         grep(<span class="string">'hello'</span>, printer()),</span><br><span class="line">                         grep(<span class="string">'world'</span>, printer())])</span><br><span class="line">           )</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://7xq1r1.com1.z0.glb.clouddn.com/broadcast-multiple-printer.png" alt=""></p>
+<p>②发送到相同的printer()<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">p = printer()</span><br><span class="line">follow(f, broadcast([</span><br><span class="line">    grep(<span class="string">'python'</span>, p),</span><br><span class="line">    grep(<span class="string">'hello'</span>, p),</span><br><span class="line">    grep(<span class="string">'world'</span>, p)]))</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://7xq1r1.com1.z0.glb.clouddn.com/broadcast-one-printer.png" alt=""></p>
+<p>不过在本例中，效果是一样的……</p>
+<h2 id="从数据处理到并发编程"><a href="#从数据处理到并发编程" class="headerlink" title="从数据处理到并发编程"></a>从数据处理到并发编程</h2><p>到目前为止，我们前面聊的coroutine的应用都是在处理数据，那么如果我们把数据发送给线程、发送给进程……协程程序自然而然就会涉及到线程和分布式系统的问题。</p>
+<p>看到这，估计也累了，那暂且先挖个坑，未完待续……</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1].<a href="Cohttp://www.dabeaz.com/coroutines/Coroutines.pdf" target="_blank" rel="external">A Curious Course on Coroutines and Concurrency</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Coroutines/">Coroutines</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/10/18/python-coroutines/&title=《Python中的Coroutine》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/10/18/python-coroutines/&title=《Python中的Coroutine》 — El barco&source=在展开对eventlet的学习之前，我们先来学习一下Python的Coroutine。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/10/18/python-coroutines/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的Coroutine》 — El barco&url=http://elbarco.cn/2017/10/18/python-coroutines/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/10/18/python-coroutines/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/17/introduction-to-trove-strategies/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">学习和认识Trove Strategies</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>本部落格係採用<a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh_TW">創用 CC 姓名標示 4.0 國際 授權條款授權</a></span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/10/18/python-coroutines/&title=《Python中的Coroutine》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/10/18/python-coroutines/&title=《Python中的Coroutine》 — El barco&source=在展开对eventlet的学习之前，我们先来学习一下Python的Coroutine。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/10/18/python-coroutines/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的Coroutine》 — El barco&url=http://elbarco.cn/2017/10/18/python-coroutines/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/10/18/python-coroutines/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/10/18/python-coroutines/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
