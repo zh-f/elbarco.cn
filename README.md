@@ -12,7 +12,7 @@ git clone git@github.com:2hf/elbarco.cn.git
 4. type command `hexo server` or `hexo server -i <your ip>` to run your web site.
 5. open browser and see what's happening!
 
-BTW, this repo is really for my blog's backup, so you knows.
+BTW, this repo is really for my blog's backup, so you know.
 
 
 My blog's entire static files. See `dev` branch [HERE](https://github.com/2hf/elbarco.cn/tree/dev) if you want to build your blog based on this one.
