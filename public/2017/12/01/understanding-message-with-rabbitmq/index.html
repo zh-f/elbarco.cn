@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Understanding message with RabbitMQ | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="AMQP,RabbitMQ">
+    <meta name="description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understanding message with RabbitMQ">
+<meta property="og:url" content="http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/msg-flow.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-channel.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-stack.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/direct-exchange.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/fanout-exchange.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/topic-exchange.png">
+<meta property="og:updated_time" content="2017-12-06T02:41:58.898Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Understanding message with RabbitMQ">
+<meta name="twitter:description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
+<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/msg-flow.png">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Understanding message with RabbitMQ</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="搜尋">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Understanding message with RabbitMQ</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-12-01T10:17:31.000Z" itemprop="datePublished" class="page-time">
+  2017-12-01
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#AMQP概述"><span class="post-toc-number">1.</span> <span class="post-toc-text">AMQP概述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#RabbitMQ中的消息流"><span class="post-toc-number">2.</span> <span class="post-toc-text">RabbitMQ中的消息流</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#从队列说起"><span class="post-toc-number">3.</span> <span class="post-toc-text">从队列说起</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#获取队列中的消息"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">获取队列中的消息</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#消息队列无订阅者或有多个订阅者"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">消息队列无订阅者或有多个订阅者</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#消息确认"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">消息确认</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#消息拒绝"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">消息拒绝</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#创建队列"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">创建队列</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#小节结语"><span class="post-toc-number">3.6.</span> <span class="post-toc-text">小节结语</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#开，往消息队列开……"><span class="post-toc-number">4.</span> <span class="post-toc-text">开，往消息队列开……</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Direct-exchange"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">Direct exchange</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Fanout-exchange"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">Fanout exchange</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Topic-exchange"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">Topic exchange</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#多租户：虚拟主机（vhost）和隔离"><span class="post-toc-number">5.</span> <span class="post-toc-text">多租户：虚拟主机（vhost）和隔离</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#消息的持久化"><span class="post-toc-number">6.</span> <span class="post-toc-text">消息的持久化</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解决事务的方案：发送方确认模式"><span class="post-toc-number">7.</span> <span class="post-toc-text">解决事务的方案：发送方确认模式</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-understanding-message-with-rabbitmq"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Understanding message with RabbitMQ</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-12-01 18:17:31" datetime="2017-12-01T10:17:31.000Z"  itemprop="datePublished">2017-12-01</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。<br><a id="more"></a></p>
+<h2 id="AMQP概述"><a href="#AMQP概述" class="headerlink" title="AMQP概述"></a>AMQP概述</h2><p>AMQP(Advanced Message Queuing Protocol)，即高级消息队列协议，是一种应用层网络协议，它为特定客户端应用(application)与消息中间件代理(messaging middleware broker)之间的通信提供支持。本文针对AMQP 0-9-1 模型作一个简单的介绍，该模型即rabbitmq所使用的模型。</p>
+<h2 id="RabbitMQ中的消息流"><a href="#RabbitMQ中的消息流" class="headerlink" title="RabbitMQ中的消息流"></a>RabbitMQ中的消息流</h2><p>用过RabbitMQ的同学肯定对下面这个图会非常理解：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/msg-flow.png" alt="message-flow"><br>总体来讲，消息的生产者，产生消息，将消息发到消息队列RabbitMQ；消息的消费者在队列中取得消息执行后续操作，这就是RabbitMQ中的消息流。</p>
+<p>然而在在将消息推送到MQ或者在MQ中消费时，我们要连接到MQ上。在连接的时候，客户端会创建一个TCP连接到RabbitMQ broker上。一旦连接成功，则客户端会创建一个AMQP channel。AMQP的channel是在TCP连接上的虚拟频道，当我们发布消息，订阅一个队列或者是接收消息，均在频道中完成——为什么需要AMQP channel呢？因为TCP会话的建立和销毁对于操作系统来讲，是十分昂贵的。我们假设说，我们的客户端连接到MQ上进行消息消费，短时间内产生大量的TCP连接，消费完成后，又要将这些TCP连接销毁，这不仅会造成了TCP连接的巨大浪费，而且操作系统每秒钟创建的连接数量有限。很快我们就会遇到性能瓶颈。于是，AMQP channel就诞生了，在一个TCP连接上使用多个频道，每个频道都会被分配一个唯一ID作为标识，在保证每个线程的私有连接的前提下，显著的提高性能，下面是一个生动的示意图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-channel.png" alt="amqp-channel"></p>
+<h2 id="从队列说起"><a href="#从队列说起" class="headerlink" title="从队列说起"></a>从队列说起</h2><p>现在，已经对消息整个的生产、消费过程有了大概的了解，我们再进到内部去看下，消息究竟在RabbitMQ内部是如何流转的。</p>
+<p>从概念上来讲，消息的成功流转离不开三部分：exchange，queue和binding：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-stack.png" alt="amqp-stack"></p>
+<ul>
+<li>Exchange是生产者发布消息的地方</li>
+<li>Queue是消息结束并被消费者接收的地方</li>
+<li>Binding就是消息如何从特定的Exchange被路由到指定队列的一系列规则</li>
+</ul>
+<h3 id="获取队列中的消息"><a href="#获取队列中的消息" class="headerlink" title="获取队列中的消息"></a>获取队列中的消息</h3><p>我们先来说说队列。在队列中获取消息有两种方式：</p>
+<ol>
+<li>使用AMQP命令<code>basic.consume</code>来启动一个队列的消费者（订阅者），如果你的消费者需要处理一个队列的大量消息或者要求一旦有消息达到队列能够立刻自动的接收到消息，则需要使用这种方式；</li>
+<li>使用AMQP命令<code>basic.get</code>直接访问队列获取一条消息。使用该命令后会使得消费者接收队列的下一条消息，并且在下次调用<code>basic.get</code>之前不会再接收队列的消息，即订阅队列，接收单条消息，取消订阅。千万不要在循环中使用<code>basic.get</code>以求替代<code>basic.consume</code>，要合理的进行订阅来提高吞吐。</li>
+</ol>
+<h3 id="消息队列无订阅者或有多个订阅者"><a href="#消息队列无订阅者或有多个订阅者" class="headerlink" title="消息队列无订阅者或有多个订阅者"></a>消息队列无订阅者或有多个订阅者</h3><p>如果消息队列没有订阅的消费者，消息会在队列中等待。</p>
+<p>如果一个RabbitMQ消息队列有多个消费者，那么队列中的消息将以轮询的方式服务于消费者，即，每条消息只会发送给订阅该队列的<strong>某一个</strong>消费者。</p>
+<h3 id="消息确认"><a href="#消息确认" class="headerlink" title="消息确认"></a>消息确认</h3><p>消费者接收到的每条消息都需要得到确认——每个消费者可以选择要么显示的通过使用AMQP命令<code>basic.ack</code>发送确认通知给RabbitMQ，或者可以选择在订阅到队列的时候设置参数<code>auto_ack</code>为<code>true</code>，指定了该参数后，RabbitMQ会在消费者接收到消息后自动认为消息已经确认收到了。注意，这里的消息确认，不是告知消息的发送者，而是告诉RabbitMQ消费者已经收到了消息，可以安全的将该消息在队列中移除了。</p>
+<p>如果处理消息比较集中和耗时，可以考虑延迟确认消息，直到处理结束。</p>
+<h3 id="消息拒绝"><a href="#消息拒绝" class="headerlink" title="消息拒绝"></a>消息拒绝</h3><p>如果消费者在处理某条消息的时候没有发送确认信息（如断开连接等），则RabbitMQ会认为该消费者不具备接收消息的条件，会将该消息重新发送给下一个订阅者。但是这种消息拒绝的方式会增加服务器负担。</p>
+<p>我们还可以使用<code>basic.reject</code>来拒绝RabbitMQ发送给消费者的消息。</p>
+<blockquote>
+<p>注：此外，对RabbitMQ来说，还可以使用<code>basic.nack</code>，这是RabbitMQ中对reject命令特殊的扩展实现。</p>
+</blockquote>
+<p>如果设置<code>reject</code>命令的参数<code>requeue</code>为<code>true</code>，则RabbitMQ会将消息发送给下一个订阅的消费者，否则RabbitMQ会立刻在队列中删除这条消息而不发送给新的消费者。</p>
+<p>当然，不想处理消息的时候还可以通过确认消息已收到来处理，在收到某些格式不正确的消息并确认没有消费者能处理时，这么操作十分有效。</p>
+<blockquote>
+<p>注，在RabbitMQ的某些新版本中，会支持一个特殊的<a href="https://www.rabbitmq.com/dlx.html" target="_blank" rel="external"><code>dead letter</code>队列</a>，即无法投递的消息队列。如果使用<code>reject</code>命令并设置参数<code>requeue</code>为<code>false</code>，则消息会被丢到该队列。</p>
+</blockquote>
+<h3 id="创建队列"><a href="#创建队列" class="headerlink" title="创建队列"></a>创建队列</h3><p>消息的消费者或者生产者都可以使用AMQP命令<code>queue.declare</code>来创建队列。但是消费者不能在已经在相同频道上订阅到其他队列的前提下声明或创建队列，必须先取消订阅将频道至于一种“可传输”的模式。</p>
+<p>创建队列时，一般由消费者指定队列的名字，如果没有指定，则RabbitMQ会随机生成一个名字，在<code>queue.declare</code>的返回值中体现出来。随机队列名在一些临时的匿名队列场景下非常有用，比如基于AMQP应用的RPC调用。</p>
+<p>在创建队列时，有两个参数很有用：</p>
+<ul>
+<li><code>exclusive</code> - 设置为true，则队列会设置为私有状态，常用于控制队列只允许有一个消费者的情况；</li>
+<li><code>auto-delete</code> - 队列在最后一个消费者取消订阅后自动删除，如果只需要一个临时队列提供给一个消费者，结合<code>auto-delete</code>和<code>exclusive</code>两个参数，当消费者断开连接时，队列自动被删除。</li>
+</ul>
+<p>创建一个队列，恰好这个队列已经存在，RabbitMQ会直接返回成功。这个特性可以用于判断队列是否存在，在创建队列时，指定<code>queue.declare</code>的参数<code>passive</code>为<code>true</code>即可；如果队列不存在，则直接返回一个错误信息并不创建队列。</p>
+<h3 id="小节结语"><a href="#小节结语" class="headerlink" title="小节结语"></a>小节结语</h3><p>队列是AMQP消息的基石——</p>
+<ul>
+<li>为等待被消费的消息提供了栖息地；</li>
+<li>完美的适用于负载均衡，只需要使很多消费者订阅同一个队列即可——因为RabbitMQ会使用轮询的方式处理消息；</li>
+<li>RabbitMQ中所有消息的终点</li>
+</ul>
+<h2 id="开，往消息队列开……"><a href="#开，往消息队列开……" class="headerlink" title="开，往消息队列开……"></a>开，往消息队列开……</h2><p>前面我们对消息队列Queue进行了比较详尽的介绍，那现在的问题是，消息是怎么抵达消息队列的？这时候，就需要exchange和binding了。</p>
+<p>所有的消息均要先发送到exchang（路由），然后基于特定的规则，RabbitMQ会决定将消息发往哪个队列。这些规则被称为<em>routing keys</em>，一个队列可以说“通过一个<em>routing key</em>，<em>绑定</em>到一个exchange上”。</p>
+<p>如果遇到了多个队列该怎么办？这里就要提到四种exchange类型，分别是<code>direct</code>、<code>fanout</code>、<code>topic</code>和<code>headers</code>，每一种都实现了不同的路由算法。<code>headers</code>允许通过匹配AMQP消息的header而不是routing key，所以我们这里不去深究和探讨了。</p>
+<h3 id="Direct-exchange"><a href="#Direct-exchange" class="headerlink" title="Direct exchange"></a>Direct exchange</h3><p>字面意思，直接路由。如果routing key匹配，则消息会被发送到响应的队列中，如下图所示：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/direct-exchange.png" alt="direct-exchange"></p>
+<p>所有的消息队列必须实现这种方式，包括创建一个名称为空字符串的exchange，如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$channel-&gt;basic_publish($msg, &apos;&apos;, &apos;queue-name&apos;);</span><br></pre></td></tr></table></figure></p>
+<p>第一个参数标识了要发送的消息，第二个参数，一个空字符串，标识了指向默认的exchange，第三个参数就是routing key，也就是声明队列所使用的名称。</p>
+<p>如果默认的direct exchange不能满足要求，可以使用<code>exchange.declare</code>命令创建自己所需要的exchange。</p>
+<h3 id="Fanout-exchange"><a href="#Fanout-exchange" class="headerlink" title="Fanout exchange"></a>Fanout exchange</h3><p>扇区路由，示意图如下：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/fanout-exchange.png" alt=""></p>
+<p> Exchange会将收到的消息组播（multicast）到绑定的消息队列中，即这种模式下，支持应用根据一个（only one）消息做出不同的反应。比如我们考虑这么一个用户场景，在用户上传完图片后，既要更新图片缓存，又要奖励用户操作，那么此时如果使用fanout exchange，只需要将两个consumer都绑定到这个exchange上即可。那么如果还需要在上传图片后增加新的处理，只需要写好消费者的功能代码绑定到exchange上即可，对于消息生产者来讲，代码是完全解耦的。</p>
+<h3 id="Topic-exchange"><a href="#Topic-exchange" class="headerlink" title="Topic exchange"></a>Topic exchange</h3><p>这种路由方式，可以实现来自不同消息源的消息到达同一队列，示意图如下：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/topic-exchange.png" alt=""></p>
+<p>这里留一个小问题：<code>为什么OpenStack中使用Topic Exchange比较多？</code></p>
+<h2 id="多租户：虚拟主机（vhost）和隔离"><a href="#多租户：虚拟主机（vhost）和隔离" class="headerlink" title="多租户：虚拟主机（vhost）和隔离"></a>多租户：虚拟主机（vhost）和隔离</h2><p>每个RabbitMQ server都有能力创建多个虚拟的消息代理，即virtual host，简称vhost。每个vhost都是一个迷你的RabbitMQ server，具有自己独有的Queue、Exchange和Binding，更重要是的是，具有自己的权限。这使得多个应用同时可以安全无忧的使用同一个RabbitMQ服务器。</p>
+<p>在RabbitMQ中，默认的vhost=/，在不需要多租户的场景下，默认值就足够了。在创建RabbitMQ用户的时候需要指定至少一个vhost。</p>
+<blockquote>
+<p>注，通过vhost隔离的租户是绝对的，即你不能将vhost A的队列绑定到vhost B的exchange上。</p>
+</blockquote>
+<p>可以使用命令查看vhosts：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@rabbit1 ~]# rabbitmqctl list_vhosts</span><br><span class="line">Listing vhosts ...</span><br><span class="line">/</span><br></pre></td></tr></table></figure></p>
+<p>使用命令创建一个vhost：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@rabbit1 ~]# rabbitmqctl add_vhost f</span><br><span class="line">Creating vhost &quot;f&quot; ...</span><br><span class="line">[root@rabbit1 ~]# rabbitmqctl list_vhosts</span><br><span class="line">Listing vhosts ...</span><br><span class="line">f</span><br><span class="line">/</span><br></pre></td></tr></table></figure></p>
+<h2 id="消息的持久化"><a href="#消息的持久化" class="headerlink" title="消息的持久化"></a>消息的持久化</h2><p>每个Queue和Exchange，都有一个<code>durable</code>属性，默认值为<code>false</code>，即默认情况下RabbitMQ不会在服务器宕机或者重启后重建Queue或Exchange，所以建议这个值一定要设置成<code>true</code>。</p>
+<p>此外，只有Queue和Exchange的<code>durable</code>还不完全够，消息的持久化还需要三个要点：</p>
+<ol>
+<li>将其选项<code>delivery mode</code>要设置成<code>2</code>，即<code>persistent</code>，持久的；</li>
+<li>消息被发布到<code>durable</code>的Exchange；</li>
+<li>消息抵达一个<code>durable</code>的Queue</li>
+</ol>
+<p>满足上述三个条件，消息的持久化就稳了。</p>
+<p>RabbitMQ通过将持久化的消息写入磁盘日志文件来确保消息在重启时不是丢失，即当发布一个持久化的消息到持久化的exchange，在写入到日志文件之前是不会发送消息的响应。如果持久化的消息被路由到非持久化的队列，则会自动在持久化日志中移除，即无法保证消息在重启时不会丢失。</p>
+<p>然而持久化虽好，却不要“贪杯”。因为将消息持久化到磁盘上比直接存储在内存中要慢很多，这就会面临几个问题：</p>
+<ol>
+<li>会减少RabbitMQ每秒处理的消息数量，这个降低的比例甚至能达到10倍或者更多；</li>
+<li>持久化消息在RabbitMQ的内置集群中表现不佳；</li>
+</ol>
+<p>那到底应不应该使用persistent/durable消息呢？首先还是要评估一下性能需求。如果单节点的RabbitMQ需要每秒处理100,000+的数据，那么可能持久化信息就不是一个好的选择。</p>
+<h2 id="解决事务的方案：发送方确认模式"><a href="#解决事务的方案：发送方确认模式" class="headerlink" title="解决事务的方案：发送方确认模式"></a>解决事务的方案：发送方确认模式</h2><p>由于AMQP内部事务对性能有很大瓶颈，现采取发送方确认模式保证事务，将信道设置为confirm模式，所有在此信道上发布的消息都会有一个唯一的ID号，当被投递到匹配的队列时，信道就会发送一个发送方确认模式给生产者应用程序，这个模式是异步的，应用程序可以等待确认的同时继续发送下一条，但如果是持久化的消息，会在写入磁盘之后消息发出。</p>
+<p>如果发送内部错误而导致消息丢失，RabbitMQ会发送一条nack(not acknowledged,未确认)消息，这种模式下每分钟可追踪数以百万计的消息投递。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AMQP/">AMQP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMQ/">RabbitMQ</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/&title=《Understanding message with RabbitMQ》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/&title=《Understanding message with RabbitMQ》 — El barco&source=本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Understanding message with RabbitMQ》 — El barco&url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/23/python-coroutines-with-concurrent-programming/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Python中的Coroutine与并发编程</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>本部落格係採用<a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh_TW">創用 CC 姓名標示 4.0 國際 授權條款授權</a></span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/&title=《Understanding message with RabbitMQ》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/&title=《Understanding message with RabbitMQ》 — El barco&source=本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Understanding message with RabbitMQ》 — El barco&url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
