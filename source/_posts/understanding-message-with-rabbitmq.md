@@ -115,6 +115,13 @@ $channel->basic_publish($msg, '', 'queue-name');
 这种路由方式，可以实现来自不同消息源的消息到达同一队列，示意图如下：
 ![](http://7xrgsx.com1.z0.glb.clouddn.com/topic-exchange.png)
 
+`Topic exchange`与`Direct exchange有`些类似，都是通过匹配特定的routing key来讲消息发送给绑定到exchange上的queue中。但是对于`Topic exchange`来讲，有两个特殊的binding key：
+* *，星号，替代/匹配一个单词
+* #，井号，替代/匹配零个或者多个词
+
+>注：如果队列使用的routing key是一个`#`，则会收到所有消息，忽略routing key的话，这就类似绑定到一个`fanout exchange`上；如果在routing key中不使用`#`或者`*`，则与`direct exchange`无异。
+
+
 这里留一个小问题：`为什么OpenStack中使用Topic Exchange比较多？`
 
 ## 多租户：虚拟主机（vhost）和隔离

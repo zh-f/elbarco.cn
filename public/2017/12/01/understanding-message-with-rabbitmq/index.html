@@ -44,7 +44,7 @@
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/direct-exchange.png">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/fanout-exchange.png">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/topic-exchange.png">
-<meta property="og:updated_time" content="2017-12-06T02:41:58.898Z">
+<meta property="og:updated_time" content="2017-12-06T06:48:50.694Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Understanding message with RabbitMQ">
 <meta name="twitter:description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
@@ -129,7 +129,7 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
@@ -245,6 +245,14 @@
 <h3 id="Fanout-exchange"><a href="#Fanout-exchange" class="headerlink" title="Fanout exchange"></a>Fanout exchange</h3><p>扇区路由，示意图如下：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/fanout-exchange.png" alt=""></p>
 <p> Exchange会将收到的消息组播（multicast）到绑定的消息队列中，即这种模式下，支持应用根据一个（only one）消息做出不同的反应。比如我们考虑这么一个用户场景，在用户上传完图片后，既要更新图片缓存，又要奖励用户操作，那么此时如果使用fanout exchange，只需要将两个consumer都绑定到这个exchange上即可。那么如果还需要在上传图片后增加新的处理，只需要写好消费者的功能代码绑定到exchange上即可，对于消息生产者来讲，代码是完全解耦的。</p>
 <h3 id="Topic-exchange"><a href="#Topic-exchange" class="headerlink" title="Topic exchange"></a>Topic exchange</h3><p>这种路由方式，可以实现来自不同消息源的消息到达同一队列，示意图如下：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/topic-exchange.png" alt=""></p>
+<p><code>Topic exchange</code>与<code>Direct exchange有</code>些类似，都是通过匹配特定的routing key来讲消息发送给绑定到exchange上的queue中。但是对于<code>Topic exchange</code>来讲，有两个特殊的binding key：</p>
+<ul>
+<li>*，星号，替代/匹配一个单词</li>
+<li>#，井号，替代/匹配零个或者多个词</li>
+</ul>
+<blockquote>
+<p>注：如果队列使用的routing key是一个<code>#</code>，则会收到所有消息，忽略routing key的话，这就类似绑定到一个<code>fanout exchange</code>上；如果在routing key中不使用<code>#</code>或者<code>*</code>，则与<code>direct exchange</code>无异。</p>
+</blockquote>
 <p>这里留一个小问题：<code>为什么OpenStack中使用Topic Exchange比较多？</code></p>
 <h2 id="多租户：虚拟主机（vhost）和隔离"><a href="#多租户：虚拟主机（vhost）和隔离" class="headerlink" title="多租户：虚拟主机（vhost）和隔离"></a>多租户：虚拟主机（vhost）和隔离</h2><p>每个RabbitMQ server都有能力创建多个虚拟的消息代理，即virtual host，简称vhost。每个vhost都是一个迷你的RabbitMQ server，具有自己独有的Queue、Exchange和Binding，更重要是的是，具有自己的权限。这使得多个应用同时可以安全无忧的使用同一个RabbitMQ服务器。</p>
 <p>在RabbitMQ中，默认的vhost=/，在不需要多租户的场景下，默认值就足够了。在创建RabbitMQ用户的时候需要指定至少一个vhost。</p>
@@ -439,7 +447,7 @@
 
         <p>
             
-            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
         </p>
     </div -->
     <div class="bottom">
