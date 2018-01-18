@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Nova架构体系概览 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="OpenStack,Nova">
+    <meta name="description" content="What’s Nova我们首先来看一下OpenStack的逻辑架构图：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nova架构体系概览">
+<meta property="og:url" content="http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="What’s Nova我们首先来看一下OpenStack的逻辑架构图：">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/osog_0001.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/architecture.svg">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/kvm_archi_base_oh9pnk.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/nova-compute-drivers.jpg">
+<meta property="og:updated_time" content="2018-01-18T07:14:12.073Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nova架构体系概览">
+<meta name="twitter:description" content="What’s Nova我们首先来看一下OpenStack的逻辑架构图：">
+<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/osog_0001.png">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Nova架构体系概览</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Nova架构体系概览</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-01-16T03:11:07.000Z" itemprop="datePublished" class="page-time">
+  2018-01-16
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#What’s-Nova"><span class="post-toc-number">1.</span> <span class="post-toc-text">What’s Nova</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Components"><span class="post-toc-number">2.</span> <span class="post-toc-text">Components</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Instance-Life-Cycle-Management-Process"><span class="post-toc-number">3.</span> <span class="post-toc-text">Instance Life Cycle Management Process</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Reference"><span class="post-toc-number">4.</span> <span class="post-toc-text">Reference</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-learning-nova-architecture-overview"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Nova架构体系概览</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-01-16 11:11:07" datetime="2018-01-16T03:11:07.000Z"  itemprop="datePublished">2018-01-16</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="What’s-Nova"><a href="#What’s-Nova" class="headerlink" title="What’s Nova"></a>What’s Nova</h2><p>我们首先来看一下OpenStack的逻辑架构图：<a id="more"></a><br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/osog_0001.png" alt=""></p>
+<p>接触过云计算，接触过OpenStack的童鞋都会有所了解，IaaS中最重要的就是计算、存储和网络。Nova，作为OpenStack核心项目，承担起了提供计算资源的重任，即，为用户提供了计算实例，这些实例又称为虚拟机。从上面的逻辑架构图中也可以看到，有了虚拟机之后，才可以外接存储、网络，亦或是有类似Trove（OpenStack中Database-as-a-Service的项目，详见<a href="https://www.openstack.org/software/releases/ocata/components/trove" target="_blank" rel="external">&gt;&gt;&gt;传送门</a>）这种在虚机中运行数据库服务的PaaS项目。当然，虚机也需要像认证服务（Keystone）、镜像（Glance）、网络（Neutron）、存储（Cinder、Swift）这些项目的支持，可谓是你中有我，我中有你。</p>
+<p>目前在OpenStack Nova项目的页面（详见<a href="https://www.openstack.org/software/releases/ocata/components/nova" target="_blank" rel="external">&gt;&gt;&gt;传送门</a>）显示的生产环境的应用率高达95%，可以说是很“强势”。</p>
+<p>本文就作为Nova学习系列的开篇文章，先熟悉一下Nova架构体系及代码结构。</p>
+<h2 id="Components"><a href="#Components" class="headerlink" title="Components"></a>Components</h2><p>Nova项目也是有好几个组件构成，组件的关系架构图如下所示，其中网络模块一个是Nova-networking，一个是Neutron，当然现在大部分使用的都是Neutron，所以我们只关注第二张图就OK了：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/architecture.svg" alt=""></p>
+<p>可以看到，在Nova中，有这么几个主要的服务：</p>
+<ul>
+<li>DB：用于数据存储的基础设施数据库</li>
+<li>API: 即nova-api服务，通过oslo.messaging队列或者HTTP，接收响应终端用户的计算服务API请求或者与其他组件进行通讯</li>
+<li>Scheduler: 即nova-scheduler服务，用于调度每台实例具体落到哪个计算服务节点上</li>
+<li>Compute: 即nova-compute服务，管理hypervisor与虚机的通讯，通过虚拟机管理程序API对虚拟机实例进行创建、终止等操作的一个工作守护进程</li>
+<li>Conductor: 即nova-conductor服务，处理需要协同合作的请求，比如创建实例和调整实例等操作；同时还扮演了数据库代理的角色或者是处理对象转换</li>
+</ul>
+<p>在这个图中，值得注意的一点是Nova的几个主要服务组件之间，是通过oslo.messaging进行RPC调用，与外部服务之间通过HTTP的方式、RESTFul接口进行通讯和交互。</p>
+<p>在Compute中，有一个“Hypervisor”，这又是什么呢？</p>
+<p>我们讲，OpenStack其实是一个云管平台，即其本身不提供虚拟化功能，还是要依赖于操作系统底层的虚拟化技术，其中Hypervisor是虚拟化技术的核心。它是一种运行在物理服务器和操作系统之间的中间软件层，可允许多个操作系统和应用共享一套基础物理硬件，因此也可以看作是虚拟环境中的“元”操作系统，它可以协调访问服务器上的所有物理设备和虚拟机，也叫虚拟机监视器（Virtual Machine Monitor）——</p>
+<blockquote>
+<p>In computing, a hypervisor, also called virtual machine monitor (VMM), is a piece of software/hardware platform-virtualization software that allows multiple operating systems to run on a host computer concurrently.</p>
+</blockquote>
+<p>目前常见的Hypervisor有QEMU、KVM、XEN、VMware等，其中，KVM是集成到Linux内核的Hypervisor，是X86架构且硬件支持虚拟化技术（Intel VT或AMD-V）的Linux的全虚拟化解决方案。它是Linux的一个很小的模块，利用Linux做大量的事，如任务调度、内存管理与硬件设备交互等。最为热门，也最为常用。</p>
+<p>此外，需要提一下qemu-kvm——</p>
+<blockquote>
+<p>QEMU将KVM整合进来，通过ioctl调用/dev/kvm接口，将有关CPU指令的部分交由内核模块来做。KVM负责CPU虚拟化+内存虚拟化，实现了CPU和内存的虚拟化，但KVM不能模拟其他设备。QEMU模拟IO设备（网卡，磁盘等），KVM加上QEMU之后就能实现真正意义上服务器虚拟化。因为用到了上面两个东西，所以称之为qemu-kvm，来张图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/kvm_archi_base_oh9pnk.png" alt=""></p>
+</blockquote>
+<p>在KVM这一层之上，是libvirt，它提供统一、稳定、开放源码的对各种虚拟机进行管理的工具（守护进程libvirtd、默认命令行管理工具virsh）和应用程序接口（API）。一些常用的虚拟机管理工具（如virsh、virt-install、virt-manager等）和云计算框架平台（如OpenStack等）都在底层使用libvirt的应用程序接口。</p>
+<p>在Nova的Compute服务中，通过不同的驱动来支持多种Hypervisor，与各种Hypervisor驱动的关系可以用下面的一张图来表示：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/nova-compute-drivers.jpg" alt=""></p>
+<h2 id="Instance-Life-Cycle-Management-Process"><a href="#Instance-Life-Cycle-Management-Process" class="headerlink" title="Instance Life Cycle Management Process"></a>Instance Life Cycle Management Process</h2><p>在实例的生命周期管理流程中，常见的一些操作如下：</p>
+<ul>
+<li>创建：nova boot<ul>
+<li>boot from image</li>
+<li>boot from volume</li>
+</ul>
+</li>
+<li>重启：nova reboot<ul>
+<li>软重启，默认情况</li>
+<li>硬重启：nova reboot –hard，具体不同还需要用代码说话</li>
+</ul>
+</li>
+<li>启动：nova start</li>
+<li>停止：nova stop</li>
+<li>挂起：nova suspend</li>
+<li>暂停：nova pause，pause与suspend的区别在于pause将instance的运行状态保存在计算节点的内存中，而suspend保存在磁盘上。pause的优点在于恢复的速度比suspend快，缺点是如果计算节点重启，内存数据丢失，则无法resume。suspend就不存在该问题</li>
+<li>恢复：nova resume</li>
+<li>调整实例：nova resize</li>
+<li>迁移实例：<ul>
+<li>nova live-migration</li>
+<li>nova migrate，代码与nova resize相同，如果在resize时未提供flavor id，则仅migrate实例</li>
+</ul>
+</li>
+<li>重建：nova rebuild</li>
+<li>快照：nova image-create，对运行的虚机创建一个快照镜像，直接上传到Glance中，可用于恢复主机或以此镜像为模板创建新的主机</li>
+<li>备份：nova backup，通过创建一个<code>backup</code>类型的快照来备份主机</li>
+<li>删除：nova delete，立即关闭主机并删除实例</li>
+</ul>
+<p>后续需要对上面这些主要流程进行梳理，包括上面描述的几个命令的不同或者相似之处，我们让代码来说话。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[1]. <a href="https://huangwei.me/wiki/tech_cloud_kvm_qemu_libvirt_openstack.html" target="_blank" rel="external">虚拟化类型</a><br>[2]. <a href="https://www.openstack.org/assets/presentation-media/OSSummitAtlanta2014-NovaLibvirtKVM2.pdf" target="_blank" rel="external">Under the Hood with Nova, Libvirt and KVM</a><br>[3]. <a href="https://zhangchenchen.github.io/2016/08/22/openstack-nova/" target="_blank" rel="external">OpenStack系列–Nova</a><br>[4]. <a href="https://docs.openstack.org/nova/latest/" target="_blank" rel="external">OpenStack Compute(Nova)</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nova/">Nova</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/&title=《Nova架构体系概览》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/&title=《Nova架构体系概览》 — El barco&source=What’s Nova我们首先来看一下OpenStack的逻辑架构图：" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Nova架构体系概览》 — El barco&url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/12/01/understanding-message-with-rabbitmq/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Understanding message with RabbitMQ</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2018</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/&title=《Nova架构体系概览》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/&title=《Nova架构体系概览》 — El barco&source=What’s Nova我们首先来看一下OpenStack的逻辑架构图：" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Nova架构体系概览》 — El barco&url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2018/01/16/learning-nova-architecture-overview/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
