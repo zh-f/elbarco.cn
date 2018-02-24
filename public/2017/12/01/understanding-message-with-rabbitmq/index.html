@@ -33,6 +33,7 @@
     
     <meta name="keywords" content="AMQP,RabbitMQ">
     <meta name="description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
+<meta name="keywords" content="AMQP,RabbitMQ">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Understanding message with RabbitMQ">
 <meta property="og:url" content="http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/index.html">
@@ -219,7 +220,7 @@
 <p>如果设置<code>reject</code>命令的参数<code>requeue</code>为<code>true</code>，则RabbitMQ会将消息发送给下一个订阅的消费者，否则RabbitMQ会立刻在队列中删除这条消息而不发送给新的消费者。</p>
 <p>当然，不想处理消息的时候还可以通过确认消息已收到来处理，在收到某些格式不正确的消息并确认没有消费者能处理时，这么操作十分有效。</p>
 <blockquote>
-<p>注，在RabbitMQ的某些新版本中，会支持一个特殊的<a href="https://www.rabbitmq.com/dlx.html" target="_blank" rel="external"><code>dead letter</code>队列</a>，即无法投递的消息队列。如果使用<code>reject</code>命令并设置参数<code>requeue</code>为<code>false</code>，则消息会被丢到该队列。</p>
+<p>注，在RabbitMQ的某些新版本中，会支持一个特殊的<a href="https://www.rabbitmq.com/dlx.html" target="_blank" rel="noopener"><code>dead letter</code>队列</a>，即无法投递的消息队列。如果使用<code>reject</code>命令并设置参数<code>requeue</code>为<code>false</code>，则消息会被丢到该队列。</p>
 </blockquote>
 <h3 id="创建队列"><a href="#创建队列" class="headerlink" title="创建队列"></a>创建队列</h3><p>消息的消费者或者生产者都可以使用AMQP命令<code>queue.declare</code>来创建队列。但是消费者不能在已经在相同频道上订阅到其他队列的前提下声明或创建队列，必须先取消订阅将频道至于一种“可传输”的模式。</p>
 <p>创建队列时，一般由消费者指定队列的名字，如果没有指定，则RabbitMQ会随机生成一个名字，在<code>queue.declare</code>的返回值中体现出来。随机队列名在一些临时的匿名队列场景下非常有用，比如基于AMQP应用的RPC调用。</p>

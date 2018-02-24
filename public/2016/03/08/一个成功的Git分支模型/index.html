@@ -32,14 +32,13 @@
     
     
     <meta name="keywords" content="Git">
-    <meta name="description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
-针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
+    <meta name="description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。 针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
+<meta name="keywords" content="Git">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个成功的Git分支模型">
 <meta property="og:url" content="http://elbarco.cn/2016/03/08/一个成功的Git分支模型/index.html">
 <meta property="og:site_name" content="El barco">
-<meta property="og:description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
-针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
+<meta property="og:description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。 针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/main-branches%402x.png">
 <meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/fb%402x.png">
@@ -48,8 +47,7 @@
 <meta property="og:updated_time" content="2016-06-30T13:31:50.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个成功的Git分支模型">
-<meta name="twitter:description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。
-针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
+<meta name="twitter:description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。 针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
 <meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
@@ -194,7 +192,7 @@
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。</p>
-<p>针对如何搭建私有Git服务器，我选用的是<a href="https://about.gitlab.com/" target="_blank" rel="external">GitLab</a>，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">《A successful Git branching model》</a>讲述如何合理的使用Git branch进行开发和版本管理。</p>
+<p>针对如何搭建私有Git服务器，我选用的是<a href="https://about.gitlab.com/" target="_blank" rel="noopener">GitLab</a>，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="noopener">《A successful Git branching model》</a>讲述如何合理的使用Git branch进行开发和版本管理。</p>
 <a id="more"></a>
 <p>先来张图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png" alt="分支模型全貌"></p>
 <h2 id="详细展开"><a href="#详细展开" class="headerlink" title="详细展开"></a>详细展开</h2><h3 id="主要分支"><a href="#主要分支" class="headerlink" title="主要分支"></a>主要分支</h3><p>在这个模型中，中央仓库持有两个生命周期无限长的主要分支：</p>
@@ -225,7 +223,7 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout -b myfeature develop</span><br><span class="line">Switched to a new branch <span class="string">"myfeature"</span></span><br></pre></td></tr></table></figure>
 <p><em>将完成的功能合并到开发分支上</em></p>
 <p>完成的功能特性被合并到<code>develop</code>分支上，表示该功能要添加到即将发布的版本中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch <span class="string">'develop'</span></span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">Updating ea1b82a..05e9557</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git branch <span class="_">-d</span> myfeature</span><br><span class="line">Deleted branch myfeature (was 05e9557).</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch <span class="string">'develop'</span></span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">Updating ea1b82a..05e9557</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git branch -d myfeature</span><br><span class="line">Deleted branch myfeature (was 05e9557).</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
 <p><code>--no-ff</code>表示合并总是创建新的提交对象，这样可以避免在合并分支时丢失历史信息，对比图如下：</p>
 <p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/merge-without-ff%402x.png" alt=""></p>
 <p>显而易见，这就是证据啊，证据！:joy:</p>
@@ -237,13 +235,13 @@
 <p>在发布用分支拉出时，就需要给其分配一个版本号。而此后的<code>develop</code>分支上的变更都将反映这个版本。</p>
 <p><em>创建一个发布用分支</em></p>
 <p>发布用分支在<code>develop</code>分支上检出。举例来讲，目前我们的生产环境版本是1.1.5，马上就要发布一个大版本。<code>develop</code>分支已经准备就绪，我们决定将下一个版本的版本号为1.2.所以我们拉出一个发布用分支，命名需要反映新的版本号：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout -b release-1.2 develop</span><br><span class="line">Switched to a new branch <span class="string">"release-1.2"</span></span><br><span class="line">$ ./bump-version.sh 1.2</span><br><span class="line">Files modified successfully, version bumped to 1.2.</span><br><span class="line">$ git commit <span class="_">-a</span> -m <span class="string">"Bumped version number to 1.2"</span></span><br><span class="line">[release-1.2 74d9424] Bumped version number to 1.2</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
-<p>创建完新分支之后，变更版本号（这里的<a href="https://gist.github.com/pete-otaqui/4188238" target="_blank" rel="external"><code>bump-version.sh</code></a>脚本用于修改文件版本号，当然，针对不同的场景，也可手动变更版本号）。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout -b release-1.2 develop</span><br><span class="line">Switched to a new branch <span class="string">"release-1.2"</span></span><br><span class="line">$ ./bump-version.sh 1.2</span><br><span class="line">Files modified successfully, version bumped to 1.2.</span><br><span class="line">$ git commit -a -m <span class="string">"Bumped version number to 1.2"</span></span><br><span class="line">[release-1.2 74d9424] Bumped version number to 1.2</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
+<p>创建完新分支之后，变更版本号（这里的<a href="https://gist.github.com/pete-otaqui/4188238" target="_blank" rel="noopener"><code>bump-version.sh</code></a>脚本用于修改文件版本号，当然，针对不同的场景，也可手动变更版本号）。</p>
 <p>该分支会存在一段时间，这段时间内，该分支允许修改缺陷（而不是在<code>develop</code>上面）。在该分支上禁止添加新特性。最终，该分支必须合并到<code>develop</code>、</p>
 <p><em>完成一个发布用分支</em></p>
 <p>当发布用分支已经准备就绪可以发布一个现实的版本，我们仍然有很多工作要做。首先，将发布用分支合并到<code>master</code>（切记，所以提交到<code>master</code>内容一定是一新版本）。接着，提交到<code>master</code>上的变更必须添加标记（如使用版本号等进行标记），用于将来参考。最后，在这个发布用分支上进行的更改需要合并回<code>develop</code>，以保证将来的版本包含缺陷的修复。</p>
 <p>在Git中的前两步：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch <span class="string">'master'</span></span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag <span class="_">-a</span> 1.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch <span class="string">'master'</span></span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2</span><br></pre></td></tr></table></figure>
 <p>此时，版本已发布，并且已标记。</p>
 <blockquote>
 <p>Tips: 你可以使用<code>-s</code>或者<code>-u &lt;key&gt;</code>来加密标记。</p>
@@ -252,7 +250,7 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch <span class="string">'develop'</span></span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
 <p>这一步可能也会产生冲突，所以，解决冲突并且提交。</p>
 <p>此时，我们可以移除该发布用分支：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch <span class="_">-d</span> release-1.2</span><br><span class="line">Deleted branch release-1.2 (was ff452fe)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch -d release-1.2</span><br><span class="line">Deleted branch release-1.2 (was ff452fe)</span><br></pre></td></tr></table></figure>
 <h4 id="补丁分支"><a href="#补丁分支" class="headerlink" title="补丁分支"></a>补丁分支</h4><blockquote>
 <p>分支来源：<code>master</code><br>合并目标：<code>develop</code>和<code>master</code><br>命名惯例：<code>hotfix-*</code></p>
 </blockquote>
@@ -261,22 +259,22 @@
 <p>在某一位或者几位开发者修复线上问题的同时，<code>develop</code>分支可以继续进行。</p>
 <p><em>创建一个补丁分支</em></p>
 <p>补丁分支在<code>master</code>上拉出，举例来说，1.2版本是目前的线上版本，由于一个严重bug造成宕机的情况出现，但是目前<code>develop</code>分支上的变更还不够稳定，此时，我们可以使用补丁分支，先来解决紧急问题：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout -b hotfix-1.2.1 master</span><br><span class="line">Switched to a new branch <span class="string">"hotfix-1.2.1"</span></span><br><span class="line">$ ./bump-version.sh 1.2.1</span><br><span class="line">Files modified successfully, version bumped to 1.2.1.</span><br><span class="line">$ git commit <span class="_">-a</span> -m <span class="string">"Bumped version number to 1.2.1"</span></span><br><span class="line">[hotfix-1.2.1 41e61bb] Bumped version number to 1.2.1</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout -b hotfix-1.2.1 master</span><br><span class="line">Switched to a new branch <span class="string">"hotfix-1.2.1"</span></span><br><span class="line">$ ./bump-version.sh 1.2.1</span><br><span class="line">Files modified successfully, version bumped to 1.2.1.</span><br><span class="line">$ git commit -a -m <span class="string">"Bumped version number to 1.2.1"</span></span><br><span class="line">[hotfix-1.2.1 41e61bb] Bumped version number to 1.2.1</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
 <p>不要忘记增加版本号。</p>
 <p>然后，修复bug并提交变更。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git commit -m <span class="string">"Fixed severe production problem"</span></span><br><span class="line">[hotfix-1.2.1 abbe5d6] Fixed severe production problem</span><br><span class="line">5 files changed, 32 insertions(+), 17 deletions(-)</span><br></pre></td></tr></table></figure>
 <p><em>结束使用一个补丁分支</em></p>
 <p>修复bug之后，补丁分支必须合并到<code>master</code>，同时，也需要合并到<code>develop</code>，确保在下一个版本中包含bug的修复。此时的操作与发布用分支完全一致。</p>
 <p>首先，更新<code>master</code>并且标注版本：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch <span class="string">'master'</span></span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag <span class="_">-a</span> 1.2.1</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch <span class="string">'master'</span></span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2.1</span><br></pre></td></tr></table></figure>
 <p>接着，合并到<code>develop</code>：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch <span class="string">'develop'</span></span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
 <p><strong>这个规则存在一个例外情况：如果发布用分支当前存在，则需要将补丁分支合并到发布用分支，而不是<code>develop</code></strong>，因为该发布用分支最终会合并到<code>develop</code>（如果<code>develop</code>分支立刻需要这个bug得到修复，而等不到发布用分支结束，则你需要小心谨慎的将修正合并到未准备就绪的<code>develop</code>分支上）。</p>
 <p>最后，移除这个临时分支：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch <span class="_">-d</span> hotfix-1.2.1</span><br><span class="line">Deleted branch hotfix-1.2.1 (was abbe5d6).</span><br></pre></td></tr></table></figure>
-<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>这个模型看起来并没有什么特别令人震惊的地方，但是却十分合理。在StackOverflow上问题<a href="http://stackoverflow.com/questions/4181185/what-does-bump-version-stand-for" target="_blank" rel="external">What does Bump Version stand for?</a>中，有解答者提到了该文，并十分推荐。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch -d hotfix-1.2.1</span><br><span class="line">Deleted branch hotfix-1.2.1 (was abbe5d6).</span><br></pre></td></tr></table></figure>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>这个模型看起来并没有什么特别令人震惊的地方，但是却十分合理。在StackOverflow上问题<a href="http://stackoverflow.com/questions/4181185/what-does-bump-version-stand-for" target="_blank" rel="noopener">What does Bump Version stand for?</a>中，有解答者提到了该文，并十分推荐。</p>
 <blockquote>
-<p>原文作者Twitter：<a href="http://twitter.com/nvie" target="_blank" rel="external">@nvie</a> </p>
+<p>原文作者Twitter：<a href="http://twitter.com/nvie" target="_blank" rel="noopener">@nvie</a> </p>
 </blockquote>
 
         </div>

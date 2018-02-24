@@ -33,6 +33,7 @@
     
     <meta name="keywords" content="Linux,CentOS6.5">
     <meta name="description" content="最近有想学习下Docker，在Linux下安装Docker对内核的要求至少是3.10以上，然而CentOS 6.5内核版本是2.6，所以首先要做的就是为CentOS 6.5安装3.10的Kernel。">
+<meta name="keywords" content="Linux,CentOS6.5">
 <meta property="og:type" content="article">
 <meta property="og:title" content="为CentOS6.5安装Kernel3.10">
 <meta property="og:url" content="http://elbarco.cn/2016/03/12/为CentOS6-5安装Kernel3-10/index.html">
@@ -185,7 +186,7 @@
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>最近有想学习下Docker，在Linux下安装Docker对内核的要求至少是3.10以上，然而CentOS 6.5内核版本是2.6，所以首先要做的就是为CentOS 6.5安装3.10的Kernel。<br><a id="more"></a></p>
-<p>我们并不需要自己编译安装，而是有小伙伴在在<a href="http://elrepo.org/tiki/tiki-index.php" target="_blank" rel="external">ELRepo</a>上为我们准备好了一个package，我们只关心如何安装就好了。</p>
+<p>我们并不需要自己编译安装，而是有小伙伴在在<a href="http://elrepo.org/tiki/tiki-index.php" target="_blank" rel="noopener">ELRepo</a>上为我们准备好了一个package，我们只关心如何安装就好了。</p>
 <h2 id="启用ELRepo"><a href="#启用ELRepo" class="headerlink" title="启用ELRepo"></a>启用ELRepo</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org  </span><br><span class="line">rpm -Uvh http://www.elrepo.org/elrepo-release-6-6.el6.elrepo.noarch.rpm</span><br></pre></td></tr></table></figure>
 <h2 id="安装Kernel"><a href="#安装Kernel" class="headerlink" title="安装Kernel"></a>安装Kernel</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum --enablerepo=elrepo-kernel install kernel<span class="_">-lt</span></span><br></pre></td></tr></table></figure>
 <h2 id="配置grub"><a href="#配置grub" class="headerlink" title="配置grub"></a>配置grub</h2><p>需要编辑<code>/etc/grub.conf</code>来更改kernel顺序，将默认的1改为0.所以看起来应该是酱婶儿的：</p>

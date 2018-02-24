@@ -33,6 +33,7 @@
     
     <meta name="keywords" content="MongoDB">
     <meta name="description" content="起因今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：">
+<meta name="keywords" content="MongoDB">
 <meta property="og:type" content="article">
 <meta property="og:title" content="由一次服务连接MongoDB超时引发的思考">
 <meta property="og:url" content="http://elbarco.cn/2017/06/28/mongodb-connecttimeout-and-sockettimeout/index.html">
@@ -195,7 +196,7 @@
 <h3 id="Socket-timeout"><a href="#Socket-timeout" class="headerlink" title="Socket timeout"></a>Socket timeout</h3><p>这个参数决定了我们的客户端等待服务端响应的最长时间，这个timeout参数控制了所有类型的请求——query、write、commands、authentication等等。</p>
 <p>如果我们将数值设置为30s，则客户端不会等服务端响应超过30s钟。所以通常来讲，我们是不会限制这个时间的，这样可以使数据库的操作响应比较自由。</p>
 <p>在大多数的driver中，这个参数都是无限大（或者没有限制的）。这个参数在Java的driver中，<code>com.mongodb.MongoClientOptions.Builder#socketTimeout</code>值是<code>0</code>,用于表示不限制。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.mlab.com/2013/10/do-you-want-a-timeout/" target="_blank" rel="external">[1].Do you want a timeout?</a><br><a href="https://stackoverflow.com/questions/40216639/mongodb-connection-timed-out-error" target="_blank" rel="external">[2].mongodb connection timed out error</a><br><a href="https://mongodb.github.io/mongo-java-driver/3.4/javadoc/com/mongodb/MongoClientOptions.html" target="_blank" rel="external">[3].Class MongoClientOptions</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.mlab.com/2013/10/do-you-want-a-timeout/" target="_blank" rel="noopener">[1].Do you want a timeout?</a><br><a href="https://stackoverflow.com/questions/40216639/mongodb-connection-timed-out-error" target="_blank" rel="noopener">[2].mongodb connection timed out error</a><br><a href="https://mongodb.github.io/mongo-java-driver/3.4/javadoc/com/mongodb/MongoClientOptions.html" target="_blank" rel="noopener">[3].Class MongoClientOptions</a></p>
 
         </div>
 

@@ -33,6 +33,7 @@
     
     <meta name="keywords" content="Concurrency,Actor Model">
     <meta name="description" content="上一篇文章《几个概念：并发、并行、进程、线程和协程》中，对并发和并行的概念做了一个简单的解释，而本文中则从两种并发编程模型讲起，简单的介绍一下Actor模型。">
+<meta name="keywords" content="Concurrency,Actor Model">
 <meta property="og:type" content="article">
 <meta property="og:title" content="并发编程模型之Actor模型">
 <meta property="og:url" content="http://elbarco.cn/2017/01/21/introduction-to-actor-model/index.html">
@@ -215,7 +216,7 @@
 <p>actor模型可以用于并发系统的建模，正是因为每个actor与其他actor完全独立，没有共享状态，则就没有了竞争状态（race condition），actor之间的通讯和交互完全通过异步消息。</p>
 <p>支持actor模型的编程语言有Elixir、Erlang、Scala等，Java语言层面并不支持，但是可以引入Akka，一个用Scala编写的库，用于简化编写容错的、高可伸缩性的Java和Scala的actor模型应用。</p>
 <h2 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h2><p>本文重点关注并发编程的两种模型及对Actor模型做一个简单的介绍，Akka的学习会放到后面，由于对Scala不了解，网上看到的例子没有办法贴到这里与大家一起分析。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>[1].MIT.6.005.<a href="http://web.mit.edu/6.005/www/fa14/classes/17-concurrency/" target="_blank" rel="external">Reading 17:Concurrency</a><br>[2].Wikipedia.<a href="https://en.wikipedia.org/wiki/Actor_model" target="_blank" rel="external">Actor Model</a><br>[3].Ruben Vermeersch.<a href="https://rocketeer.be/articles/concurrency-in-erlang-scala/" target="_blank" rel="external">Concurrency in Erlang and Scala</a><br>[4].Marko Dvečko.<a href="https://www.toptal.com/software/introduction-to-concurrent-programming" target="_blank" rel="external">Introduction to Concurrent Programming</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>[1].MIT.6.005.<a href="http://web.mit.edu/6.005/www/fa14/classes/17-concurrency/" target="_blank" rel="noopener">Reading 17:Concurrency</a><br>[2].Wikipedia.<a href="https://en.wikipedia.org/wiki/Actor_model" target="_blank" rel="noopener">Actor Model</a><br>[3].Ruben Vermeersch.<a href="https://rocketeer.be/articles/concurrency-in-erlang-scala/" target="_blank" rel="noopener">Concurrency in Erlang and Scala</a><br>[4].Marko Dvečko.<a href="https://www.toptal.com/software/introduction-to-concurrent-programming" target="_blank" rel="noopener">Introduction to Concurrent Programming</a></p>
 
         </div>
 

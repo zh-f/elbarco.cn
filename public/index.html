@@ -31,16 +31,13 @@
     <meta name="theme-color" content="#3F51B5">
     
     
-    <meta name="keywords" content="undefined">
-    <meta name="description">
-<meta property="og:type" content="website">
+    <meta name="keywords" content="">
+    <meta property="og:type" content="website">
 <meta property="og:title" content="El barco">
 <meta property="og:url" content="http://elbarco.cn/index.html">
 <meta property="og:site_name" content="El barco">
-<meta property="og:description">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="El barco">
-<meta name="twitter:description">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -153,6 +150,52 @@
 <div class="container body-wrap">
 
     <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-nova-placement-api"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2018-02-23 16:47:50" datetime="2018-02-23T08:47:50.000Z"  itemprop="datePublished">2018-02-23</time>
+
+        
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2018/02/23/nova-placement-api/">Nova Placement API深度介绍</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        
+是什么由于历史遗留原因，Nova认为资源全部是由计算节点提供，所以在报告某些资源使用时，Nova仅仅通过查询数据库中不同计算节点的数据，简单的做累加计算得到使用量和可用资源情况，这一定不是严谨科学的做法，于是，在N版中，Nova引入了Placement API，这是一个单独的RESTful API和数据模型，用于管理和查询资源提供者的资源存量、使用情况、分配记录等等，以提供更好、更准确的资...
+    
+
+        <a href="/2018/02/23/nova-placement-api/" class="post-more waves-effect waves-button">
+            MORE ...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nova/">Nova</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
     
         <li class="post-list-item fade">
             <article id="post-learning-nova-architecture-overview"
@@ -552,51 +595,6 @@
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Translation/">Translation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Trove/">Trove</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-mongodb-connecttimeout-and-sockettimeout"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-06-28 17:12:28" datetime="2017-06-28T09:12:28.000Z"  itemprop="datePublished">2017-06-28</time>
-
-        
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/06/28/mongodb-connecttimeout-and-sockettimeout/">由一次服务连接MongoDB超时引发的思考</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        起因今天某个业务操作突然执行失败，查询服务日志发现，服务在些写数据的时候，连接被重置，和MongoTimeoutException，截取部分日志如下：
-    
-
-        <a href="/2017/06/28/mongodb-connecttimeout-and-sockettimeout/" class="post-more waves-effect waves-button">
-            MORE ...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
 
     </div>
     

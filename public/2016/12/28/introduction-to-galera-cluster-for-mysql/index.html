@@ -33,6 +33,7 @@
     
     <meta name="keywords" content="MySQL,Galera Cluster,DB">
     <meta name="description" content="关于数据库复制数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——">
+<meta name="keywords" content="MySQL,Galera Cluster,DB">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Galera Cluster for MySQL介绍">
 <meta property="og:url" content="http://elbarco.cn/2016/12/28/introduction-to-galera-cluster-for-mysql/index.html">
@@ -228,7 +229,7 @@
 <li>Galera Replication Plugin</li>
 <li>Group Communication plugins</li>
 </ul>
-<p>这里就不一一展开具体解释了，详细的可以参见<a href="http://galeracluster.com/documentation-webpages/architecture.html#wsrep-api" target="_blank" rel="external">Replication API</a></p>
+<p>这里就不一一展开具体解释了，详细的可以参见<a href="http://galeracluster.com/documentation-webpages/architecture.html#wsrep-api" target="_blank" rel="noopener">Replication API</a></p>
 <h2 id="部分关键字解释"><a href="#部分关键字解释" class="headerlink" title="部分关键字解释"></a>部分关键字解释</h2><h3 id="Primary-Componet"><a href="#Primary-Componet" class="headerlink" title="Primary Componet"></a>Primary Componet</h3><p>除了单一节点故障之外，集群可能会由于网络原因分裂成几个组件，在这种情况下，为了避免冲突，只有一个组件可以继续修改数据库状态，而这个组件，就称为Primary Component。</p>
 <p>Primary Component其实是一个集群，当发生集群分裂的时候，Galera Cluster会执行一个特殊的权重算法，来选举一个组件作为Primary Component，如下图所示：</p>
 <p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/primary-componet.png" alt=""></p>
@@ -249,7 +250,7 @@
 <li>wsrep_provider_options - 定义节点传递给wsrep provider的一些可选配置，如：<code>gcache.size</code>，表示节点缓存<code>write-sets</code>集合的磁盘空间，默认值是128M；<code>gcache.page_size</code>表示页存储中单页大小，整体页面存储的上限是磁盘的大小，默认值是128M。</li>
 <li>wsrep_method - 定义了节点在单个状态快照传输（State Snapshot Transfer，指完整的数据从一个集群节点——又称为donor——拷贝到一个新加入的节点——又称为joiner——的过程）中使用的方法或者脚本，支持的方法有<code>mysqldump</code>和<code>rsync</code>两种，在大数据集的场景中，后者比前者更快。</li>
 </ul>
-<p>上面是我们<code>/etc/my.cnf.d/wsrep.cnf</code>文件中几个配置项的解释，更多的详细内容，请参见<a href="http://galeracluster.com/documentation-webpages/reference.html" target="_blank" rel="external">http://galeracluster.com/documentation-webpages/reference.html</a>。</p>
+<p>上面是我们<code>/etc/my.cnf.d/wsrep.cnf</code>文件中几个配置项的解释，更多的详细内容，请参见<a href="http://galeracluster.com/documentation-webpages/reference.html" target="_blank" rel="noopener">http://galeracluster.com/documentation-webpages/reference.html</a>。</p>
 
         </div>
 

@@ -33,6 +33,7 @@
     
     <meta name="keywords" content="Git,rebase">
     <meta name="description" content="最近在开发trove中，因为误提交，本地项目的devel分支已经与上游的的devel分支不一致了">
+<meta name="keywords" content="Git,rebase">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Git中使用rebase命令更新本地分支">
 <meta property="og:url" content="http://elbarco.cn/2017/09/28/git-rebase-local-branch-with-upstream-branch/index.html">
@@ -179,7 +180,7 @@
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>最近在开发<code>trove</code>中，因为误提交，本地项目的<code>devel</code>分支已经与上游的的<code>devel</code>分支不一致了<a id="more"></a>。为了更好的创建分支，或者后面进行<code>cherry-pick</code>准备打包，都需要将本地的分支与上游的分支做一下rebase。</p>
 <blockquote>
-<p>注：上游指的是<a href="https://github.com/eayunstack/trove" target="_blank" rel="external"><code>eayunstack/trove</code></a>，本地指的是<a href="https://github.com/2hf/trove" target="_blank" rel="external"><code>2hf/trove</code></a></p>
+<p>注：上游指的是<a href="https://github.com/eayunstack/trove" target="_blank" rel="noopener"><code>eayunstack/trove</code></a>，本地指的是<a href="https://github.com/2hf/trove" target="_blank" rel="noopener"><code>2hf/trove</code></a></p>
 </blockquote>
 <p>首先，我们要添加<code>upstream</code>远程仓库：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git remote</span><br><span class="line">origin</span><br><span class="line">$ git remote add upstream git@github.com:eayunstack/trove.git</span><br><span class="line">$ git remote -v</span><br><span class="line">origin  git@github.com:2hf/trove.git (fetch)</span><br><span class="line">origin  git@github.com:2hf/trove.git (push)</span><br><span class="line">upstream        git@github.com:eayunstack/trove.git (fetch)</span><br><span class="line">upstream        git@github.com:eayunstack/trove.git (push)</span><br></pre></td></tr></table></figure></p>
 <p>然后更新<code>upstream</code>：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git fetch upstream</span><br></pre></td></tr></table></figure></p>

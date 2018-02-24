@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Nova Placement API深度介绍 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="OpenStack,Nova">
+    <meta name="description" content="是什么由于历史遗留原因，Nova认为资源全部是由计算节点提供，所以在报告某些资源使用时，Nova仅仅通过查询数据库中不同计算节点的数据，简单的做累加计算得到使用量和可用资源情况，这一定不是严谨科学的做法，于是，在N版中，Nova引入了Placement API，这是一个单独的RESTful API和数据模型，用于管理和查询资源提供者的资源存量、使用情况、分配记录等等，以提供更好、更准确的资源跟踪">
+<meta name="keywords" content="OpenStack,Nova">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nova Placement API深度介绍">
+<meta property="og:url" content="http://elbarco.cn/2018/02/23/nova-placement-api/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="是什么由于历史遗留原因，Nova认为资源全部是由计算节点提供，所以在报告某些资源使用时，Nova仅仅通过查询数据库中不同计算节点的数据，简单的做累加计算得到使用量和可用资源情况，这一定不是严谨科学的做法，于是，在N版中，Nova引入了Placement API，这是一个单独的RESTful API和数据模型，用于管理和查询资源提供者的资源存量、使用情况、分配记录等等，以提供更好、更准确的资源跟踪">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/boot-instance-pike.png">
+<meta property="og:updated_time" content="2018-02-23T08:59:26.124Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nova Placement API深度介绍">
+<meta name="twitter:description" content="是什么由于历史遗留原因，Nova认为资源全部是由计算节点提供，所以在报告某些资源使用时，Nova仅仅通过查询数据库中不同计算节点的数据，简单的做累加计算得到使用量和可用资源情况，这一定不是严谨科学的做法，于是，在N版中，Nova引入了Placement API，这是一个单独的RESTful API和数据模型，用于管理和查询资源提供者的资源存量、使用情况、分配记录等等，以提供更好、更准确的资源跟踪">
+<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/boot-instance-pike.png">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/2hf" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Nova Placement API深度介绍</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Nova Placement API深度介绍</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-02-23T08:47:50.000Z" itemprop="datePublished" class="page-time">
+  2018-02-23
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#是什么"><span class="post-toc-number">1.</span> <span class="post-toc-text">是什么</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#有什么"><span class="post-toc-number">2.</span> <span class="post-toc-text">有什么</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码目录"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">代码目录</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Nova-Placement-API中的一些概念"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">Nova Placement API中的一些概念</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Resource-Provider"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">Resource Provider</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Resource-Class"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">Resource Class</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Inventory"><span class="post-toc-number">2.2.3.</span> <span class="post-toc-text">Inventory</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Usage"><span class="post-toc-number">2.2.4.</span> <span class="post-toc-text">Usage</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Aggregate"><span class="post-toc-number">2.2.5.</span> <span class="post-toc-text">Aggregate</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Allocation"><span class="post-toc-number">2.2.6.</span> <span class="post-toc-text">Allocation</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Allocation-candidate"><span class="post-toc-number">2.2.7.</span> <span class="post-toc-text">Allocation-candidate</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Trait"><span class="post-toc-number">2.2.8.</span> <span class="post-toc-text">Trait</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#数据库及数据表"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">数据库及数据表</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#初始化及加载方式"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">初始化及加载方式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#API路由定义"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">API路由定义</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#怎么用"><span class="post-toc-number">3.</span> <span class="post-toc-text">怎么用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#如何部署"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">如何部署</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#OSC-Placement-Plugin"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">OSC Placement Plugin</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#划重点：Nova调度与Placement-API的结合"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">划重点：Nova调度与Placement API的结合</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Get-allocation-candidates"><span class="post-toc-number">3.3.1.</span> <span class="post-toc-text">Get allocation candidates</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Claim-Resources"><span class="post-toc-number">3.3.2.</span> <span class="post-toc-text">Claim Resources</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#目前社区Placement的发展"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">目前社区Placement的发展</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#有哪些不足"><span class="post-toc-number">4.</span> <span class="post-toc-text">有哪些不足</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">5.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-nova-placement-api"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Nova Placement API深度介绍</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-02-23 16:47:50" datetime="2018-02-23T08:47:50.000Z"  itemprop="datePublished">2018-02-23</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <a id="more"></a>
+<h2 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h2><p>由于历史遗留原因，Nova认为资源全部是由计算节点提供，所以在报告某些资源使用时，Nova仅仅通过查询数据库中不同计算节点的数据，简单的做累加计算得到使用量和可用资源情况，这一定不是严谨科学的做法，于是，在N版中，Nova引入了Placement API，这是一个单独的RESTful API和数据模型，用于管理和查询资源提供者的资源存量、使用情况、分配记录等等，以提供更好、更准确的资源跟踪、调度和分配的功能。</p>
+<h2 id="有什么"><a href="#有什么" class="headerlink" title="有什么"></a>有什么</h2><h3 id="代码目录"><a href="#代码目录" class="headerlink" title="代码目录"></a>代码目录</h3><p>由于Nova Placement API是单独剥离出来的RESTful API，同时也有自己单独的Endpoint，并且与Nova API服务启动在不同的端口，单独提供服务，那么，在代码目录上来看，也是相对独立的，其代码实现均在<code>/nova/api/openstack/placement/</code>下，那么我看来看一下Nova Placement API的代码目录结构：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">F:nova ZH.F$ tree  -C  api/openstack/placement</span><br><span class="line">api/openstack/placement</span><br><span class="line">├── __init__.py</span><br><span class="line">├── auth.py</span><br><span class="line">├── deploy.py</span><br><span class="line">├── handler.py</span><br><span class="line">├── handlers</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── aggregate.py</span><br><span class="line">│   ├── allocation.py</span><br><span class="line">│   ├── allocation_candidate.py</span><br><span class="line">│   ├── inventory.py</span><br><span class="line">│   ├── resource_class.py</span><br><span class="line">│   ├── resource_provider.py</span><br><span class="line">│   ├── root.py</span><br><span class="line">│   ├── trait.py</span><br><span class="line">│   └── usage.py</span><br><span class="line">├── lib.py</span><br><span class="line">├── microversion.py</span><br><span class="line">├── policy.py</span><br><span class="line">├── requestlog.py</span><br><span class="line">├── rest_api_version_history.rst</span><br><span class="line">├── schemas</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── aggregate.py</span><br><span class="line">│   ├── allocation.py</span><br><span class="line">│   ├── allocation_candidate.py</span><br><span class="line">│   ├── inventory.py</span><br><span class="line">│   ├── resource_class.py</span><br><span class="line">│   ├── trait.py</span><br><span class="line">│   └── usage.py</span><br><span class="line">├── util.py</span><br><span class="line">├── wsgi.py</span><br><span class="line">└── wsgi_wrapper.py</span><br></pre></td></tr></table></figure>
+<p>其中，在<code>api/openstack/placement/schemas</code>目录下，可以看到基本数据模型的schema，不过<code>resource privoder</code>的schema定义在了<code>api/openstack/placement/handlers/resource_provider.py</code>中。下面，对照schema，我们对其中的一些概念进行了解。</p>
+<h3 id="Nova-Placement-API中的一些概念"><a href="#Nova-Placement-API中的一些概念" class="headerlink" title="Nova Placement API中的一些概念"></a>Nova Placement API中的一些概念</h3><h4 id="Resource-Provider"><a href="#Resource-Provider" class="headerlink" title="Resource Provider"></a>Resource Provider</h4><p>即资源提供者，通过其schema可以看到结构比较简单，只包含UUID和RP（Resource Provider简写，下同）的一些基本信息，比如name：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">GET_RPS_SCHEMA_1_0 = &#123;</span><br><span class="line">    <span class="string">"type"</span>: <span class="string">"object"</span>,</span><br><span class="line">    <span class="string">"properties"</span>: &#123;</span><br><span class="line">        <span class="string">"name"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"string"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"uuid"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">            <span class="string">"format"</span>: <span class="string">"uuid"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"additionalProperties"</span>: <span class="keyword">False</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>资源提供者可能是一个计算节点，也可能是一个共享存储池或者一个IP分配池子，那么不同的RP，提供的资源多种多样，于是就引入了Resource Class，即资源类型的概念。</p>
+<h4 id="Resource-Class"><a href="#Resource-Class" class="headerlink" title="Resource Class"></a>Resource Class</h4><p>即资源类型，比如计算节点提供的资源可能是CPU、内存、PCI设备、本地临时磁盘等等。每种被消费的资源都会按照类别进行标注和跟踪。</p>
+<p>之所以引入这个概念，目的是解决Nova中hard-coded的资源类型扩展性问题，比如CPU资源，可能记录在Instance对象的<em>vcpus</em>字段中，那么之后再增加新的资源类型，都需要修改数据表，而修改数据表的过程都会停机维护，给系统带来许多downtime，这是不可接受的。</p>
+<p>Placement API提供了一些标准资源类别，如：</p>
+<ul>
+<li>VCPU</li>
+<li>MEMORY_MB</li>
+<li>DISK_GB</li>
+<li>PCI_DEVICE</li>
+<li>NUMA_SOCKET</li>
+<li>NUMA_CORE</li>
+<li>NUMA_THREAD</li>
+<li>IPV4_ADDRESS</li>
+<li>…</li>
+</ul>
+<p>注：数据来自<a href="https://specs.openstack.org/openstack/nova-specs/specs/mitaka/implemented/resource-classes.html" target="_blank" rel="noopener">BP:Introduce resource classes</a></p>
+<p>除了以上标准资源类别，Placement API还在O版中为RP增加了自定义Resource Class的能力，比如自动以的FPGA、裸机调度等等。</p>
+<h4 id="Inventory"><a href="#Inventory" class="headerlink" title="Inventory"></a>Inventory</h4><p>即库存，存量。用于记录超配比、资源总量、存量、步长（step_size）、最小和最大单位等信息，可以看一下它的schema：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">BASE_INVENTORY_SCHEMA = &#123;</span><br><span class="line">    <span class="string">"type"</span>: <span class="string">"object"</span>,</span><br><span class="line">    <span class="string">"properties"</span>: &#123;</span><br><span class="line">        <span class="string">"resource_provider_generation"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"integer"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"total"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"integer"</span>,</span><br><span class="line">            <span class="string">"maximum"</span>: db.MAX_INT,</span><br><span class="line">            <span class="string">"minimum"</span>: <span class="number">1</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"reserved"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"integer"</span>,</span><br><span class="line">            <span class="string">"maximum"</span>: db.MAX_INT,</span><br><span class="line">            <span class="string">"minimum"</span>: <span class="number">0</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"min_unit"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"integer"</span>,</span><br><span class="line">            <span class="string">"maximum"</span>: db.MAX_INT,</span><br><span class="line">            <span class="string">"minimum"</span>: <span class="number">1</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"max_unit"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"integer"</span>,</span><br><span class="line">            <span class="string">"maximum"</span>: db.MAX_INT,</span><br><span class="line">            <span class="string">"minimum"</span>: <span class="number">1</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"step_size"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"integer"</span>,</span><br><span class="line">            <span class="string">"maximum"</span>: db.MAX_INT,</span><br><span class="line">            <span class="string">"minimum"</span>: <span class="number">1</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"allocation_ratio"</span>: &#123;</span><br><span class="line">            <span class="string">"type"</span>: <span class="string">"number"</span>,</span><br><span class="line">            <span class="string">"maximum"</span>: db.SQL_SP_FLOAT_MAX</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"required"</span>: [</span><br><span class="line">        <span class="string">"total"</span>,</span><br><span class="line">        <span class="string">"resource_provider_generation"</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"additionalProperties"</span>: <span class="keyword">False</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中的<code>resource_provider_generation</code>字段，是一个一致性视图的标志位，在获取RP列表时的<code>generation</code>功能是相同的，这就是CAS（Compare and swap），即乐观锁技术——当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。</p>
+<h4 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h4><p>即用量，使用情况。可以查看某个RP的使用情况，也可以查看项目下某用户的资源使用情况。</p>
+<h4 id="Aggregate"><a href="#Aggregate" class="headerlink" title="Aggregate"></a>Aggregate</h4><p>在Ocata版本，社区开始将nova-scheduler服务与Placement API进行集成，并在scheduler进行了一些修改，使用Placement API进行满足一些基本资源请求条件的计算节点过滤。添加了aggregates，来提供resource provider的分组机制。</p>
+<h4 id="Allocation"><a href="#Allocation" class="headerlink" title="Allocation"></a>Allocation</h4><p>即已分配量，某一个RP对某一个资源消费者（即某个实例）所分配的资源。</p>
+<h4 id="Allocation-candidate"><a href="#Allocation-candidate" class="headerlink" title="Allocation-candidate"></a>Allocation-candidate</h4><p>即分配的候选者（资源提供者），举个例子，用户说，我需要1个VCPU，512MB内存，1GB磁盘的资源，Placement你帮我找找看看，有没有合适的资源。然后Placement就要做各种处理，反馈给用户，哪些是可以分配的候选资源提供者。</p>
+<h4 id="Trait"><a href="#Trait" class="headerlink" title="Trait"></a>Trait</h4><p>字面意思，特征，特性。ResourceProvider和Allocation可以在定量的角度，控制和管理boot虚机请求，然而我们还需要从定性的角度来区分资源，最经典的例子是当我们创建虚机时，需要向不同的RP请求磁盘资源，用户可能请求80GB的磁盘，但也可能请求80GB的SSD。这就是Trait的意义。</p>
+<h3 id="数据库及数据表"><a href="#数据库及数据表" class="headerlink" title="数据库及数据表"></a>数据库及数据表</h3><p>目前我安装的Pike版本的Packstack环境中，能看到有一个<code>nova_placement</code>数据库，但是没有任何表（也许是社区希望能把placement相关的表放到这个数据库中？），Placement对应的数据库用的还是<code>nova_api</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MariaDB [nova_placement]&gt; use nova_api;</span><br><span class="line">Reading table information for completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line">MariaDB [nova_api]&gt; show tables;</span><br><span class="line">+------------------------------+</span><br><span class="line">| Tables_in_nova_api           |</span><br><span class="line">+------------------------------+</span><br><span class="line">| aggregate_hosts              |</span><br><span class="line">| aggregate_metadata           |</span><br><span class="line">| aggregates                   |</span><br><span class="line">| allocations                  |</span><br><span class="line">| build_requests               |</span><br><span class="line">| cell_mappings                |</span><br><span class="line">| consumers                    |</span><br><span class="line">| flavor_extra_specs           |</span><br><span class="line">| flavor_projects              |</span><br><span class="line">| flavors                      |</span><br><span class="line">| host_mappings                |</span><br><span class="line">| instance_group_member        |</span><br><span class="line">| instance_group_policy        |</span><br><span class="line">| instance_groups              |</span><br><span class="line">| instance_mappings            |</span><br><span class="line">| inventories                  |</span><br><span class="line">| key_pairs                    |</span><br><span class="line">| migrate_version              |</span><br><span class="line">| placement_aggregates         |</span><br><span class="line">| project_user_quotas          |</span><br><span class="line">| projects                     |</span><br><span class="line">| quota_classes                |</span><br><span class="line">| quota_usages                 |</span><br><span class="line">| quotas                       |</span><br><span class="line">| request_specs                |</span><br><span class="line">| reservations                 |</span><br><span class="line">| resource_classes             |</span><br><span class="line">| resource_provider_aggregates |</span><br><span class="line">| resource_provider_traits     |</span><br><span class="line">| resource_providers           |</span><br><span class="line">| traits                       |</span><br><span class="line">| users                        |</span><br><span class="line">+------------------------------+</span><br></pre></td></tr></table></figure>
+<p>可以从表明上看到那些是Placement相关的表，这里就不展开了。</p>
+<h3 id="初始化及加载方式"><a href="#初始化及加载方式" class="headerlink" title="初始化及加载方式"></a>初始化及加载方式</h3><p>我们前面提到Nova Placement API是单独的RESTful API，那么是如何进行初始化的呢？带着这个问题，我们先查看nova的<code>setup.cfg</code>，其中配置了wsgi_scripts如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wsgi_scripts =</span><br><span class="line">    nova-placement-api = nova.api.openstack.placement.wsgi:init_application</span><br><span class="line">    nova-api-wsgi = nova.api.openstack.compute.wsgi:init_application</span><br><span class="line">    nova-metadata-wsgi = nova.api.metadata.wsgi:init_application</span><br></pre></td></tr></table></figure>
+<p>其中可以看到nova-placement-api的初始化来自 <code>nova.api.openstack.placement.wsgi.init_application</code> ，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_application</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># initialize the config system</span></span><br><span class="line">    conffile = _get_config_file()</span><br><span class="line">    config.parse_args([], default_config_files=[conffile])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># initialize the logging system</span></span><br><span class="line">    setup_logging(conf.CONF)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># dump conf if we're at debug</span></span><br><span class="line">    <span class="keyword">if</span> conf.CONF.debug:</span><br><span class="line">        conf.CONF.log_opt_values(</span><br><span class="line">            logging.getLogger(__name__),</span><br><span class="line">            logging.DEBUG)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># build and return our WSGI app</span></span><br><span class="line">    <span class="keyword">return</span> deploy.loadapp(conf.CONF)</span><br></pre></td></tr></table></figure>
+<p>其中在最后构造WSGI app并返回，即调用了deploy.loadapp(conf.CONF)：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadapp</span><span class="params">(config, project_name=NAME)</span>:</span></span><br><span class="line">    application = deploy(config, project_name)</span><br><span class="line">    <span class="keyword">return</span> application</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">deploy</span><span class="params">(conf, project_name)</span>:</span></span><br><span class="line">    <span class="string">"""Assemble the middleware pipeline leading to the placement app."""</span></span><br><span class="line">    ...</span><br><span class="line">    application = handler.PlacementHandler()</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">for</span> middleware <span class="keyword">in</span> (microversion_middleware,</span><br><span class="line">                       fault_wrap,</span><br><span class="line">                       request_log,</span><br><span class="line">                       context_middleware,</span><br><span class="line">                       auth_middleware,</span><br><span class="line">                       cors_middleware,</span><br><span class="line">                       req_id_middleware,</span><br><span class="line">                       ):</span><br><span class="line">        <span class="keyword">if</span> middleware:</span><br><span class="line">            application = middleware(application)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> application</span><br></pre></td></tr></table></figure>
+<p>而这里的handler.PlacementHandler()就是我们的Placement的API入口：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PlacementHandler</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">"""Serve Placement API.</span></span><br><span class="line"><span class="string">    Dispatch to handlers defined in ROUTE_DECLARATIONS.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, **local_config)</span>:</span></span><br><span class="line">        <span class="comment"># NOTE(cdent): Local config currently unused.</span></span><br><span class="line">        self._map = make_map(ROUTE_DECLARATIONS)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, environ, start_response)</span>:</span></span><br><span class="line">        <span class="comment"># All requests but '/' require admin.</span></span><br><span class="line">        <span class="keyword">if</span> environ[<span class="string">'PATH_INFO'</span>] != <span class="string">'/'</span>:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>可以看到，PlacementHandler在<code>__init__</code>中根据路由定义构造了map，同时在<code>__call__</code>中对请求进行dispatch。这就是一个典型的WSGI应用：</p>
+<blockquote>
+<p>WSGI application is a callable object (a function, method, class, or an instance with a <code>__call__</code> method) that accepts two positional arguments: WSGI environment variables and a callable with two required positional arguments which starts the response;</p>
+</blockquote>
+<p>找到了初始化，那么Placement API加载和启动是如何实现的？</p>
+<p>首先，nova-placement-api是单独的脚本，在httpd中启动，与keystone（在12年就完成了WSGI化，参见<a href="http://adam.younglogic.com/2012/03/keystone-should-move-to-apache-httpd/" target="_blank" rel="noopener">&gt;&gt;传送门</a>）类似，通过<code>systemctl status httpd</code>是可以看到的：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@f-packstack ~(keystone_admin)]# systemctl status httpd</span><br><span class="line">● httpd.service - The Apache HTTP Server</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)</span><br><span class="line">   Active: active (running) since Fri 2018-02-02 09:17:51 CST; 1 weeks 0 days ago</span><br><span class="line">     Docs: man:httpd(8)</span><br><span class="line">           man:apachectl(8)</span><br><span class="line">  Process: 4087 ExecReload=/usr/sbin/httpd $OPTIONS -k graceful (code=exited, status=0/SUCCESS)</span><br><span class="line"> Main PID: 1309 (httpd)</span><br><span class="line">   Status: &quot;Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec&quot;</span><br><span class="line">   CGroup: /system.slice/httpd.service</span><br><span class="line">           ├─ 1309 /usr/sbin/httpd -DFOREGROUND</span><br><span class="line">           ├─ 4108 keystone-admin  -DFOREGROUND</span><br><span class="line"></span><br><span class="line">▽</span><br><span class="line">           ├─ 4109 keystone-admin  -DFOREGROUND</span><br><span class="line">           ├─ 4110 keystone-admin  -DFOREGROUND</span><br><span class="line">           ├─ 4111 keystone-admin  -DFOREGROUND</span><br><span class="line"></span><br><span class="line">▽</span><br><span class="line">           ├─ 4112 keystone-main   -DFOREGROUND</span><br><span class="line">           ├─ 4113 keystone-main   -DFOREGROUND</span><br><span class="line">           ├─ 4114 keystone-main   -DFOREGROUND</span><br><span class="line">           ├─ 4115 keystone-main   -DFOREGROUND</span><br><span class="line">           ├─ 4116 placement_wsgi  -DFOREGROUND</span><br><span class="line">           ├─ 4117 placement_wsgi  -DFOREGROUND</span><br><span class="line">           ├─ 4118 placement_wsgi  -DFOREGROUND</span><br><span class="line">           ├─ 4119 placement_wsgi  -DFOREGROUND</span><br><span class="line">           ├─ 4121 /usr/sbin/httpd -DFOREGROUND</span><br><span class="line">           ├─ 4122 /usr/sbin/httpd -DFOREGROUND</span><br><span class="line">…</span><br></pre></td></tr></table></figure>
+<p>知道是在httpd启动的，我们去查看配置文件目录：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@f-packstack ~(keystone_admin)]# ll /etc/httpd/conf.d/</span><br><span class="line">total 36</span><br><span class="line">-rw-r-----. 1 root root  136 Jan 12 17:46 00-nova-placement-api.conf</span><br><span class="line">-rw-r--r--. 1 root root  943 Jan 12 17:48 10-keystone_wsgi_admin.conf</span><br><span class="line">-rw-r--r--. 1 root root  938 Jan 12 17:48 10-keystone_wsgi_main.conf</span><br><span class="line">-rw-r--r--. 1 root root  941 Jan 12 17:49 10-placement_wsgi.conf</span><br><span class="line">-rw-r--r--. 1 root root  697 Jan 12 17:48 15-default.conf</span><br><span class="line">-rw-r--r--. 1 root root 2926 Oct 20 04:39 autoindex.conf</span><br><span class="line">-rw-r--r--. 1 root root  366 Oct 20 04:39 README</span><br><span class="line">-rw-r--r--. 1 root root 1252 Oct 20 00:44 userdir.conf</span><br><span class="line">-rw-r--r--. 1 root root  824 Oct 20 00:44 welcome.conf</span><br></pre></td></tr></table></figure>
+<p>其中，10-placement_wsgi.conf 中定义了WSGIScriptAllias：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">  WSGIProcessGroup placement-api</span><br><span class="line">  WSGIScriptAlias /placement &quot;/var/www/cgi-bin/nova/nova-placement-api”</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>也就是说，url为<code>/placement/xxx</code>的请求会使得httpd服务运行定义在<code>/var/www/cgi-bin/nova/nova-placement-api</code>中的WSGI应用，在这个文件中，我们会看到：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> nova.api.openstack.placement.wsgi <span class="keyword">import</span> init_application</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__”:</span></span><br><span class="line"><span class="string">    import argparse</span></span><br><span class="line"><span class="string">    import socket</span></span><br><span class="line"><span class="string">    import sys</span></span><br><span class="line"><span class="string">    import wsgiref.simple_server as wss</span></span><br><span class="line"><span class="string">    …</span></span><br><span class="line"><span class="string">    server = wss.make_server(args.host, args.port, init_application())</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
+<p>也就对应了前面提到的PlacementHandler中的<code>nova.api.openstack.placement.wsgi.init_application</code>，至此，我们就了解了Nova Placement API的初始化和加载方式。</p>
+<h3 id="API路由定义"><a href="#API路由定义" class="headerlink" title="API路由定义"></a>API路由定义</h3><p>上一小节提到了PlacementHandler初始化时，根据路由定义构造了map映射，我们就来看下文件<code>api/openstack/placement/handler.py</code>中的API<code>ROUTE_DECLARATIONS</code>:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># URLs and Handlers</span></span><br><span class="line"><span class="comment"># NOTE(cdent): When adding URLs here, do not use regex patterns in</span></span><br><span class="line"><span class="comment"># the path parameters (e.g. &#123;uuid:[0-9a-zA-Z-]+&#125;) as that will lead</span></span><br><span class="line"><span class="comment"># to 404s that are controlled outside of the individual resources</span></span><br><span class="line"><span class="comment"># and thus do not include specific information on the why of the 404.</span></span><br><span class="line">ROUTE_DECLARATIONS = &#123;</span><br><span class="line">    <span class="string">'/'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: root.home,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment"># NOTE(cdent): This allows '/placement/' and '/placement' to</span></span><br><span class="line">    <span class="comment"># both work as the root of the service, which we probably want</span></span><br><span class="line">    <span class="comment"># for those situations where the service is mounted under a</span></span><br><span class="line">    <span class="comment"># prefix (as it is in devstack). While weird, an empty string is</span></span><br><span class="line">    <span class="comment"># a legit key in a dictionary and matches as desired in Routes.</span></span><br><span class="line">    <span class="string">''</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: root.home,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_classes'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: resource_class.list_resource_classes,</span><br><span class="line">        <span class="string">'POST'</span>: resource_class.create_resource_class</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_classes/&#123;name&#125;'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: resource_class.get_resource_class,</span><br><span class="line">        <span class="string">'PUT'</span>: resource_class.update_resource_class,</span><br><span class="line">        <span class="string">'DELETE'</span>: resource_class.delete_resource_class,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: resource_provider.list_resource_providers,</span><br><span class="line">        <span class="string">'POST'</span>: resource_provider.create_resource_provider</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers/&#123;uuid&#125;'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: resource_provider.get_resource_provider,</span><br><span class="line">        <span class="string">'DELETE'</span>: resource_provider.delete_resource_provider,</span><br><span class="line">        <span class="string">'PUT'</span>: resource_provider.update_resource_provider</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers/&#123;uuid&#125;/inventories'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: inventory.get_inventories,</span><br><span class="line">        <span class="string">'POST'</span>: inventory.create_inventory,</span><br><span class="line">        <span class="string">'PUT'</span>: inventory.set_inventories,</span><br><span class="line">        <span class="string">'DELETE'</span>: inventory.delete_inventories</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers/&#123;uuid&#125;/inventories/&#123;resource_class&#125;'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: inventory.get_inventory,</span><br><span class="line">        <span class="string">'PUT'</span>: inventory.update_inventory,</span><br><span class="line">        <span class="string">'DELETE'</span>: inventory.delete_inventory</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers/&#123;uuid&#125;/usages'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: usage.list_usages</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers/&#123;uuid&#125;/aggregates'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: aggregate.get_aggregates,</span><br><span class="line">        <span class="string">'PUT'</span>: aggregate.set_aggregates</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers/&#123;uuid&#125;/allocations'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: allocation.list_for_resource_provider,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/allocations'</span>: &#123;</span><br><span class="line">        <span class="string">'POST'</span>: allocation.set_allocations,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/allocations/&#123;consumer_uuid&#125;'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: allocation.list_for_consumer,</span><br><span class="line">        <span class="string">'PUT'</span>: allocation.set_allocations_for_consumer,</span><br><span class="line">        <span class="string">'DELETE'</span>: allocation.delete_allocations,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/allocation_candidates'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: allocation_candidate.list_allocation_candidates,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/traits'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: trait.list_traits,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/traits/&#123;name&#125;'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: trait.get_trait,</span><br><span class="line">        <span class="string">'PUT'</span>: trait.put_trait,</span><br><span class="line">        <span class="string">'DELETE'</span>: trait.delete_trait,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/resource_providers/&#123;uuid&#125;/traits'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: trait.list_traits_for_resource_provider,</span><br><span class="line">        <span class="string">'PUT'</span>: trait.update_traits_for_resource_provider,</span><br><span class="line">        <span class="string">'DELETE'</span>: trait.delete_traits_for_resource_provider</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'/usages'</span>: &#123;</span><br><span class="line">        <span class="string">'GET'</span>: usage.get_total_usages,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="怎么用"><a href="#怎么用" class="headerlink" title="怎么用"></a>怎么用</h2><h3 id="如何部署"><a href="#如何部署" class="headerlink" title="如何部署"></a>如何部署</h3><p>在官方文档中提到，placement api服务必须在升级到14.0.0，即N版后，升级到15.0.0，即O版之前进行部署，不过对于我们P版，经过了O版的一系列功能补齐，尤其是在O版中，如果在<code>nova.conf</code>中不配置<code>[placement]</code>部分的内容，就无法启动<code>nova-compute</code>服务。</p>
+<blockquote>
+<p>The nova-compute service will fail to start in Ocata unless the [placement] section of nova.conf on the compute is configured. </p>
+</blockquote>
+<p>P版中不再需要我们进行单独部署。</p>
+<h3 id="OSC-Placement-Plugin"><a href="#OSC-Placement-Plugin" class="headerlink" title="OSC Placement Plugin"></a>OSC Placement Plugin</h3><p>从前面的API路由定义，我们可以看到，目前支持了这么些功能，那么我们可以简单的用一下，第一个想到的是cURL命令，我们可以使用该命令模拟发起请求，调用Placement API，比如查看resource providers list，首先我们获取token：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"># 首先得到auth token</span><br><span class="line">curl -d '&#123;"auth": &#123;"tenantName": "admin", "passwordCredentials": &#123;"username": "admin", "password": "1234qwer"&#125;&#125;&#125;' \</span><br><span class="line">-H "Content-type: application/json" \</span><br><span class="line">http://localhost:5000/v2.0/tokens</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"issued_at"</span>: <span class="string">"2018-02-07T07:40:07.000000Z"</span>, </span><br><span class="line">    <span class="attr">"expires"</span>: <span class="string">"2018-02-07T08:40:07.000000Z"</span>, </span><br><span class="line">    <span class="attr">"id"</span>: <span class="string">"gAAAAABaeq1XrNDoU_F_iRk8uC0lOxYpyzLMW_YRs_ggJHuF1OpGHBN-pymQut-Bp2Er-J4XkYfQkMdJbRlBIBhq4wfhZMHZvag1itnL6Q-TSWhOn7uZpdQsYqqJDmwgtzCm-hcpg17IwN5FZSanCbcy6S96YZ0Zci5STWNka40861Mn8UQ2yRE"</span>, </span><br><span class="line">    <span class="attr">"tenant"</span>: &#123;</span><br><span class="line">        <span class="attr">"description"</span>: <span class="string">"admin tenant"</span>, </span><br><span class="line">        <span class="attr">"enabled"</span>: <span class="literal">true</span>, </span><br><span class="line">        <span class="attr">"id"</span>: <span class="string">"6387fc88b3064149a12eb5b58669e0b2"</span>, </span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">"admin"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># token的获取方式，还可以用OSC命令：</span><br><span class="line">openstack token issue | grep ' id' | awk '&#123;print $4&#125;'</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#得到token之后，构造请求，查看resource providers list：</span><br><span class="line">curl -X GET /</span><br><span class="line">-H 'x-auth-token:gAAAAABaeq1XrNDoU_F_iRk8uC0lOxYpyzLMW_YRs_ggJHuF1OpGHBN-pymQut-Bp2Er-J4XkYfQkMdJbRlBIBhq4wfhZMHZvag1itn17IwN5FZSanCbcy6S96YZ0Zci5STWNka40861Mn8UQ2yRE’ /</span><br><span class="line">http://192.168.122.105:8778/placement/resource_providers</span><br><span class="line"></span><br><span class="line">#得到resources providers list</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"resource_providers"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"generation"</span>: <span class="number">30</span>, </span><br><span class="line">            <span class="attr">"uuid"</span>: <span class="string">"4cae2ef8-30eb-4571-80c3-3289e86bd65c"</span>, </span><br><span class="line">            <span class="attr">"links"</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">"href"</span>: <span class="string">"/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c"</span>, </span><br><span class="line">                    <span class="attr">"rel"</span>: <span class="string">"self"</span></span><br><span class="line">                &#125;, </span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">"href"</span>: <span class="string">"/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/inventories"</span>, </span><br><span class="line">                    <span class="attr">"rel"</span>: <span class="string">"inventories"</span></span><br><span class="line">                &#125;, </span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">"href"</span>: <span class="string">"/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/usages"</span>, </span><br><span class="line">                    <span class="attr">"rel"</span>: <span class="string">"usages"</span></span><br><span class="line">                &#125;</span><br><span class="line">            ], </span><br><span class="line">            <span class="attr">"name"</span>: <span class="string">"f-packstack"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中的<code>generation</code>字段，是一个一致性视图的标志位，跟获取RP的inventories中的<code>resource_provider_generation</code>功能是相同的，其实算作是乐观锁技术，即CAS，Compare and swap，当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。</p>
+<p>下面来一个获取aggregate和inventories的示例，注意，aggregate的API是在1.1版本中实现的，所以要在请求头指定<code>OpenStack-API-Version: placement 1.1</code>：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">curl -g -i -X GET http://192.168.122.105:8778/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/aggregates \</span><br><span class="line">-H "User-Agent: python-novaclient" \</span><br><span class="line">-H "Accept: application/json" \</span><br><span class="line">-H "X-Auth-Token: gAAAAABaf5nafUZyFTl_pztozfB65wkP0c26HQqrxRgAiJGsxY8g743LxFOZEI3bF_l37xh0UajbF5nQ1kLYGAonOGphV4AivXgYMUOJ84uGrHjpC60NlmNzzQ3lJGVJb-pNxQw74WsMOc9I0D2B5Mzmf2OgDeictae5f0UFgTR9DFb_vaWCWQ4" \</span><br><span class="line">-H "OpenStack-API-Version: placement 1.1" </span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Fri, 15 Sep 2017 09:35:21 GMT</span><br><span class="line">Server: Apache/2.4.18 (Ubuntu)</span><br><span class="line">Content-Length: 18</span><br><span class="line">Content-Type: application/json</span><br><span class="line">OpenStack-API-Version: placement 1.1</span><br><span class="line">vary: OpenStack-API-Version</span><br><span class="line">x-openstack-request-id: req-ab28194f-8389-40a1-9a2b-a94dbc792573</span><br><span class="line">Connection: close</span><br><span class="line"> </span><br><span class="line">&#123;<span class="attr">"aggregates"</span>: []&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">curl -g -i -X GET http://192.168.122.105:8778/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/inventories \</span><br><span class="line">-H "User-Agent: python-novaclient" \</span><br><span class="line">-H "Accept: application/json" \</span><br><span class="line">-H 'x-auth-token:gAAAAABae6lX26bp4PEVHCac0cjFnNl18W8DjeQKXDYvuKP4drRJ8t6DC-9uzcCm4E9Xf7NjqSqkRX6WGsE3qHmpAt7GmIu1SrLCtyEOVM2IQP5XLNrwMekGGrzQ_ADOaSTc9XpPpCYyYwzT-zCAvWG-T9T6Ip4l3zHWLwNBBPrm35gBZVZeslQ' \</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"resource_provider_generation"</span>: <span class="number">30</span>, </span><br><span class="line">    <span class="attr">"inventories"</span>: &#123;</span><br><span class="line">        <span class="attr">"VCPU"</span>: &#123;</span><br><span class="line">            <span class="attr">"allocation_ratio"</span>: <span class="number">16</span>, </span><br><span class="line">            <span class="attr">"total"</span>: <span class="number">4</span>, </span><br><span class="line">            <span class="attr">"reserved"</span>: <span class="number">0</span>, </span><br><span class="line">            <span class="attr">"step_size"</span>: <span class="number">1</span>, </span><br><span class="line">            <span class="attr">"min_unit"</span>: <span class="number">1</span>, </span><br><span class="line">            <span class="attr">"max_unit"</span>: <span class="number">128</span></span><br><span class="line">        &#125;, </span><br><span class="line">        <span class="attr">"MEMORY_MB"</span>: &#123;</span><br><span class="line">            <span class="attr">"allocation_ratio"</span>: <span class="number">1.5</span>, </span><br><span class="line">            <span class="attr">"total"</span>: <span class="number">8095</span>, </span><br><span class="line">            <span class="attr">"reserved"</span>: <span class="number">512</span>, </span><br><span class="line">            <span class="attr">"step_size"</span>: <span class="number">1</span>, </span><br><span class="line">            <span class="attr">"min_unit"</span>: <span class="number">1</span>, </span><br><span class="line">            <span class="attr">"max_unit"</span>: <span class="number">8095</span></span><br><span class="line">        &#125;, </span><br><span class="line">        <span class="attr">"DISK_GB"</span>: &#123;</span><br><span class="line">            <span class="attr">"allocation_ratio"</span>: <span class="number">1</span>, </span><br><span class="line">            <span class="attr">"total"</span>: <span class="number">49</span>, </span><br><span class="line">            <span class="attr">"reserved"</span>: <span class="number">0</span>, </span><br><span class="line">            <span class="attr">"step_size"</span>: <span class="number">1</span>, </span><br><span class="line">            <span class="attr">"min_unit"</span>: <span class="number">1</span>, </span><br><span class="line">            <span class="attr">"max_unit"</span>: <span class="number">49</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>贴心的社区妥妥的想到了如何可以方便用户操作Placement API，所以开发了一个OpenStackClient Plugin，即<a href="https://github.com/openstack/osc-placement" target="_blank" rel="noopener">osc-placement</a>，需要我们手动安装使用：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ pip install osc-placement</span><br></pre></td></tr></table></figure>
+<p>有了OSC placement commands，我们不再需要使用curl命令模拟HTTP请求，并且可以非常轻松的进行操作：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@f-packstack ~(keystone_admin)]# openstack --debug resource provider list</span><br><span class="line">...</span><br><span class="line">http://192.168.122.105:8778 "GET /placement/resource_providers HTTP/1.1" 200 185</span><br><span class="line">RESP: [200] Date: Thu, 08 Feb 2018 05:59:56 GMT Server: Apache/2.4.6 (CentOS) OpenStack-API-Version: placement 1.0 vary: OpenStack-API-Version,Accept-Encoding x-openstack-request-id: req-c6077c19-ca05-4cab-95fa-6129ff989400 Content-Encoding: gzip Content-Length: 185 Keep-Alive: timeout=15, max=100 Connection: Keep-Alive Content-Type: application/json</span><br><span class="line">RESP BODY: &#123;"resource_providers": [&#123;"generation": 30, "uuid": "4cae2ef8-30eb-4571-80c3-3289e86bd65c", "links": [&#123;"href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c", "rel": "self"&#125;, &#123;"href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/inventories", "rel": "inventories"&#125;, &#123;"href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/usages", "rel": "usages"&#125;], "name": "f-packstack"&#125;]&#125;</span><br><span class="line"></span><br><span class="line">GET call to placement for http://192.168.122.105:8778/placement/resource_providers used request id req-c6077c19-ca05-4cab-95fa-6129ff989400</span><br><span class="line">+--------------------------------------+-------------+------------+</span><br><span class="line">| uuid                                 | name        | generation |</span><br><span class="line">+--------------------------------------+-------------+------------+</span><br><span class="line">| 4cae2ef8-30eb-4571-80c3-3289e86bd65c | f-packstack |         30 |</span><br><span class="line">+--------------------------------------+-------------+------------+</span><br><span class="line">clean_up ListResourceProvider:</span><br><span class="line">END return value: 0</span><br></pre></td></tr></table></figure>
+<p>当然还有很多其他的命令，有兴趣的可以尝试玩一下。</p>
+<h3 id="划重点：Nova调度与Placement-API的结合"><a href="#划重点：Nova调度与Placement-API的结合" class="headerlink" title="划重点：Nova调度与Placement API的结合"></a>划重点：Nova调度与Placement API的结合</h3><p>首先来一张图，来认识一下在P版中，创建一台虚机过程中各个服务之间的调用/调度关系：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/boot-instance-pike.png" alt=""><br>可以看到，在nova-scheduler与Placement API的交互过程中，有两部分：</p>
+<ol>
+<li>Get allocation candidates</li>
+<li>Claim Resources<br>下面，我们结合代码详细的讲述一下调度过程。</li>
+</ol>
+<h4 id="Get-allocation-candidates"><a href="#Get-allocation-candidates" class="headerlink" title="Get allocation candidates"></a>Get allocation candidates</h4><p>目前在调度时，nova-conductor在<code>nova.conductor.manager.ComputeTaskManager#_schedule_instances</code>中调用了方法<code>nova.scheduler.client.SchedulerClient#select_destinations</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@utils.retry_select_destinations</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_destinations</span><span class="params">(self, context, spec_obj, instance_uuids,</span></span></span><br><span class="line"><span class="function"><span class="params">        return_objects=False, return_alternates=False)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> self.queryclient.select_destinations(context, spec_obj,</span><br><span class="line">            instance_uuids, return_objects, return_alternates)</span><br></pre></td></tr></table></figure>
+<p>其中<code>SchedulerClient</code>又调用了<code>SchedulerQueryClient</code>，即调用了<code>nova.scheduler.client.query.SchedulerQueryClient#select_destinations</code>方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_destinations</span><span class="params">(self, context, spec_obj, instance_uuids,</span></span></span><br><span class="line"><span class="function"><span class="params">        return_objects=False, return_alternates=False)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> self.scheduler_rpcapi.select_destinations(context, spec_obj,</span><br><span class="line">            instance_uuids, return_objects, return_alternates)</span><br></pre></td></tr></table></figure>
+<p>在该方法中发起RPC调用，调用了<code>nova.scheduler.manager.SchedulerManager#select_destinations</code>方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@messaging.expected_exceptions(exception.NoValidHost)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_destinations</span><span class="params">(self, ctxt, request_spec=None,</span></span></span><br><span class="line"><span class="function"><span class="params">        filter_properties=None, spec_obj=_sentinel, instance_uuids=None,</span></span></span><br><span class="line"><span class="function"><span class="params">        return_objects=False, return_alternates=False)</span>:</span></span><br><span class="line">    LOG.debug(<span class="string">"Starting to schedule for instances: %s"</span>, instance_uuids)</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment"># 其中USES_ALLOCATION_CANDIDATES默认值为True，</span></span><br><span class="line">    <span class="comment"># 即表示使用Nova Placement API来选取资源分配候选者</span></span><br><span class="line">    <span class="keyword">if</span> self.driver.USES_ALLOCATION_CANDIDATES: </span><br><span class="line">        res = self.placement_client.get_allocation_candidates(ctxt,</span><br><span class="line">        <span class="keyword">if</span> res <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="comment"># We have to handle the case that we failed to connect to the</span></span><br><span class="line">            <span class="comment"># Placement service and the safe_connect decorator on</span></span><br><span class="line">            <span class="comment"># get_allocation_candidates returns None.</span></span><br><span class="line">            alloc_reqs, provider_summaries, allocation_request_version = (</span><br><span class="line">                    <span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            (alloc_reqs, provider_summaries,</span><br><span class="line">                        allocation_request_version) = res</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> alloc_reqs:</span><br><span class="line">            LOG.debug(<span class="string">"Got no allocation candidates from the Placement "</span></span><br><span class="line">                      <span class="string">"API. This may be a temporary occurrence as compute "</span></span><br><span class="line">                      <span class="string">"nodes start up and begin reporting inventory to "</span></span><br><span class="line">                      <span class="string">"the Placement service."</span>)</span><br><span class="line">            <span class="keyword">raise</span> exception.NoValidHost(reason=<span class="string">""</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># Build a dict of lists of allocation requests, keyed by</span></span><br><span class="line">            <span class="comment"># provider UUID, so that when we attempt to claim resources for</span></span><br><span class="line">            <span class="comment"># a host, we can grab an allocation request easily</span></span><br><span class="line">            alloc_reqs_by_rp_uuid = collections.defaultdict(list)</span><br><span class="line">            <span class="keyword">for</span> ar <span class="keyword">in</span> alloc_reqs:</span><br><span class="line">                <span class="keyword">for</span> rp_uuid <span class="keyword">in</span> ar[<span class="string">'allocations'</span>]:</span><br><span class="line">                    alloc_reqs_by_rp_uuid[rp_uuid].append(ar)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Only return alternates if both return_objects and return_alternates</span></span><br><span class="line">    <span class="comment"># are True.</span></span><br><span class="line">    return_alternates = return_alternates <span class="keyword">and</span> return_objects</span><br><span class="line">    <span class="comment"># self.driver在这里，我们配置使用的是FilterScheduler，</span></span><br><span class="line">    <span class="comment"># 即又调用了nova.scheduler.filter_scheduler.FilterScheduler#select_destinations</span></span><br><span class="line">    <span class="comment"># 这个我们后面会提到</span></span><br><span class="line">    selections = self.driver.select_destinations(ctxt, spec_obj,</span><br><span class="line">            instance_uuids, alloc_reqs_by_rp_uuid, provider_summaries,</span><br><span class="line">            allocation_request_version, return_alternates)</span><br><span class="line">    <span class="comment"># If `return_objects` is False, we need to convert the selections to</span></span><br><span class="line">    <span class="comment"># the older format, which is a list of host state dicts.</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> return_objects:</span><br><span class="line">        selection_dicts = [sel[<span class="number">0</span>].to_dict() <span class="keyword">for</span> sel <span class="keyword">in</span> selections]</span><br><span class="line">        <span class="keyword">return</span> jsonutils.to_primitive(selection_dicts)</span><br><span class="line">    <span class="keyword">return</span> selections</span><br></pre></td></tr></table></figure>
+<p>我们先来说，这里调用的Placement API，发起一个GET请求，获取Allocation Candidates。</p>
+<blockquote>
+<p>注：没有找到这个API对应的OSC命令，所以我们使用curl命令进行模拟。<br><br>另，Allocation candidates API requests are availiable starting from version <code>1.10</code>.</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"># 获取token</span><br><span class="line">[root@f-packstack ~(keystone_admin)]# openstack token issue | grep ' id' | awk '&#123;print $4&#125;'</span><br><span class="line">gAAAAABajn5nIXMCkZQBwcl7LdqeCV8pOuFSN4ltIUa9GcJ_PO4x920rpw5fwz43BZ8rkKIVlWF1OHfDNs1GRhqhoUHPNkEU6SRNK8G1BFKoHKD4nDJESGhSMrGwDGTIsYeaANqM2D_48tUo_pY0eqCD8iEcRDHi-QCH-c_t_m44So0cHvlXtdE</span><br><span class="line"># 使用curl命令发起GET请求，请求参数是resources=DISK_GB:1,MEMORY_MB:512,VCPU:1</span><br><span class="line">curl -g -i -X GET http://192.168.122.105:8778/placement/allocation_candidates?resources=DISK_GB:1,MEMORY_MB:512,VCPU:1 \</span><br><span class="line">-H "User-Agent: python-novaclient" \</span><br><span class="line">-H "Accept: application/json" \</span><br><span class="line">-H "X-Auth-Token: gAAAAABajn5nIXMCkZQBwcl7LdqeCV8pOuFSN4ltIUa9GcJ_PO4x920rpw5fwz43BZ8rkKIVlWF1OHfDNs1GRhqhoUHPNkEU6SRNK8G1BFKoHKD4nDJESGhSMrGwDGTIsYeaANqM2D_48tUo_pY0eqCD8iEcRDHi-QCH-c_t_m44So0cHvlXtdE" \</span><br><span class="line">-H "OpenStack-API-Version: placement 1.10" </span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Thu, 22 Feb 2018 08:55:27 GMT</span><br><span class="line">Server: Apache/2.4.6 (CentOS)</span><br><span class="line">OpenStack-API-Version: placement 1.10</span><br><span class="line">vary: OpenStack-API-Version,Accept-Encoding</span><br><span class="line">x-openstack-request-id: req-234db1eb-1386-4e89-99bd-c9269270c603</span><br><span class="line">Content-Length: 381</span><br><span class="line">Content-Type: application/json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"provider_summaries"</span>: &#123;</span><br><span class="line">        <span class="attr">"4cae2ef8-30eb-4571-80c3-3289e86bd65c"</span>: &#123;</span><br><span class="line">            <span class="attr">"resources"</span>: &#123;</span><br><span class="line">                <span class="attr">"VCPU"</span>: &#123;</span><br><span class="line">                    <span class="attr">"used"</span>: <span class="number">2</span>, </span><br><span class="line">                    <span class="attr">"capacity"</span>: <span class="number">64</span></span><br><span class="line">                &#125;, </span><br><span class="line">                <span class="attr">"MEMORY_MB"</span>: &#123;</span><br><span class="line">                    <span class="attr">"used"</span>: <span class="number">1024</span>, </span><br><span class="line">                    <span class="attr">"capacity"</span>: <span class="number">11374</span></span><br><span class="line">                &#125;, </span><br><span class="line">                <span class="attr">"DISK_GB"</span>: &#123;</span><br><span class="line">                    <span class="attr">"used"</span>: <span class="number">2</span>, </span><br><span class="line">                    <span class="attr">"capacity"</span>: <span class="number">49</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, </span><br><span class="line">    <span class="attr">"allocation_requests"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"allocations"</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">"resource_provider"</span>: &#123;</span><br><span class="line">                        <span class="attr">"uuid"</span>: <span class="string">"4cae2ef8-30eb-4571-80c3-3289e86bd65c"</span></span><br><span class="line">                    &#125;, </span><br><span class="line">                    <span class="attr">"resources"</span>: &#123;</span><br><span class="line">                        <span class="attr">"VCPU"</span>: <span class="number">1</span>, </span><br><span class="line">                        <span class="attr">"MEMORY_MB"</span>: <span class="number">512</span>, </span><br><span class="line">                        <span class="attr">"DISK_GB"</span>: <span class="number">1</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Placement经过一系列查询之后，返回了一些信息，其中<code>allocation_requests</code>就是我们的请求参数，即我们需要这么些资源，麻烦Placement给看看有合适的RP没？然后Placement帮我们找到了UUID为<code>4cae2ef8-30eb-4571-80c3-3289e86bd65c</code>的RP，还很贴心的在<code>provider_summaries</code>列出了这个RP当前使用的资源量以及存量。实际上这两个查询分别对应了下面的两个SQL语句：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 1.查询符合要求的Resource Provider</span></span><br><span class="line"><span class="keyword">SELECT</span> rp.id</span><br><span class="line"><span class="keyword">FROM</span> resource_providers <span class="keyword">AS</span> rp</span><br><span class="line">    <span class="comment">-- vcpu信息join</span></span><br><span class="line">    <span class="comment">-- vcpu总存量信息</span></span><br><span class="line">    <span class="keyword">INNER</span> <span class="keyword">JOIN</span> inventories <span class="keyword">AS</span> inv_vcpu</span><br><span class="line">        <span class="keyword">ON</span> inv_vcpu.resource_provider_id = rp.id </span><br><span class="line">        <span class="keyword">AND</span> inv_vcpu.resource_class_id = %(resource_class_id_1)s</span><br><span class="line">    <span class="comment">-- vcpu已使用量信息</span></span><br><span class="line">    <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span> (</span><br><span class="line">        <span class="keyword">SELECT</span> allocations.resource_provider_id <span class="keyword">AS</span> resource_provider_id,</span><br><span class="line">        <span class="keyword">sum</span>(allocations.used) <span class="keyword">AS</span> used</span><br><span class="line">        <span class="keyword">FROM</span> allocations</span><br><span class="line">        <span class="keyword">WHERE</span> allocations.resource_class_id = %(resource_class_id_2)s</span><br><span class="line">        <span class="keyword">GROUP</span> <span class="keyword">BY</span> allocations.resource_provider_id</span><br><span class="line">    ) <span class="keyword">AS</span> usage_vcpu</span><br><span class="line">        <span class="keyword">ON</span> inv_vcpu.resource_provider_id = usage_vcpu.resource_provider_id</span><br><span class="line">    <span class="comment">-- memory信息join</span></span><br><span class="line">    <span class="comment">-- memory总存量信息</span></span><br><span class="line">    <span class="keyword">INNER</span> <span class="keyword">JOIN</span> inventories <span class="keyword">AS</span> inv_memory_mb</span><br><span class="line">        <span class="keyword">ON</span> inv_memory_mb.resource_provider_id = rp.id</span><br><span class="line">        <span class="keyword">AND</span> inv_memory_mb.resource_class_id = %(resource_class_id_3)s</span><br><span class="line">    <span class="comment">-- memory已使用量信息</span></span><br><span class="line">    <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span> (</span><br><span class="line">        <span class="keyword">SELECT</span> allocations.resource_provider_id <span class="keyword">AS</span> resource_provider_id,</span><br><span class="line">            <span class="keyword">sum</span>(allocations.used) <span class="keyword">AS</span> used</span><br><span class="line">        <span class="keyword">FROM</span> allocations</span><br><span class="line">        <span class="keyword">WHERE</span> allocations.resource_class_id = %(resource_class_id_4)s</span><br><span class="line">        <span class="keyword">GROUP</span> <span class="keyword">BY</span> allocations.resource_provider_id</span><br><span class="line">    ) <span class="keyword">AS</span> usage_memory_mb</span><br><span class="line">        <span class="keyword">ON</span> inv_memory_mb.resource_provider_id = usage_memory_mb.resource_provider_id</span><br><span class="line">    <span class="comment">-- disk信息join</span></span><br><span class="line">    <span class="comment">-- disk总存量信息</span></span><br><span class="line">    <span class="keyword">INNER</span> <span class="keyword">JOIN</span> inventories <span class="keyword">AS</span> inv_disk_gb</span><br><span class="line">        <span class="keyword">ON</span> inv_disk_gb.resource_provider_id = rp.id</span><br><span class="line">        <span class="keyword">AND</span> inv_disk_gb.resource_class_id = %(resource_class_id_5)s</span><br><span class="line">    <span class="comment">-- disk已使用量信息</span></span><br><span class="line">    <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span> (</span><br><span class="line">        <span class="keyword">SELECT</span> allocations.resource_provider_id</span><br><span class="line">        <span class="keyword">AS</span> resource_provider_id, <span class="keyword">sum</span>(allocations.used) <span class="keyword">AS</span> used</span><br><span class="line">        <span class="keyword">FROM</span> allocations</span><br><span class="line">        <span class="keyword">WHERE</span> allocations.resource_class_id = %(resource_class_id_6)s</span><br><span class="line">        <span class="keyword">GROUP</span> <span class="keyword">BY</span> allocations.resource_provider_id</span><br><span class="line">        ) <span class="keyword">AS</span> usage_disk_gb</span><br><span class="line">            <span class="keyword">ON</span> inv_disk_gb.resource_provider_id = usage_disk_gb.resource_provider_id</span><br><span class="line"><span class="keyword">WHERE</span> </span><br><span class="line"><span class="comment">-- vcpu满足上限/下限/步长条件</span></span><br><span class="line"><span class="keyword">coalesce</span>(usage_vcpu.used, %(coalesce_1)s) + %(coalesce_2)s &lt;= (</span><br><span class="line">inv_vcpu.total - inv_vcpu.reserved) * inv_vcpu.allocation_ratio <span class="keyword">AND</span></span><br><span class="line">inv_vcpu.min_unit &lt;= %(min_unit_1)s <span class="keyword">AND</span></span><br><span class="line">inv_vcpu.max_unit &gt;= %(max_unit_1)s <span class="keyword">AND</span></span><br><span class="line">%(step_size_1)s % inv_vcpu.step_size = %(param_1)s <span class="keyword">AND</span></span><br><span class="line"><span class="comment">-- memory满足上限/下限/步长条件</span></span><br><span class="line"><span class="keyword">coalesce</span>(usage_memory_mb.used, %(coalesce_3)s) + %(coalesce_4)s &lt;= (</span><br><span class="line">inv_memory_mb.total - inv_memory_mb.reserved) * inv_memory_mb.allocation_ratio <span class="keyword">AND</span></span><br><span class="line">inv_memory_mb.min_unit &lt;= %(min_unit_2)s <span class="keyword">AND</span></span><br><span class="line">inv_memory_mb.max_unit &gt;= %(max_unit_2)s <span class="keyword">AND</span></span><br><span class="line">%(step_size_2)s % inv_memory_mb.step_size = %(param_2)s <span class="keyword">AND</span></span><br><span class="line"><span class="comment">-- disk满足上限/下限/步长条件</span></span><br><span class="line"><span class="keyword">coalesce</span>(usage_disk_gb.used, %(coalesce_5)s) + %(coalesce_6)s &lt;= (</span><br><span class="line">inv_disk_gb.total - inv_disk_gb.reserved) * inv_disk_gb.allocation_ratio <span class="keyword">AND</span></span><br><span class="line">inv_disk_gb.min_unit &lt;= %(min_unit_3)s <span class="keyword">AND</span></span><br><span class="line">inv_disk_gb.max_unit &gt;= %(max_unit_3)s <span class="keyword">AND</span></span><br><span class="line">%(step_size_3)s % inv_disk_gb.step_size = %(param_3)s</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 2.查询该Resource Provider的用量和存量</span></span><br><span class="line"><span class="keyword">SELECT</span> rp.id <span class="keyword">AS</span> resource_provider_id, rp.uuid <span class="keyword">AS</span> resource_provider_uuid,</span><br><span class="line">    inv.resource_class_id, inv.total, inv.reserved, inv.allocation_ratio,</span><br><span class="line">    <span class="string">`usage`</span>.used</span><br><span class="line"><span class="keyword">FROM</span> resource_providers <span class="keyword">AS</span> rp</span><br><span class="line">    <span class="comment">-- inventory信息，每个rp的总量</span></span><br><span class="line">    <span class="keyword">INNER</span> <span class="keyword">JOIN</span> inventories <span class="keyword">AS</span> inv</span><br><span class="line">        <span class="keyword">ON</span> rp.id = inv.resource_provider_id</span><br><span class="line">    <span class="comment">-- allocation信息</span></span><br><span class="line">    <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span> (</span><br><span class="line">        <span class="comment">-- 每个rp和class的已使用量</span></span><br><span class="line">        <span class="keyword">SELECT</span> allocations.resource_provider_id <span class="keyword">AS</span> resource_provider_id,</span><br><span class="line">        allocations.resource_class_id <span class="keyword">AS</span> resource_class_id,</span><br><span class="line">        <span class="keyword">sum</span>(allocations.used) <span class="keyword">AS</span> used</span><br><span class="line">        <span class="keyword">FROM</span> allocations</span><br><span class="line">        <span class="keyword">WHERE</span> allocations.resource_provider_id <span class="keyword">IN</span> (%(resource_provider_id_1)s) <span class="keyword">AND</span></span><br><span class="line">            allocations.resource_class_id <span class="keyword">IN</span> (</span><br><span class="line">                %(resource_class_id_1)s,</span><br><span class="line">                %(resource_class_id_2)s,</span><br><span class="line">                %(resource_class_id_3)s</span><br><span class="line">            )</span><br><span class="line">        <span class="comment">-- 按照rp_id和rp_class_id进行分组</span></span><br><span class="line">        <span class="keyword">GROUP</span> <span class="keyword">BY</span> allocations.resource_provider_id, allocations.resource_class_id</span><br><span class="line">    ) <span class="keyword">AS</span> <span class="string">`usage`</span></span><br><span class="line">        <span class="keyword">ON</span> <span class="string">`usage`</span>.resource_provider_id = inv.resource_provider_id <span class="keyword">AND</span></span><br><span class="line">        <span class="string">`usage`</span>.resource_class_id = inv.resource_class_id</span><br><span class="line"><span class="comment">-- 查询指定id及class的resource</span></span><br><span class="line"><span class="keyword">WHERE</span> rp.id <span class="keyword">IN</span> (%(id_1)s) <span class="keyword">AND</span></span><br><span class="line">    inv.resource_class_id <span class="keyword">IN</span> (</span><br><span class="line">        %(resource_class_id_4)s,</span><br><span class="line">        %(resource_class_id_5)s,</span><br><span class="line">        %(resource_class_id_6)s</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<h4 id="Claim-Resources"><a href="#Claim-Resources" class="headerlink" title="Claim Resources"></a>Claim Resources</h4><p>前面我们提到，在获取到Allocation Candidates（即可用于资源分配的候选host）之后，<code>nova.scheduler.manager.SchedulerManager#select_destinations</code>方法中又调用了<code>nova.scheduler.filter_scheduler.FilterScheduler#select_destinations</code>，在这个方法中，对拿到的Allocation candidates根据权重等再次进行过滤，并尝试进行<code>Claim resources</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">        <span class="keyword">for</span> num <span class="keyword">in</span> range(num_instances):</span><br><span class="line">            <span class="comment"># 根据权重对hosts列表进行排序</span></span><br><span class="line">            hosts = self._get_sorted_hosts(spec_obj, hosts, num)</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> hosts:</span><br><span class="line">                <span class="comment"># NOTE(jaypipes): If we get here, that means not all instances</span></span><br><span class="line">                <span class="comment"># in instance_uuids were able to be matched to a selected host.</span></span><br><span class="line">                <span class="comment"># Any allocations will be cleaned up in the</span></span><br><span class="line">                <span class="comment"># _ensure_sufficient_hosts() call.</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">            instance_uuid = instance_uuids[num]</span><br><span class="line">            <span class="comment"># Attempt to claim the resources against one or more resource</span></span><br><span class="line">            <span class="comment"># providers, looping over the sorted list of possible hosts</span></span><br><span class="line">            <span class="comment"># looking for an allocation_request that contains that host's</span></span><br><span class="line">            <span class="comment"># resource provider UUID</span></span><br><span class="line">            claimed_host = <span class="keyword">None</span></span><br><span class="line">            <span class="keyword">for</span> host <span class="keyword">in</span> hosts:</span><br><span class="line">                cn_uuid = host.uuid</span><br><span class="line">                <span class="keyword">if</span> cn_uuid <span class="keyword">not</span> <span class="keyword">in</span> alloc_reqs_by_rp_uuid:</span><br><span class="line">                    msg = (<span class="string">"A host state with uuid = '%s' that did not have a "</span></span><br><span class="line">                          <span class="string">"matching allocation_request was encountered while "</span></span><br><span class="line">                          <span class="string">"scheduling. This host was skipped."</span>)</span><br><span class="line">                    LOG.debug(msg, cn_uuid)</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">                alloc_reqs = alloc_reqs_by_rp_uuid[cn_uuid]</span><br><span class="line">                <span class="comment"># TODO(jaypipes): Loop through all allocation_requests instead</span></span><br><span class="line">                <span class="comment"># of just trying the first one. For now, since we'll likely</span></span><br><span class="line">                <span class="comment"># want to order the allocation_requests in the future based on</span></span><br><span class="line">                <span class="comment"># information in the provider summaries, we'll just try to</span></span><br><span class="line">                <span class="comment"># claim resources using the first allocation_request</span></span><br><span class="line">                alloc_req = alloc_reqs[<span class="number">0</span>]</span><br><span class="line">                <span class="comment"># 这里的self.placement_client是</span></span><br><span class="line">                <span class="comment"># nova.scheduler.client.report.SchedulerReportClient</span></span><br><span class="line">                <span class="keyword">if</span> utils.claim_resources(elevated, self.placement_client,</span><br><span class="line">                        spec_obj, instance_uuid, alloc_req,</span><br><span class="line">                        allocation_request_version=allocation_request_version):</span><br><span class="line">                    claimed_host = host</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>我们来一起看一下<code>nova.scheduler.utils.claim_resources</code>的代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">claim_resources</span><span class="params">(ctx, client, spec_obj, instance_uuid, alloc_req,</span></span></span><br><span class="line"><span class="function"><span class="params">        allocation_request_version=None)</span>:</span></span><br><span class="line">    <span class="string">"""Given an instance UUID (representing the consumer of resources) and the</span></span><br><span class="line"><span class="string">    allocation_request JSON object returned from Placement, attempt to claim</span></span><br><span class="line"><span class="string">    resources for the instance in the placement API. Returns True if the claim</span></span><br><span class="line"><span class="string">    process was successful, False otherwise.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    :param ctx: The RequestContext object</span></span><br><span class="line"><span class="string">    :param client: The scheduler client to use for making the claim call</span></span><br><span class="line"><span class="string">    :param spec_obj: The RequestSpec object - needed to get the project_id</span></span><br><span class="line"><span class="string">    :param instance_uuid: The UUID of the consuming instance</span></span><br><span class="line"><span class="string">    :param alloc_req: The allocation_request received from placement for the</span></span><br><span class="line"><span class="string">                      resources we want to claim against the chosen host. The</span></span><br><span class="line"><span class="string">                      allocation_request satisfies the original request for</span></span><br><span class="line"><span class="string">                      resources and can be supplied as-is (along with the</span></span><br><span class="line"><span class="string">                      project and user ID to the placement API's PUT</span></span><br><span class="line"><span class="string">                      /allocations/&#123;consumer_uuid&#125; call to claim resources for</span></span><br><span class="line"><span class="string">                      the instance</span></span><br><span class="line"><span class="string">    :param allocation_request_version: The microversion used to request the</span></span><br><span class="line"><span class="string">                                       allocations.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">if</span> request_is_rebuild(spec_obj):</span><br><span class="line">        <span class="comment"># NOTE(danms): This is a rebuild-only scheduling request, so we should</span></span><br><span class="line">        <span class="comment"># not be doing any extra claiming</span></span><br><span class="line">        LOG.debug(<span class="string">'Not claiming resources in the placement API for '</span></span><br><span class="line">                  <span class="string">'rebuild-only scheduling of instance %(uuid)s'</span>,</span><br><span class="line">                  &#123;<span class="string">'uuid'</span>: instance_uuid&#125;)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line">    LOG.debug(<span class="string">"Attempting to claim resources in the placement API for "</span></span><br><span class="line">              <span class="string">"instance %s"</span>, instance_uuid)</span><br><span class="line"></span><br><span class="line">    project_id = spec_obj.project_id</span><br><span class="line"></span><br><span class="line">    <span class="comment"># NOTE(jaypipes): So, the RequestSpec doesn't store the user_id,</span></span><br><span class="line">    <span class="comment"># only the project_id, so we need to grab the user information from</span></span><br><span class="line">    <span class="comment"># the context. Perhaps we should consider putting the user ID in</span></span><br><span class="line">    <span class="comment"># the spec object?</span></span><br><span class="line">    user_id = ctx.user_id</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> client.claim_resources(ctx, instance_uuid, alloc_req, project_id,</span><br><span class="line">            user_id, allocation_request_version=allocation_request_version)</span><br></pre></td></tr></table></figure>
+<p>在该方法中，最终调用的还是传入的client的<code>claim_resources()</code>方法，即<code>nova.scheduler.client.report.SchedulerReportClient#claim_resources</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@safe_connect</span></span><br><span class="line"><span class="meta">@retries</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">claim_resources</span><span class="params">(self, context, consumer_uuid, alloc_request,</span></span></span><br><span class="line"><span class="function"><span class="params">                    project_id, user_id, allocation_request_version=None)</span>:</span></span><br><span class="line">    <span class="string">"""Creates allocation records for the supplied instance UUID against</span></span><br><span class="line"><span class="string">    the supplied resource providers.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    We check to see if resources have already been claimed for this</span></span><br><span class="line"><span class="string">    consumer. If so, we assume that a move operation is underway and the</span></span><br><span class="line"><span class="string">    scheduler is attempting to claim resources against the new (destination</span></span><br><span class="line"><span class="string">    host). In order to prevent compute nodes currently performing move</span></span><br><span class="line"><span class="string">    operations from being scheduled to improperly, we create a "doubled-up"</span></span><br><span class="line"><span class="string">    allocation that consumes resources on *both* the source and the</span></span><br><span class="line"><span class="string">    destination host during the move operation. When the move operation</span></span><br><span class="line"><span class="string">    completes, the destination host (via _allocate_for_instance()) will</span></span><br><span class="line"><span class="string">    end up setting allocations for the instance only on the destination</span></span><br><span class="line"><span class="string">    host thereby freeing up resources on the source host appropriately.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    :param context: The security context</span></span><br><span class="line"><span class="string">    :param consumer_uuid: The instance's UUID.</span></span><br><span class="line"><span class="string">    :param alloc_request: The JSON body of the request to make to the</span></span><br><span class="line"><span class="string">                          placement's PUT /allocations API</span></span><br><span class="line"><span class="string">    :param project_id: The project_id associated with the allocations.</span></span><br><span class="line"><span class="string">    :param user_id: The user_id associated with the allocations.</span></span><br><span class="line"><span class="string">    :param allocation_request_version: The microversion used to request the</span></span><br><span class="line"><span class="string">                                       allocations.</span></span><br><span class="line"><span class="string">    :returns: True if the allocations were created, False otherwise.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># Older clients might not send the allocation_request_version, so</span></span><br><span class="line">    <span class="comment"># default to 1.10.</span></span><br><span class="line">    <span class="comment"># TODO(alex_xu): In the rocky, all the client should send the</span></span><br><span class="line">    <span class="comment"># allocation_request_version. So remove this default value.</span></span><br><span class="line">    allocation_request_version = allocation_request_version <span class="keyword">or</span> <span class="string">'1.10'</span></span><br><span class="line">    <span class="comment"># Ensure we don't change the supplied alloc request since it's used in</span></span><br><span class="line">    <span class="comment"># a loop within the scheduler against multiple instance claims</span></span><br><span class="line">    ar = copy.deepcopy(alloc_request)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># If the allocation_request_version less than 1.12, then convert the</span></span><br><span class="line">    <span class="comment"># allocation array format to the dict format. This conversion can be</span></span><br><span class="line">    <span class="comment"># remove in Rocky release.</span></span><br><span class="line">    <span class="keyword">if</span> versionutils.convert_version_to_tuple(</span><br><span class="line">            allocation_request_version) &lt; (<span class="number">1</span>, <span class="number">12</span>):</span><br><span class="line">        ar = &#123;</span><br><span class="line">            <span class="string">'allocations'</span>: &#123;</span><br><span class="line">                alloc[<span class="string">'resource_provider'</span>][<span class="string">'uuid'</span>]: &#123;</span><br><span class="line">                    <span class="string">'resources'</span>: alloc[<span class="string">'resources'</span>]</span><br><span class="line">                &#125; <span class="keyword">for</span> alloc <span class="keyword">in</span> ar[<span class="string">'allocations'</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        allocation_request_version = <span class="string">'1.12'</span></span><br><span class="line"></span><br><span class="line">    url = <span class="string">'/allocations/%s'</span> % consumer_uuid</span><br><span class="line"></span><br><span class="line">    payload = ar</span><br><span class="line"></span><br><span class="line">    <span class="comment"># We first need to determine if this is a move operation and if so</span></span><br><span class="line">    <span class="comment"># create the "doubled-up" allocation that exists for the duration of</span></span><br><span class="line">    <span class="comment"># the move operation against both the source and destination hosts</span></span><br><span class="line">    r = self.get(url, global_request_id=context.global_id)</span><br><span class="line">    <span class="keyword">if</span> r.status_code == <span class="number">200</span>:</span><br><span class="line">        current_allocs = r.json()[<span class="string">'allocations'</span>]</span><br><span class="line">        <span class="keyword">if</span> current_allocs:</span><br><span class="line">            payload = _move_operation_alloc_request(current_allocs, ar)</span><br><span class="line"></span><br><span class="line">    payload[<span class="string">'project_id'</span>] = project_id</span><br><span class="line">    payload[<span class="string">'user_id'</span>] = user_id</span><br><span class="line">    r = self.put(url, payload, version=allocation_request_version,</span><br><span class="line">                 global_request_id=context.global_id)</span><br><span class="line">    <span class="keyword">if</span> r.status_code != <span class="number">204</span>:</span><br><span class="line">        <span class="comment"># NOTE(jaypipes): Yes, it sucks doing string comparison like this</span></span><br><span class="line">        <span class="comment"># but we have no error codes, only error messages.</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">'concurrently updated'</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            reason = (<span class="string">'another process changed the resource providers '</span></span><br><span class="line">                      <span class="string">'involved in our attempt to put allocations for '</span></span><br><span class="line">                      <span class="string">'consumer %s'</span> % consumer_uuid)</span><br><span class="line">            <span class="keyword">raise</span> Retry(<span class="string">'claim_resources'</span>, reason)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            LOG.warning(</span><br><span class="line">                <span class="string">'Unable to submit allocation for instance '</span></span><br><span class="line">                <span class="string">'%(uuid)s (%(code)i %(text)s)'</span>,</span><br><span class="line">                &#123;<span class="string">'uuid'</span>: consumer_uuid,</span><br><span class="line">                 <span class="string">'code'</span>: r.status_code,</span><br><span class="line">                 <span class="string">'text'</span>: r.text&#125;)</span><br><span class="line">    <span class="keyword">return</span> r.status_code == <span class="number">204</span></span><br></pre></td></tr></table></figure>
+<p>在这里是发起了一个PUT请求，尝试为<code>consumer_id</code>先声明所需要的资源，并根据返回的HTTP status code来判断是否声明资源成功。一旦能成功声明所需要的资源，就等于找到将该虚机调度到哪一个宿主节点，可以继续后面实际资源的创建等一系列流程，Placement API的工作到这里就暂告一段落了。</p>
+<h3 id="目前社区Placement的发展"><a href="#目前社区Placement的发展" class="headerlink" title="目前社区Placement的发展"></a>目前社区Placement的发展</h3><p>通过订阅<code>openstack-dev</code>或者参加<code>nova</code>的weekly meeting，是可以非常及时的获取社区趋势和把握社区的开发进度。那么对Nova Schedule Team来讲，目前这两个月的进度，华为的<a href="http://yikun.github.io/" target="_blank" rel="noopener">姜逸坤</a>都给出了比较详尽的记录和整理：</p>
+<ul>
+<li><a href="https://github.com/Yikun/yikun.github.com/issues/66" target="_blank" rel="noopener">Nova Scheduler Team Meeting跟踪（一月）</a></li>
+<li><a href="https://github.com/Yikun/yikun.github.com/issues/67" target="_blank" rel="noopener">Nova Scheduler Team Meeting跟踪（二月）</a></li>
+</ul>
+<p>目前看起来，调度相关的team还在紧锣密鼓的继续完善Placement的功能，热火朝天向Rocky版本迈进。</p>
+<h2 id="有哪些不足"><a href="#有哪些不足" class="headerlink" title="有哪些不足"></a>有哪些不足</h2><p>目前看起来不足主要集中在使用中的bug及功能的待完善。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1].<a href="https://docs.openstack.org/nova/latest/user/placement.html" target="_blank" rel="noopener">Placement API</a><br>[2].<a href="https://developer.openstack.org/api-ref/placement/" target="_blank" rel="noopener">Placement API Reference</a><br>[3].<a href="http://yikun.github.io/" target="_blank" rel="noopener">Yikun’s blog</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nova/">Nova</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/02/23/nova-placement-api/&title=《Nova Placement API深度介绍》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/02/23/nova-placement-api/&title=《Nova Placement API深度介绍》 — El barco&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/02/23/nova-placement-api/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Nova Placement API深度介绍》 — El barco&url=http://elbarco.cn/2018/02/23/nova-placement-api/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/02/23/nova-placement-api/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/01/16/learning-nova-architecture-overview/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Nova架构体系概览</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2018</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/02/23/nova-placement-api/&title=《Nova Placement API深度介绍》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/02/23/nova-placement-api/&title=《Nova Placement API深度介绍》 — El barco&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/02/23/nova-placement-api/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Nova Placement API深度介绍》 — El barco&url=http://elbarco.cn/2018/02/23/nova-placement-api/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/02/23/nova-placement-api/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2018/02/23/nova-placement-api/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
