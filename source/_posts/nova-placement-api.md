@@ -1,5 +1,5 @@
 ---
-title: Nova Placement API深度介绍
+title: Nova Placement API与Nova调度全解析
 date: 2018-02-23 16:47:50
 tags: [OpenStack, Nova]
 ---
@@ -463,11 +463,16 @@ ROUTE_DECLARATIONS = {
 
 ### 如何部署
 
-在官方文档中提到，placement api服务必须在升级到14.0.0，即N版后，升级到15.0.0，即O版之前进行部署，不过对于我们P版，经过了O版的一系列功能补齐，尤其是在O版中，如果在`nova.conf`中不配置`[placement]`部分的内容，就无法启动`nova-compute`服务。
+在官方文档中提到，placement api服务必须在升级到14.0.0，即N版后，升级到15.0.0，即O版之前进行部署。nova-compute服务中的resource tracker需要获取placement的资源提供者存量和分配信息（这部分信息将在O版中由nova-scheduler使用）。
 
->The nova-compute service will fail to start in Ocata unless the [placement] section of nova.conf on the compute is configured. 
+1. 部署API服务 - Placement API目前还是在nova中进行开发，但是设计上是相对独立的，以便将来分离出来成为单独的项目。作为一个单独的WSGI应用，可使用Apahce2或者Nginx部署API服务。
+2. 同步数据库 - 升级N版时，需要手动执行` nova-manage api_db sync`命令进行数据库同步，这样Placement相关的数据表就会被创建出来
+3. 在keystone中创建具有admin角色的placement service user，同时更新服务目录，配置单独的endpoint.
+4. 配置nova.conf中[placement]部分，并重启nova-compute服务。不过对于我们P版，经过了O版的一系列功能补齐，尤其是在O版中，如果在`nova.conf`中不配置`[placement]`部分的内容，就无法启动`nova-compute`服务。
 
-P版中不再需要我们进行单独部署。
+>The nova-compute service will fail to start in Ocata unless the [placement] section of nova.conf on the compute is configured.
+
+更多部署相关的可参见官方文档，[>>传送门](https://docs.openstack.org/nova/latest/user/placement.html#deployment)。
 
 ### OSC Placement Plugin
 
@@ -481,13 +486,13 @@ http://localhost:5000/v2.0/tokens
 
 ...
 {
-    "issued_at": "2018-02-07T07:40:07.000000Z", 
-    "expires": "2018-02-07T08:40:07.000000Z", 
-    "id": "gAAAAABaeq1XrNDoU_F_iRk8uC0lOxYpyzLMW_YRs_ggJHuF1OpGHBN-pymQut-Bp2Er-J4XkYfQkMdJbRlBIBhq4wfhZMHZvag1itnL6Q-TSWhOn7uZpdQsYqqJDmwgtzCm-hcpg17IwN5FZSanCbcy6S96YZ0Zci5STWNka40861Mn8UQ2yRE", 
+    "issued_at": "2018-02-07T07:40:07.000000Z",
+    "expires": "2018-02-07T08:40:07.000000Z",
+    "id": "gAAAAABaeq1XrNDoU_F_iRk8uC0lOxYpyzLMW_YRs_ggJHuF1OpGHBN-pymQut-Bp2Er-J4XkYfQkMdJbRlBIBhq4wfhZMHZvag1itnL6Q-TSWhOn7uZpdQsYqqJDmwgtzCm-hcpg17IwN5FZSanCbcy6S96YZ0Zci5STWNka40861Mn8UQ2yRE",
     "tenant": {
-        "description": "admin tenant", 
-        "enabled": true, 
-        "id": "6387fc88b3064149a12eb5b58669e0b2", 
+        "description": "admin tenant",
+        "enabled": true,
+        "id": "6387fc88b3064149a12eb5b58669e0b2",
         "name": "admin"
     }
 }
@@ -506,22 +511,22 @@ http://192.168.122.105:8778/placement/resource_providers
 {
     "resource_providers": [
         {
-            "generation": 30, 
-            "uuid": "4cae2ef8-30eb-4571-80c3-3289e86bd65c", 
+            "generation": 30,
+            "uuid": "4cae2ef8-30eb-4571-80c3-3289e86bd65c",
             "links": [
                 {
-                    "href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c", 
+                    "href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c",
                     "rel": "self"
-                }, 
+                },
                 {
-                    "href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/inventories", 
+                    "href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/inventories",
                     "rel": "inventories"
-                }, 
+                },
                 {
-                    "href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/usages", 
+                    "href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/usages",
                     "rel": "usages"
                 }
-            ], 
+            ],
             "name": "f-packstack"
         }
     ]
@@ -536,7 +541,7 @@ curl -g -i -X GET http://192.168.122.105:8778/placement/resource_providers/4cae2
 -H "User-Agent: python-novaclient" \
 -H "Accept: application/json" \
 -H "X-Auth-Token: gAAAAABaf5nafUZyFTl_pztozfB65wkP0c26HQqrxRgAiJGsxY8g743LxFOZEI3bF_l37xh0UajbF5nQ1kLYGAonOGphV4AivXgYMUOJ84uGrHjpC60NlmNzzQ3lJGVJb-pNxQw74WsMOc9I0D2B5Mzmf2OgDeictae5f0UFgTR9DFb_vaWCWQ4" \
--H "OpenStack-API-Version: placement 1.1" 
+-H "OpenStack-API-Version: placement 1.1"
 HTTP/1.1 200 OK
 Date: Fri, 15 Sep 2017 09:35:21 GMT
 Server: Apache/2.4.18 (Ubuntu)
@@ -546,7 +551,7 @@ OpenStack-API-Version: placement 1.1
 vary: OpenStack-API-Version
 x-openstack-request-id: req-ab28194f-8389-40a1-9a2b-a94dbc792573
 Connection: close
- 
+
 {"aggregates": []}
 
 
@@ -556,30 +561,30 @@ curl -g -i -X GET http://192.168.122.105:8778/placement/resource_providers/4cae2
 -H 'x-auth-token:gAAAAABae6lX26bp4PEVHCac0cjFnNl18W8DjeQKXDYvuKP4drRJ8t6DC-9uzcCm4E9Xf7NjqSqkRX6WGsE3qHmpAt7GmIu1SrLCtyEOVM2IQP5XLNrwMekGGrzQ_ADOaSTc9XpPpCYyYwzT-zCAvWG-T9T6Ip4l3zHWLwNBBPrm35gBZVZeslQ' \
 
 {
-    "resource_provider_generation": 30, 
+    "resource_provider_generation": 30,
     "inventories": {
         "VCPU": {
-            "allocation_ratio": 16, 
-            "total": 4, 
-            "reserved": 0, 
-            "step_size": 1, 
-            "min_unit": 1, 
+            "allocation_ratio": 16,
+            "total": 4,
+            "reserved": 0,
+            "step_size": 1,
+            "min_unit": 1,
             "max_unit": 128
-        }, 
+        },
         "MEMORY_MB": {
-            "allocation_ratio": 1.5, 
-            "total": 8095, 
-            "reserved": 512, 
-            "step_size": 1, 
-            "min_unit": 1, 
+            "allocation_ratio": 1.5,
+            "total": 8095,
+            "reserved": 512,
+            "step_size": 1,
+            "min_unit": 1,
             "max_unit": 8095
-        }, 
+        },
         "DISK_GB": {
-            "allocation_ratio": 1, 
-            "total": 49, 
-            "reserved": 0, 
-            "step_size": 1, 
-            "min_unit": 1, 
+            "allocation_ratio": 1,
+            "total": 49,
+            "reserved": 0,
+            "step_size": 1,
+            "min_unit": 1,
             "max_unit": 49
         }
     }
@@ -650,12 +655,9 @@ END return value: 0
         ...
         # 其中USES_ALLOCATION_CANDIDATES默认值为True，
         # 即表示使用Nova Placement API来选取资源分配候选者
-        if self.driver.USES_ALLOCATION_CANDIDATES: 
+        if self.driver.USES_ALLOCATION_CANDIDATES:
             res = self.placement_client.get_allocation_candidates(ctxt,
             if res is None:
-                # We have to handle the case that we failed to connect to the
-                # Placement service and the safe_connect decorator on
-                # get_allocation_candidates returns None.
                 alloc_reqs, provider_summaries, allocation_request_version = (
                         None, None, None)
             else:
@@ -707,7 +709,7 @@ curl -g -i -X GET http://192.168.122.105:8778/placement/allocation_candidates?re
 -H "User-Agent: python-novaclient" \
 -H "Accept: application/json" \
 -H "X-Auth-Token: gAAAAABajn5nIXMCkZQBwcl7LdqeCV8pOuFSN4ltIUa9GcJ_PO4x920rpw5fwz43BZ8rkKIVlWF1OHfDNs1GRhqhoUHPNkEU6SRNK8G1BFKoHKD4nDJESGhSMrGwDGTIsYeaANqM2D_48tUo_pY0eqCD8iEcRDHi-QCH-c_t_m44So0cHvlXtdE" \
--H "OpenStack-API-Version: placement 1.10" 
+-H "OpenStack-API-Version: placement 1.10"
 
 HTTP/1.1 200 OK
 Date: Thu, 22 Feb 2018 08:55:27 GMT
@@ -723,30 +725,30 @@ Content-Type: application/json
         "4cae2ef8-30eb-4571-80c3-3289e86bd65c": {
             "resources": {
                 "VCPU": {
-                    "used": 2, 
+                    "used": 2,
                     "capacity": 64
-                }, 
+                },
                 "MEMORY_MB": {
-                    "used": 1024, 
+                    "used": 1024,
                     "capacity": 11374
-                }, 
+                },
                 "DISK_GB": {
-                    "used": 2, 
+                    "used": 2,
                     "capacity": 49
                 }
             }
         }
-    }, 
+    },
     "allocation_requests": [
         {
             "allocations": [
                 {
                     "resource_provider": {
                         "uuid": "4cae2ef8-30eb-4571-80c3-3289e86bd65c"
-                    }, 
+                    },
                     "resources": {
-                        "VCPU": 1, 
-                        "MEMORY_MB": 512, 
+                        "VCPU": 1,
+                        "MEMORY_MB": 512,
                         "DISK_GB": 1
                     }
                 }
@@ -765,7 +767,7 @@ FROM resource_providers AS rp
     -- vcpu信息join
     -- vcpu总存量信息
     INNER JOIN inventories AS inv_vcpu
-        ON inv_vcpu.resource_provider_id = rp.id 
+        ON inv_vcpu.resource_provider_id = rp.id
         AND inv_vcpu.resource_class_id = %(resource_class_id_1)s
     -- vcpu已使用量信息
     LEFT OUTER JOIN (
@@ -804,7 +806,7 @@ FROM resource_providers AS rp
         GROUP BY allocations.resource_provider_id
         ) AS usage_disk_gb
             ON inv_disk_gb.resource_provider_id = usage_disk_gb.resource_provider_id
-WHERE 
+WHERE
 -- vcpu满足上限/下限/步长条件
 coalesce(usage_vcpu.used, %(coalesce_1)s) + %(coalesce_2)s <= (
 inv_vcpu.total - inv_vcpu.reserved) * inv_vcpu.allocation_ratio AND
@@ -859,98 +861,54 @@ WHERE rp.id IN (%(id_1)s) AND
     )
 
 ```
+#### Schedule by fitlers
+
+在nova-scheduler获取到allocation candidates之后，还需要使用`FilterScheduler`对选取的宿主（候选）节点根据启用的过滤器和权重进行计算和过滤。
+
+> 目前Nova中实现的调度器有以下几种：
+> 
+> 1. FilterScheduler（过滤调度器）：默认载入的调度器，根据指定的过滤条件以及权重挑选最佳节点
+> 2. CachingScheduler：与FilterScheduler功能类似，只不过为了追求的更高的调度性能，将主机资源信息缓存到本地内存中，目前的master代码中标注为`[DEPRECATED]`
+> 3. ChanceScheduler（随机调度器）：随机选择，真·佛系。不过也在master代码中被标注了`[DEPRECATED]`
+> 4. FakeScheduler：用于测试，无实际功能
+
+But how does filter scheduler work?
+
+我们依然从代码入手，来张序列图先看为敬：
+
+![FilterScheduler](http://7xrgsx.com1.z0.glb.clouddn.com/how%20filterscheduler%20works.jpg)
+
+在`FilterScheduler`的泳道中，可以看到，大体上分三步：
+
+1. 调度器缓存刷新、状态更新：通过`nova.scheduler.host_manager.HostState`来维护内存中一份主机状态，并返回可见的计算节点信息
+2. Filtering：实用配置文件指定各种的filters去过滤掉不符合条件的hosts。在配置文件中有两个配置`availale_filters`和`enabled_filters`，前者用于指定所有可用的filters，配置为`available_filters=nova.scheduler.filters.all_filters`；后者表示对于可用的filter，nova-scheduler会使用哪些，配置如`enabled_filters=RetryFilter,AvailabilityZoneFilter,RamFilter,DiskFilter`等。O版中Nova支持的filters多达27个，实现均位于`nova/scheduler/filters`目录下，能够处理各类信息，比如主机可用资源、启动请求的参数（如镜像信息、请求重试次数等）、虚机亲和性和反亲和性（与其他虚机是否在同一宿主节点上）等
+3. Weighing：对所有符合条件的host计算权重并排序，从而选出最佳的一个宿主节点。所有的Weigher实现均位于`nova/scheduler/weights`目录下，比如DiskWeigher：
+
+```python
+class DiskWeigher(weights.BaseHostWeigher):
+    # 可以设置maxval和minval属性指明权重的最大值和最小值
+    minval = 0
+    # 权重的系数，最终排序时需要将每种Weigher得到的权重分别乘上它对应的这个
+    # 系数，有多个Weigher时才有意义，这里的disk_weight_multiplier
+    # 配置文件默认值为 1.0 
+    def weight_multiplier(self):
+        return CONF.filter_scheduler.disk_weight_multiplier
+    # 计算权重值，按照注释描述，free_disk_mb更大者胜出
+    def _weigh_object(self, host_state, weight_properties):
+        """Higher weights win.  We want spreading to be the default."""
+        return host_state.free_disk_mb
+```
 
 
 #### Claim Resources
 
-前面我们提到，在获取到Allocation Candidates（即可用于资源分配的候选host）之后，`nova.scheduler.manager.SchedulerManager#select_destinations`方法中又调用了`nova.scheduler.filter_scheduler.FilterScheduler#select_destinations`，在这个方法中，对拿到的Allocation candidates根据权重等再次进行过滤，并尝试进行`Claim resources`：
-
-```python
-...
-        for num in range(num_instances):
-            # 根据权重对hosts列表进行排序
-            hosts = self._get_sorted_hosts(spec_obj, hosts, num)
-            if not hosts:
-                # NOTE(jaypipes): If we get here, that means not all instances
-                # in instance_uuids were able to be matched to a selected host.
-                # Any allocations will be cleaned up in the
-                # _ensure_sufficient_hosts() call.
-                break
-
-            instance_uuid = instance_uuids[num]
-            # Attempt to claim the resources against one or more resource
-            # providers, looping over the sorted list of possible hosts
-            # looking for an allocation_request that contains that host's
-            # resource provider UUID
-            claimed_host = None
-            for host in hosts:
-                cn_uuid = host.uuid
-                if cn_uuid not in alloc_reqs_by_rp_uuid:
-                    msg = ("A host state with uuid = '%s' that did not have a "
-                          "matching allocation_request was encountered while "
-                          "scheduling. This host was skipped.")
-                    LOG.debug(msg, cn_uuid)
-                    continue
-
-                alloc_reqs = alloc_reqs_by_rp_uuid[cn_uuid]
-                # TODO(jaypipes): Loop through all allocation_requests instead
-                # of just trying the first one. For now, since we'll likely
-                # want to order the allocation_requests in the future based on
-                # information in the provider summaries, we'll just try to
-                # claim resources using the first allocation_request
-                alloc_req = alloc_reqs[0]
-                # 这里的self.placement_client是
-                # nova.scheduler.client.report.SchedulerReportClient
-                if utils.claim_resources(elevated, self.placement_client,
-                        spec_obj, instance_uuid, alloc_req,
-                        allocation_request_version=allocation_request_version):
-                    claimed_host = host
-                    break
-...
-```
+前面我们提到，在获取到Allocation Candidates（即可用于资源分配的候选host）并经过过滤器过滤和权重计算之后，nova-scheduler开始尝试进行`Claim resources`，即在创建之前预先测试一下所指定的host的可用资源是否能够满足创建虚机的需求。
 我们来一起看一下`nova.scheduler.utils.claim_resources`的代码：
 
 ```python
 def claim_resources(ctx, client, spec_obj, instance_uuid, alloc_req,
         allocation_request_version=None):
-    """Given an instance UUID (representing the consumer of resources) and the
-    allocation_request JSON object returned from Placement, attempt to claim
-    resources for the instance in the placement API. Returns True if the claim
-    process was successful, False otherwise.
-
-    :param ctx: The RequestContext object
-    :param client: The scheduler client to use for making the claim call
-    :param spec_obj: The RequestSpec object - needed to get the project_id
-    :param instance_uuid: The UUID of the consuming instance
-    :param alloc_req: The allocation_request received from placement for the
-                      resources we want to claim against the chosen host. The
-                      allocation_request satisfies the original request for
-                      resources and can be supplied as-is (along with the
-                      project and user ID to the placement API's PUT
-                      /allocations/{consumer_uuid} call to claim resources for
-                      the instance
-    :param allocation_request_version: The microversion used to request the
-                                       allocations.
-    """
-    if request_is_rebuild(spec_obj):
-        # NOTE(danms): This is a rebuild-only scheduling request, so we should
-        # not be doing any extra claiming
-        LOG.debug('Not claiming resources in the placement API for '
-                  'rebuild-only scheduling of instance %(uuid)s',
-                  {'uuid': instance_uuid})
-        return True
-
-    LOG.debug("Attempting to claim resources in the placement API for "
-              "instance %s", instance_uuid)
-
-    project_id = spec_obj.project_id
-
-    # NOTE(jaypipes): So, the RequestSpec doesn't store the user_id,
-    # only the project_id, so we need to grab the user information from
-    # the context. Perhaps we should consider putting the user ID in
-    # the spec object?
-    user_id = ctx.user_id
-
+    ...
     return client.claim_resources(ctx, instance_uuid, alloc_req, project_id,
             user_id, allocation_request_version=allocation_request_version)
 ```
@@ -963,18 +921,7 @@ def claim_resources(ctx, client, spec_obj, instance_uuid, alloc_req,
                         project_id, user_id, allocation_request_version=None):
         """Creates allocation records for the supplied instance UUID against
         the supplied resource providers.
-
-        We check to see if resources have already been claimed for this
-        consumer. If so, we assume that a move operation is underway and the
-        scheduler is attempting to claim resources against the new (destination
-        host). In order to prevent compute nodes currently performing move
-        operations from being scheduled to improperly, we create a "doubled-up"
-        allocation that consumes resources on *both* the source and the
-        destination host during the move operation. When the move operation
-        completes, the destination host (via _allocate_for_instance()) will
-        end up setting allocations for the instance only on the destination
-        host thereby freeing up resources on the source host appropriately.
-
+        即对指定的实例创建该实例在指定RP上的分配记录
         :param context: The security context
         :param consumer_uuid: The instance's UUID.
         :param alloc_request: The JSON body of the request to make to the
@@ -985,13 +932,6 @@ def claim_resources(ctx, client, spec_obj, instance_uuid, alloc_req,
                                            allocations.
         :returns: True if the allocations were created, False otherwise.
         """
-        # Older clients might not send the allocation_request_version, so
-        # default to 1.10.
-        # TODO(alex_xu): In the rocky, all the client should send the
-        # allocation_request_version. So remove this default value.
-        allocation_request_version = allocation_request_version or '1.10'
-        # Ensure we don't change the supplied alloc request since it's used in
-        # a loop within the scheduler against multiple instance claims
         ar = copy.deepcopy(alloc_request)
 
         # If the allocation_request_version less than 1.12, then convert the
@@ -1042,7 +982,7 @@ def claim_resources(ctx, client, spec_obj, instance_uuid, alloc_req,
                      'text': r.text})
         return r.status_code == 204
 ```
-在这里是发起了一个PUT请求，尝试为`consumer_id`先声明所需要的资源，并根据返回的HTTP status code来判断是否声明资源成功。一旦能成功声明所需要的资源，就等于找到将该虚机调度到哪一个宿主节点，可以继续后面实际资源的创建等一系列流程，Placement API的工作到这里就暂告一段落了。
+在这里是发起了一个PUT请求，尝试为`consumer_id`先声明所需要的资源，并根据返回的HTTP status code来判断是否声明资源成功。一旦能成功声明所需要的资源，就等于找到将该虚机调度到哪一个宿主节点，可以继续后面实际资源的创建等一系列流程，Placement API的工作到这里就暂告一段落了。但是对于scheduler，还有去consumer host的资源，即更新host state等内存中的信息等等。
 
 
 ### 目前社区Placement的发展
@@ -1056,7 +996,7 @@ def claim_resources(ctx, client, spec_obj, instance_uuid, alloc_req,
 
 ## 有哪些不足
 
-目前看起来不足主要集中在使用中的bug及功能的待完善。
+目前看起来不足主要集中在使用中的bug及功能的待完善。比如目前还在开发的Nested Resource Providers；为获取Allocation candidates增加limit，控制每次取到的资源候选分配者的数量等等；还有比如主机迁移失败导致两个RP中都有占用的情况等等。像把Placement单独抽离出来，这也是社区有意向要做的事情。
 
 ## 参考
 
