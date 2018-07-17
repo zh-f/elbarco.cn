@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>初识Virtio Balloon | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Virtio,KVM,Virtualization">
+    <meta name="description" content="原文地址：Virtio balloon原创翻译，转载请注明出处。  本文主要介绍了什么是KVM virtio balloon driver。">
+<meta name="keywords" content="Virtio,KVM,Virtualization">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初识Virtio Balloon">
+<meta property="og:url" content="http://elbarco.cn/2018/07/16/virtio-balloon/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="原文地址：Virtio balloon原创翻译，转载请注明出处。  本文主要介绍了什么是KVM virtio balloon driver。">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-expanded.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-shrink.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-chunk.png">
+<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-labels.png">
+<meta property="og:updated_time" content="2018-07-17T09:18:09.756Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="初识Virtio Balloon">
+<meta name="twitter:description" content="原文地址：Virtio balloon原创翻译，转载请注明出处。  本文主要介绍了什么是KVM virtio balloon driver。">
+<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-expanded.png">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/zh-f" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">初识Virtio Balloon</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">初识Virtio Balloon</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-07-16T03:22:07.000Z" itemprop="datePublished" class="page-time">
+  2018-07-16
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-virtio-balloon"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">初识Virtio Balloon</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-07-16 11:22:07" datetime="2018-07-16T03:22:07.000Z"  itemprop="datePublished">2018-07-16</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <blockquote>
+<p>原文地址：<a href="https://rwmj.wordpress.com/2010/07/17/virtio-balloon/" target="_blank" rel="noopener">Virtio balloon</a><br>原创翻译，转载请注明出处。</p>
+</blockquote>
+<p>本文主要介绍了什么是<a href="https://github.com/torvalds/linux/blob/e241e3f2bf975788a1b70dff2eb5180ca395b28e/drivers/virtio/virtio_balloon.c" target="_blank" rel="noopener">KVM virtio balloon driver</a>。<a id="more"></a></p>
+<p>首先，如果你从没听过这个概念，那什么是balloon driver呢？它是一种给予guest实例或者从guest实例中获取RAM的方法。（理论上来讲），如果你的guest实例需要更多的RAM，你可以通过balloon driver给他分配更多的内存，或者如果宿主机需要在guest实例中取走一下内存，balloon driver也可以做到。这些操作的执行<strong>不需要</strong>暂停或者重启guest实例。</p>
+<p>virtio_balloon是一个在guest实例中的内核驱动。这个driver表现的像一种奇怪的进程，要么扩展自己的内存使用，要么压缩自己的内存使用接近什么也没有，如下图所示：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-expanded.png" alt="balloon-expanded"></p>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-shrink.png" alt="balloon-shrink"></p>
+<p>当balloon driver扩张时，运行在guest实例中的应用会突然少了很多可用内存，然后guest实例会像没有多少内存时做的那样，交换内存并启动OOM killer（balloon本身是不可交换并且不会被杀掉的）。</p>
+<p>那么这个“浪费”内存的内核驱动程序有什么意义呢？有两点——<br>第一，驱动通过virtio通道与宿主机通讯，宿主机给其下发指令，比如扩展到指定的大小、现在开始缩小。guest实例配合操作，但是并不直接控制balloon。<br>第二，balloon中的内存也从guest实例中取消映射，并传回宿主机，因此宿主机可以将这部分内存传递给其他的guest实例使用。看起来就像guest虚机的内存缺失了一块一样：</p>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-chunk.png" alt="balloon-chunk"></p>
+<p>Libvirt有两个配置项，<code>currentMemory</code>和<code>maxMemory</code>（详见<a href="https://libvirt.org/formatdomain.html#elementsMemoryAllocation" target="_blank" rel="noopener">Memory Allocation</a>）：</p>
+<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-labels.png" alt="balloon-labels"></p>
+<p><code>maxMemory</code>（或<code>&lt;memory&gt;</code>）是在guest实例启动阶段分配的内存。KVM和Xen的guest虚机目前（译者注：原文发布时间是2010-07-17 14:33）无法找过这个内存上限。<code>currentMemory</code>控制了请求分配给guest实例上应用程序的内存。balloon填充剩余的内存，并且把这部分内存还给宿主机，用于宿主机的在其他地方使用。</p>
+<p>该项配置可以手动调整，或者通过编辑XML文件，或者通过<code>virsh setmem</code>命令。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/KVM/">KVM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Virtio/">Virtio</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Virtualization/">Virtualization</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/07/16/virtio-balloon/&title=《初识Virtio Balloon》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/07/16/virtio-balloon/&title=《初识Virtio Balloon》 — El barco&source=
+原文地址：Virtio balloon原创翻译，转载请注明出处。
+
+本文主要介绍了什么是KVM virtio balloon driver。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/07/16/virtio-balloon/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《初识Virtio Balloon》 — El barco&url=http://elbarco.cn/2018/07/16/virtio-balloon/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/07/16/virtio-balloon/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/02/23/nova-placement-api/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">Nova Placement API与Nova调度全解析</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2018</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/07/16/virtio-balloon/&title=《初识Virtio Balloon》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/07/16/virtio-balloon/&title=《初识Virtio Balloon》 — El barco&source=
+原文地址：Virtio balloon原创翻译，转载请注明出处。
+
+本文主要介绍了什么是KVM virtio balloon driver。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/07/16/virtio-balloon/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《初识Virtio Balloon》 — El barco&url=http://elbarco.cn/2018/07/16/virtio-balloon/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/07/16/virtio-balloon/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2018/07/16/virtio-balloon/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
