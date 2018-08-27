@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=62987721"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Nova中的块设备映射 | El barco | Just another mediocre programmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="OpenStack,Nova">
+    <meta name="description" content="原文地址：Block Device Mapping原创翻译，转载请注明出处。">
+<meta name="keywords" content="OpenStack,Nova">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nova中的块设备映射">
+<meta property="og:url" content="http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/index.html">
+<meta property="og:site_name" content="El barco">
+<meta property="og:description" content="原文地址：Block Device Mapping原创翻译，转载请注明出处。">
+<meta property="og:updated_time" content="2018-08-27T01:51:12.637Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nova中的块设备映射">
+<meta name="twitter:description" content="原文地址：Block Device Mapping原创翻译，转载请注明出处。">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.6.10">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Fan Zhang</h5>
+          <a href="mailto:zh.f@outlook.com" title="zh.f@outlook.com" class="mail">zh.f@outlook.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/links"  >
+                <i class="icon icon-lg icon-link"></i>
+                Links
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/zh-f" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Nova中的块设备映射</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Nova中的块设备映射</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-08-25T05:54:51.000Z" itemprop="datePublished" class="page-time">
+  2018-08-25
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一、概述"><span class="post-toc-number">1.</span> <span class="post-toc-text">一、概述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二、数据格式及其历史"><span class="post-toc-number">2.</span> <span class="post-toc-text">二、数据格式及其历史</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Block-device-mapping-V1（又称之为-legacy）"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Block device mapping V1（又称之为 legacy）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#间奏曲-块设备名称的问题"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">间奏曲-块设备名称的问题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Block-device-mapping-V2"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">Block device mapping V2</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#有效的source-destination组合"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">有效的source/destination组合</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-block-device-mapping-in-nova"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Nova中的块设备映射</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-08-25 13:54:51" datetime="2018-08-25T05:54:51.000Z"  itemprop="datePublished">2018-08-25</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <blockquote>
+<p>原文地址：<a href="https://docs.openstack.org/nova/queens/user/block-device-mapping.html" target="_blank" rel="noopener">Block Device Mapping</a><br>原创翻译，转载请注明出处。<br><a id="more"></a></p>
+</blockquote>
+<h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>Nova中存在一个块设备的概念，这些块设备用于暴露给实例使用。实例的块设备可以有多种，租户或者用户使用哪种块设备取决于特定的部署已经设置的使用限制。块设备映射（Block device mapping）用于管理实例所有的块设备和保存数据。</p>
+<p>当我们讨论块设备时，我们通常会涉及下列事情：</p>
+<ul>
+<li>API或者CLI命令行层面，在实例boot请求中指定块设备的请求结构或者syntax；</li>
+<li>Nova内部用于记录、持久化块设备数据的数据结构，最终记录会写入到<code>block_device_mapping</code>表中。然而在Nova内部，在表示同一数据时，却有几种略微不同的数据格式。除了代码中的<code>BlockDeviceMapping</code>对象，我们还有：<ul>
+<li>API格式，见<code>BlockDeviceDict</code>类，来处理API层面BDM的校验和格式转换，姑且称之为API BDMs</li>
+<li>virt driver格式，由nova.virt.block_device中的类来定义，比如<code>DriverBlockDevice</code>、<code>DriverVolumeBlockDevice</code>等。这些类，除了暴露不同的格式之外，同时提供了处理不同类型的块设备的一些功能函数，比如挂在卷需要同是和cinder和virt driver的代码交互，下文中称之为Driver BDMs</li>
+</ul>
+</li>
+</ul>
+<h2 id="二、数据格式及其历史"><a href="#二、数据格式及其历史" class="headerlink" title="二、数据格式及其历史"></a>二、数据格式及其历史</h2><p>Nova早期的代码中的block device mapping，基本上是仿照了EC2 API中的数据结构。在Havana版本中，block device mapping的代码有了改进和提高，比如在API中暴露额外的详情和特性。为此，V2 API中增加了一个新的扩展，称之为<code>BlockDeviceMappingV2Boot</code>，实际上是在实例的boot API请求中，增加了字段<code>block_device_mapping_v2</code>。</p>
+<h3 id="Block-device-mapping-V1（又称之为-legacy）"><a href="#Block-device-mapping-V1（又称之为-legacy）" class="headerlink" title="Block device mapping V1（又称之为 legacy）"></a>Block device mapping V1（又称之为 legacy）</h3><p>目前Nova代码中使用和存储数据使用的是新的数据结构，但是为了处理会用遗留格式的请求，仍然需要处理v1格式，代码的转换在<code>nova.block_device</code>模块。在V1中，使用device name作为key，并且仅接受：</p>
+<ul>
+<li>Cinder卷或者快照的UUID</li>
+<li>Type，类型，用于区分Cinder卷和快照。</li>
+<li>Size，大小，可选项</li>
+<li>delete_on_termination标志位，可选项</li>
+</ul>
+<h3 id="间奏曲-块设备名称的问题"><a href="#间奏曲-块设备名称的问题" class="headerlink" title="间奏曲-块设备名称的问题"></a>间奏曲-块设备名称的问题</h3><p>使用设备名称作为每个实例的主要的识别号，并把它们暴露给API，对于Nova来说，是有问题的，主要是因为Nova支持的几种hypervisor及其自己的drivers不能保证guest OS分配的设备就是用户在Nova中请求的设备。另外，在公共的NovaAPI中暴露这样的详情，显然也是不理想的。</p>
+<p>解决这个问题，方案是允许用户不指定块设备名称，从而交给Nova（在virt driver的帮助下）来决定设备名称。</p>
+<p>此外，指定设备名称常用于卷启动功能，为实例指定匹配root device设备名称，通常是<code>/dev/vda</code>。</p>
+<p>目前，用户不鼓励在请求时指定设备名称。</p>
+<h3 id="Block-device-mapping-V2"><a href="#Block-device-mapping-V2" class="headerlink" title="Block device mapping V2"></a>Block device mapping V2</h3><p>引入新的格式，是为了解决上面提到的问题，并且支持使用简单的格式所做不到的灵活性以及额外的功能。新的格式是一个含有字典的列表，包含下列字段（除了前面提到的已有的选项）：</p>
+<ul>
+<li>source_type，可以有以下值：<ul>
+<li>image</li>
+<li>volume</li>
+<li>snapshot</li>
+<li>blank</li>
+</ul>
+</li>
+<li>dest_type，可以有以下值:<ul>
+<li>local</li>
+<li>volume</li>
+</ul>
+</li>
+<li>guest_format，用于告诉Nova在挂载时如何格式化设备，通常用于blank local images，如果值为swap，则表示一个swap设备</li>
+<li>device_name，设备名称最好还是不要设置，除非用户希望重载image metadata中指定的设备。在Libvirt中，即使指定了设备名称，在实例内部的设备名称最终由driver来设置（按照字母序，比如指定某个设备名称是/dev/sde，但是在实例内部会按照字母序设置为/dev/sdb或者/dev/sdc等等）</li>
+<li>disk_bus和device_type，可能某些hypervisor会支持的low level details。disk_bus可能的值有<code>ide</code>、<code>usb</code>、<code>virtio</code>、<code>scsi</code>，device_type可以是<code>disk</code>、<code>cdrom</code>、<code>floppy</code>、<code>lun</code>（<strong>//TODO，挖个坑，lun了解一下？</strong>）。以上值不是全部的列表，一般设置为空即可。</li>
+<li>boot_index，定义了hypervisor boot实例尝试存储设备的顺序。每个可用于boot device的设备，应当设置一个唯一的index值，从0开始，依次递增。有些hypervisor不支持booting from multiple devices，所以只会考虑boot_index为0的设备。设置该值为None或者负数（比如-1），则表示这个设备不可以用于启动。通常的做法是，对于boot device，boot_index设置为0，其他设备设置为None（或不设置）。</li>
+</ul>
+<h3 id="有效的source-destination组合"><a href="#有效的source-destination组合" class="headerlink" title="有效的source/destination组合"></a>有效的source/destination组合</h3><p>source_type和dest_type的组合用于定义块设备条目的类型，目前支持下列组合：</p>
+<ul>
+<li>image-&gt;local，预留的条目，用于表示实例在Glance的镜像启动。</li>
+<li>volume-&gt;volume，表示挂载到实例的Cinder卷，可以被标注为启动设备</li>
+<li>snapshot-&gt;volume，表示在Cinder的卷快照创建一个卷，并挂载到实例上，可以被标注为启动设备</li>
+<li>image-&gt;volume，表示在Glance中下载镜像到Cinder的卷，并且把卷挂载给实例，可以被标注为bootable</li>
+<li>blank-&gt;volume，创建一个空的Cinder卷，并把它挂载到实例上，需要设置size</li>
+<li>blank-&gt;local，取决于guest_format，通常表示hypervisor本地存储的ephemeral blank disk或者swap disk（实例只能有一个swap磁盘）</li>
+</ul>
+<p>Nova不会在一个请求中同时允许BDMv1和BDMv2的混合使用，会在接收一个boot请求时做基础的校验。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+
+        
+        尊重原创，转载请标注作者及原文链接，感谢~
+        
+    </div>
+    <footer>
+        <a href="http://elbarco.cn">
+            <img src="/img/avatar.jpg" alt="Fan Zhang">
+            Fan Zhang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-btn waves-light">Donate</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nova/">Nova</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/&title=《Nova中的块设备映射》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/&title=《Nova中的块设备映射》 — El barco&source=
+原文地址：Block Device Mapping原创翻译，转载请注明出处。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Nova中的块设备映射》 — El barco&url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/07/16/virtio-balloon/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h5 class="title">初识Virtio Balloon</h5>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+<section class="comments" id="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    var disqus_shortname = 'elbarco-cn';
+    lazyScripts.push('//' + disqus_shortname + '.disqus.com/embed.js')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        Thanks for donating
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="DonateQRCode">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">Wechat</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">Alipay</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <!-- div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div -->
+    <div class="bottom">
+    
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        UV：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        PV：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p><span>Fan Zhang &copy; 2016 - 2018</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/publish/query/indexFirst.action" target="_blank">京ICP备16008405号-2</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/&title=《Nova中的块设备映射》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/&title=《Nova中的块设备映射》 — El barco&source=
+原文地址：Block Device Mapping原创翻译，转载请注明出处。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Nova中的块设备映射》 — El barco&url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/&via=http://elbarco.cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2018/08/25/block-device-mapping-in-nova/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
+
+</script>
+
+<script src="/js/main.min.js?v=1.6.10"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.6.10" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
