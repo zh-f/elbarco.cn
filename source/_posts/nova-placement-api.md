@@ -619,7 +619,7 @@ END return value: 0
 ### 划重点：Nova调度与Placement API的结合
 
 首先来一张图，来认识一下在P版中，创建一台虚机过程中各个服务之间的调用/调度关系：
-![](http://7xrgsx.com1.z0.glb.clouddn.com/boot-instance-pike.png)
+![](http://bop-to.top/boot-instance-pike.png)
 可以看到，在nova-scheduler与Placement API的交互过程中，有两部分：
 1. Get allocation candidates
 2. Claim Resources
@@ -876,7 +876,7 @@ But how does filter scheduler work?
 
 我们依然从代码入手，来张序列图先看为敬：
 
-![FilterScheduler](http://7xrgsx.com1.z0.glb.clouddn.com/how%20filterscheduler%20works.jpg)
+![FilterScheduler](http://bop-to.top/how%20filterscheduler%20works.jpg)
 
 在`FilterScheduler`的泳道中，可以看到，大体上分三步：
 

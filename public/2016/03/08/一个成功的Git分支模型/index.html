@@ -39,16 +39,16 @@
 <meta property="og:url" content="http://elbarco.cn/2016/03/08/一个成功的Git分支模型/index.html">
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。 针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/main-branches%402x.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/fb%402x.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/merge-without-ff%402x.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/hotfix-branches%402x.png">
-<meta property="og:updated_time" content="2016-06-30T13:31:50.000Z">
+<meta property="og:image" content="http://bop-to.top/git-model%402x.png">
+<meta property="og:image" content="http://bop-to.top/main-branches%402x.png">
+<meta property="og:image" content="http://bop-to.top/fb%402x.png">
+<meta property="og:image" content="http://bop-to.top/merge-without-ff%402x.png">
+<meta property="og:image" content="http://bop-to.top/hotfix-branches%402x.png">
+<meta property="og:updated_time" content="2018-09-23T06:09:32.394Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个成功的Git分支模型">
 <meta name="twitter:description" content="前言从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。 针对如何搭建私有Git服务器，我选用的是GitLab，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章《A successful Git branching model》讲述如何合理的使用Git">
-<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png">
+<meta name="twitter:image" content="http://bop-to.top/git-model%402x.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -194,13 +194,13 @@
             <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>从大公司跳到了小团队，版本控制软件从Git换到了SVN，然而前段时间，头儿让我研究下如何搭建私有Git服务器，如何“优雅”地使用Git。</p>
 <p>针对如何搭建私有Git服务器，我选用的是<a href="https://about.gitlab.com/" target="_blank" rel="noopener">GitLab</a>，有一键安装包，也有很多Step by Step的教程，可自行Google。本文就上面提出的后两个问题，参考文章<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="noopener">《A successful Git branching model》</a>讲述如何合理的使用Git branch进行开发和版本管理。</p>
 <a id="more"></a>
-<p>先来张图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png" alt="分支模型全貌"></p>
+<p>先来张图：<br><img src="http://bop-to.top/git-model%402x.png" alt="分支模型全貌"></p>
 <h2 id="详细展开"><a href="#详细展开" class="headerlink" title="详细展开"></a>详细展开</h2><h3 id="主要分支"><a href="#主要分支" class="headerlink" title="主要分支"></a>主要分支</h3><p>在这个模型中，中央仓库持有两个生命周期无限长的主要分支：</p>
 <ul>
 <li><code>master</code></li>
 <li><code>develop</code></li>
 </ul>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/main-branches%402x.png" alt="主要分支"></p>
+<p><img src="http://bop-to.top/main-branches%402x.png" alt="主要分支"></p>
 <p>我们认为，<code>origin/master</code>这个主要分支上，源码的<code>HEAD</code>永远保持生产就绪的状态。<code>origin/develop</code>这个主要分支的源码<code>HEAD</code>则永远代表了最新提交的开发变更，所以也被称为是“集成分支”。该分支可以用于每晚的自动化构建所使用。</p>
 <p>当<code>develop</code>分支的代码能够到达一个稳定点，并且已经准备好进行版本发布，所以的变更应当合并到<code>master</code>上，并且用版本号标注。具体操作后详细谈到。</p>
 <p>因此，每当变更最终合并到<code>master</code>分支，这就是一个新的生产版本。对待这个分支，要极其严格，所以理论上来讲，可以使用一个Git hook脚本来进行自动化构建，每当有新内容提交到<code>master</code>，脚本自动将软件发布到成产环境。</p>
@@ -215,7 +215,7 @@
 <h4 id="功能特性分支"><a href="#功能特性分支" class="headerlink" title="功能特性分支"></a>功能特性分支</h4><blockquote>
 <p>分支来源：<code>develop</code><br>合并目标：<code>develop</code><br>命名惯例：除<code>master</code>、<code>develop</code>、<code>release-*</code>或者<code>hotfix-*</code>之外的任何名字均可</p>
 </blockquote>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/fb%402x.png" alt=""></p>
+<p><img src="http://bop-to.top/fb%402x.png" alt=""></p>
 <p>功能特性分支（或者有时被称作专题分支）被用于开发接下来或者将来版本的新功能、新特性。当开始开发一项功能时，目标发布用分支并未明确，但只要功能在开发中，这个分支就存在，最终会合并回<code>develop</code>（意味着即将发布的版本中一定会包含该功能）或者被废弃（这当然是一种令人十分失望的情况）。</p>
 <p>功能特性分支仅存在与开发的代码仓库，并不在<code>origin</code>。</p>
 <p><em>创建一个功能特性分支</em></p>
@@ -225,7 +225,7 @@
 <p>完成的功能特性被合并到<code>develop</code>分支上，表示该功能要添加到即将发布的版本中：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch <span class="string">'develop'</span></span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">Updating ea1b82a..05e9557</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git branch -d myfeature</span><br><span class="line">Deleted branch myfeature (was 05e9557).</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
 <p><code>--no-ff</code>表示合并总是创建新的提交对象，这样可以避免在合并分支时丢失历史信息，对比图如下：</p>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/merge-without-ff%402x.png" alt=""></p>
+<p><img src="http://bop-to.top/merge-without-ff%402x.png" alt=""></p>
 <p>显而易见，这就是证据啊，证据！:joy:</p>
 <h4 id="发布用分支"><a href="#发布用分支" class="headerlink" title="发布用分支"></a>发布用分支</h4><blockquote>
 <p>分支来源：<code>develop</code><br>合并目标：<code>develop</code>和<code>master</code><br>命名惯例：<code>release-*</code></p>
@@ -254,7 +254,7 @@
 <h4 id="补丁分支"><a href="#补丁分支" class="headerlink" title="补丁分支"></a>补丁分支</h4><blockquote>
 <p>分支来源：<code>master</code><br>合并目标：<code>develop</code>和<code>master</code><br>命名惯例：<code>hotfix-*</code></p>
 </blockquote>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/hotfix-branches%402x.png" alt="Hoxfix branches"></p>
+<p><img src="http://bop-to.top/hotfix-branches%402x.png" alt="Hoxfix branches"></p>
 <p>这类分支与发布用分支很类似，不过补丁分支的产生是为了快速响应生产环境中的紧急问题。当线上遭遇紧急缺陷需要立刻解决，则需要在对应标记的<code>master</code>分支上拉出一个补丁分支。</p>
 <p>在某一位或者几位开发者修复线上问题的同时，<code>develop</code>分支可以继续进行。</p>
 <p><em>创建一个补丁分支</em></p>

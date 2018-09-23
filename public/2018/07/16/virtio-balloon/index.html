@@ -39,15 +39,15 @@
 <meta property="og:url" content="http://elbarco.cn/2018/07/16/virtio-balloon/index.html">
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="原文地址：Virtio balloon原创翻译，转载请注明出处。  本文主要介绍了什么是KVM virtio balloon driver。">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-expanded.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-shrink.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-chunk.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-labels.png">
-<meta property="og:updated_time" content="2018-07-17T09:18:09.756Z">
+<meta property="og:image" content="http://bop-to.top/balloon-expanded.png">
+<meta property="og:image" content="http://bop-to.top/balloon-shrink.png">
+<meta property="og:image" content="http://bop-to.top/balloon-chunk.png">
+<meta property="og:image" content="http://bop-to.top/balloon-labels.png">
+<meta property="og:updated_time" content="2018-09-23T06:09:32.407Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识Virtio Balloon">
 <meta name="twitter:description" content="原文地址：Virtio balloon原创翻译，转载请注明出处。  本文主要介绍了什么是KVM virtio balloon driver。">
-<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-expanded.png">
+<meta name="twitter:image" content="http://bop-to.top/balloon-expanded.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -188,13 +188,13 @@
 </blockquote>
 <p>本文主要介绍了什么是<a href="https://github.com/torvalds/linux/blob/e241e3f2bf975788a1b70dff2eb5180ca395b28e/drivers/virtio/virtio_balloon.c" target="_blank" rel="noopener">KVM virtio balloon driver</a>。<a id="more"></a></p>
 <p>首先，如果你从没听过这个概念，那什么是balloon driver呢？它是一种给予guest实例或者从guest实例中获取RAM的方法。（理论上来讲），如果你的guest实例需要更多的RAM，你可以通过balloon driver给他分配更多的内存，或者如果宿主机需要在guest实例中取走一下内存，balloon driver也可以做到。这些操作的执行<strong>不需要</strong>暂停或者重启guest实例。</p>
-<p>virtio_balloon是一个在guest实例中的内核驱动。这个driver表现的像一种奇怪的进程，要么扩展自己的内存使用，要么压缩自己的内存使用接近什么也没有，如下图所示：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-expanded.png" alt="balloon-expanded"></p>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-shrink.png" alt="balloon-shrink"></p>
+<p>virtio_balloon是一个在guest实例中的内核驱动。这个driver表现的像一种奇怪的进程，要么扩展自己的内存使用，要么压缩自己的内存使用接近什么也没有，如下图所示：<br><img src="http://bop-to.top/balloon-expanded.png" alt="balloon-expanded"></p>
+<p><img src="http://bop-to.top/balloon-shrink.png" alt="balloon-shrink"></p>
 <p>当balloon driver扩张时，运行在guest实例中的应用会突然少了很多可用内存，然后guest实例会像没有多少内存时做的那样，交换内存并启动OOM killer（balloon本身是不可交换并且不会被杀掉的）。</p>
 <p>那么这个“浪费”内存的内核驱动程序有什么意义呢？有两点——<br>第一，驱动通过virtio通道与宿主机通讯，宿主机给其下发指令，比如扩展到指定的大小、现在开始缩小。guest实例配合操作，但是并不直接控制balloon。<br>第二，balloon中的内存也从guest实例中取消映射，并传回宿主机，因此宿主机可以将这部分内存传递给其他的guest实例使用。看起来就像guest虚机的内存缺失了一块一样：</p>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-chunk.png" alt="balloon-chunk"></p>
+<p><img src="http://bop-to.top/balloon-chunk.png" alt="balloon-chunk"></p>
 <p>Libvirt有两个配置项，<code>currentMemory</code>和<code>maxMemory</code>（详见<a href="https://libvirt.org/formatdomain.html#elementsMemoryAllocation" target="_blank" rel="noopener">Memory Allocation</a>）：</p>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/balloon-labels.png" alt="balloon-labels"></p>
+<p><img src="http://bop-to.top/balloon-labels.png" alt="balloon-labels"></p>
 <p><code>maxMemory</code>（或<code>&lt;memory&gt;</code>）是在guest实例启动阶段分配的内存。KVM和Xen的guest虚机目前（译者注：原文发布时间是2010-07-17 14:33）无法找过这个内存上限。<code>currentMemory</code>控制了请求分配给guest实例上应用程序的内存。balloon填充剩余的内存，并且把这部分内存还给宿主机，用于宿主机的在其他地方使用。</p>
 <p>该项配置可以手动调整，或者通过编辑XML文件，或者通过<code>virsh setmem</code>命令。</p>
 

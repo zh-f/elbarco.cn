@@ -8,10 +8,10 @@ tags: [MySQL, Galera Cluster, DB]
 数据库的复制，一般指的是在数据库集群中，数据在一个数据库服务节点拷贝到另一个数据库节点。常见的RDBMS的复制方式有两种——
 <!--more-->
 
-![](http://7xrgsx.com1.z0.glb.clouddn.com/master-slave-repl.png)
+![](http://bop-to.top/master-slave-repl.png)
 * Master/Slave Replication
 
-![](http://7xrgsx.com1.z0.glb.clouddn.com/multi-master-repl.png)
+![](http://bop-to.top/multi-master-repl.png)
 * Multi-master Replication
 
 对于主从方式的复制方式，master节点上的写操作会通过数据库日志（如MySQ了的binary log）记录，并通过网络传递给slave节点，然后由slave节点根据master节点传递的日志执行这些变更。
@@ -34,7 +34,7 @@ tags: [MySQL, Galera Cluster, DB]
 ## Galera Cluster for MySQL架构
 
 使用了Galera之后，客户端和Galera节点之间交互的时序图如下所示：
-![](http://7xrgsx.com1.z0.glb.clouddn.com/certification-based-replication.png)
+![](http://bop-to.top/certification-based-replication.png)
 
 当客户端执行COMMIT命令，但实际提交未发生前，所有的数据库同一事务中的变更和变更行的主键会被收集到一个`write-set`中，紧接着，数据库节点就会将`write-set`发送到所有的其他节点。
 
@@ -44,7 +44,7 @@ tags: [MySQL, Galera Cluster, DB]
 
 那么Galera Cluster内部又是如何工作的呢？
 
-![](http://7xrgsx.com1.z0.glb.clouddn.com/repl-api.png)
+![](http://bop-to.top/repl-api.png)
 
 如上图所示，Galera Cluster有四个组件组成：
 * DBMS - Galera Cluster支持MySQL、MariaDB和Percona XtraDB
@@ -63,7 +63,7 @@ tags: [MySQL, Galera Cluster, DB]
 
 Primary Component其实是一个集群，当发生集群分裂的时候，Galera Cluster会执行一个特殊的权重算法，来选举一个组件作为Primary Component，如下图所示：
 
-![](http://7xrgsx.com1.z0.glb.clouddn.com/primary-componet.png)
+![](http://bop-to.top/primary-componet.png)
 
 如果集群具有偶数个节点，则会存在脑裂的风险。如果由于网络导致集群被分裂成恰好数量相等的两个cluster，则每个cluster都有可能保持自己的权重，并且两个都会变成non-primary状态。
 

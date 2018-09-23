@@ -39,17 +39,17 @@
 <meta property="og:url" content="http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/index.html">
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/msg-flow.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-channel.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-stack.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/direct-exchange.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/fanout-exchange.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/topic-exchange.png">
-<meta property="og:updated_time" content="2018-01-15T08:39:03.691Z">
+<meta property="og:image" content="http://bop-to.top/msg-flow.png">
+<meta property="og:image" content="http://bop-to.top/amqp-channel.png">
+<meta property="og:image" content="http://bop-to.top/amqp-stack.png">
+<meta property="og:image" content="http://bop-to.top/direct-exchange.png">
+<meta property="og:image" content="http://bop-to.top/fanout-exchange.png">
+<meta property="og:image" content="http://bop-to.top/topic-exchange.png">
+<meta property="og:updated_time" content="2018-09-23T06:09:32.396Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Understanding message with RabbitMQ">
 <meta name="twitter:description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
-<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/msg-flow.png">
+<meta name="twitter:image" content="http://bop-to.top/msg-flow.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -194,10 +194,10 @@
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。<br><a id="more"></a></p>
 <h2 id="AMQP概述"><a href="#AMQP概述" class="headerlink" title="AMQP概述"></a>AMQP概述</h2><p>AMQP(Advanced Message Queuing Protocol)，即高级消息队列协议，是一种应用层网络协议，它为特定客户端应用(application)与消息中间件代理(messaging middleware broker)之间的通信提供支持。本文针对AMQP 0-9-1 模型作一个简单的介绍，该模型即rabbitmq所使用的模型。</p>
-<h2 id="RabbitMQ中的消息流"><a href="#RabbitMQ中的消息流" class="headerlink" title="RabbitMQ中的消息流"></a>RabbitMQ中的消息流</h2><p>用过RabbitMQ的同学肯定对下面这个图会非常理解：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/msg-flow.png" alt="message-flow"><br>总体来讲，消息的生产者，产生消息，将消息发到消息队列RabbitMQ；消息的消费者在队列中取得消息执行后续操作，这就是RabbitMQ中的消息流。</p>
-<p>然而在在将消息推送到MQ或者在MQ中消费时，我们要连接到MQ上。在连接的时候，客户端会创建一个TCP连接到RabbitMQ broker上。一旦连接成功，则客户端会创建一个AMQP channel。AMQP的channel是在TCP连接上的虚拟频道，当我们发布消息，订阅一个队列或者是接收消息，均在频道中完成——为什么需要AMQP channel呢？因为TCP会话的建立和销毁对于操作系统来讲，是十分昂贵的。我们假设说，我们的客户端连接到MQ上进行消息消费，短时间内产生大量的TCP连接，消费完成后，又要将这些TCP连接销毁，这不仅会造成了TCP连接的巨大浪费，而且操作系统每秒钟创建的连接数量有限。很快我们就会遇到性能瓶颈。于是，AMQP channel就诞生了，在一个TCP连接上使用多个频道，每个频道都会被分配一个唯一ID作为标识，在保证每个线程的私有连接的前提下，显著的提高性能，下面是一个生动的示意图：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-channel.png" alt="amqp-channel"></p>
+<h2 id="RabbitMQ中的消息流"><a href="#RabbitMQ中的消息流" class="headerlink" title="RabbitMQ中的消息流"></a>RabbitMQ中的消息流</h2><p>用过RabbitMQ的同学肯定对下面这个图会非常理解：<br><img src="http://bop-to.top/msg-flow.png" alt="message-flow"><br>总体来讲，消息的生产者，产生消息，将消息发到消息队列RabbitMQ；消息的消费者在队列中取得消息执行后续操作，这就是RabbitMQ中的消息流。</p>
+<p>然而在在将消息推送到MQ或者在MQ中消费时，我们要连接到MQ上。在连接的时候，客户端会创建一个TCP连接到RabbitMQ broker上。一旦连接成功，则客户端会创建一个AMQP channel。AMQP的channel是在TCP连接上的虚拟频道，当我们发布消息，订阅一个队列或者是接收消息，均在频道中完成——为什么需要AMQP channel呢？因为TCP会话的建立和销毁对于操作系统来讲，是十分昂贵的。我们假设说，我们的客户端连接到MQ上进行消息消费，短时间内产生大量的TCP连接，消费完成后，又要将这些TCP连接销毁，这不仅会造成了TCP连接的巨大浪费，而且操作系统每秒钟创建的连接数量有限。很快我们就会遇到性能瓶颈。于是，AMQP channel就诞生了，在一个TCP连接上使用多个频道，每个频道都会被分配一个唯一ID作为标识，在保证每个线程的私有连接的前提下，显著的提高性能，下面是一个生动的示意图：<br><img src="http://bop-to.top/amqp-channel.png" alt="amqp-channel"></p>
 <h2 id="从队列说起"><a href="#从队列说起" class="headerlink" title="从队列说起"></a>从队列说起</h2><p>现在，已经对消息整个的生产、消费过程有了大概的了解，我们再进到内部去看下，消息究竟在RabbitMQ内部是如何流转的。</p>
-<p>从概念上来讲，消息的成功流转离不开三部分：exchange，queue和binding：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/amqp-stack.png" alt="amqp-stack"></p>
+<p>从概念上来讲，消息的成功流转离不开三部分：exchange，queue和binding：<br><img src="http://bop-to.top/amqp-stack.png" alt="amqp-stack"></p>
 <ul>
 <li>Exchange是生产者发布消息的地方</li>
 <li>Queue是消息结束并被消费者接收的地方</li>
@@ -239,13 +239,13 @@
 <h2 id="开，往消息队列开……"><a href="#开，往消息队列开……" class="headerlink" title="开，往消息队列开……"></a>开，往消息队列开……</h2><p>前面我们对消息队列Queue进行了比较详尽的介绍，那现在的问题是，消息是怎么抵达消息队列的？这时候，就需要exchange和binding了。</p>
 <p>所有的消息均要先发送到exchang（路由），然后基于特定的规则，RabbitMQ会决定将消息发往哪个队列。这些规则被称为<em>routing keys</em>，一个队列可以说“通过一个<em>routing key</em>，<em>绑定</em>到一个exchange上”。</p>
 <p>如果遇到了多个队列该怎么办？这里就要提到四种exchange类型，分别是<code>direct</code>、<code>fanout</code>、<code>topic</code>和<code>headers</code>，每一种都实现了不同的路由算法。<code>headers</code>允许通过匹配AMQP消息的header而不是routing key，所以我们这里不去深究和探讨了。</p>
-<h3 id="Direct-exchange"><a href="#Direct-exchange" class="headerlink" title="Direct exchange"></a>Direct exchange</h3><p>字面意思，直接路由。如果routing key匹配，则消息会被发送到响应的队列中，如下图所示：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/direct-exchange.png" alt="direct-exchange"></p>
+<h3 id="Direct-exchange"><a href="#Direct-exchange" class="headerlink" title="Direct exchange"></a>Direct exchange</h3><p>字面意思，直接路由。如果routing key匹配，则消息会被发送到响应的队列中，如下图所示：<br><img src="http://bop-to.top/direct-exchange.png" alt="direct-exchange"></p>
 <p>所有的消息队列必须实现这种方式，包括创建一个名称为空字符串的exchange，如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$channel-&gt;basic_publish($msg, &apos;&apos;, &apos;queue-name&apos;);</span><br></pre></td></tr></table></figure></p>
 <p>第一个参数标识了要发送的消息，第二个参数，一个空字符串，标识了指向默认的exchange，第三个参数就是routing key，也就是声明队列所使用的名称。</p>
 <p>如果默认的direct exchange不能满足要求，可以使用<code>exchange.declare</code>命令创建自己所需要的exchange。</p>
-<h3 id="Fanout-exchange"><a href="#Fanout-exchange" class="headerlink" title="Fanout exchange"></a>Fanout exchange</h3><p>扇区路由，示意图如下：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/fanout-exchange.png" alt=""></p>
+<h3 id="Fanout-exchange"><a href="#Fanout-exchange" class="headerlink" title="Fanout exchange"></a>Fanout exchange</h3><p>扇区路由，示意图如下：<br><img src="http://bop-to.top/fanout-exchange.png" alt=""></p>
 <p> Exchange会将收到的消息组播（multicast）到绑定的消息队列中，即这种模式下，支持应用根据一个（only one）消息做出不同的反应。比如我们考虑这么一个用户场景，在用户上传完图片后，既要更新图片缓存，又要奖励用户操作，那么此时如果使用fanout exchange，只需要将两个consumer都绑定到这个exchange上即可。那么如果还需要在上传图片后增加新的处理，只需要写好消费者的功能代码绑定到exchange上即可，对于消息生产者来讲，代码是完全解耦的。</p>
-<h3 id="Topic-exchange"><a href="#Topic-exchange" class="headerlink" title="Topic exchange"></a>Topic exchange</h3><p>这种路由方式，可以实现来自不同消息源的消息到达同一队列，示意图如下：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/topic-exchange.png" alt=""></p>
+<h3 id="Topic-exchange"><a href="#Topic-exchange" class="headerlink" title="Topic exchange"></a>Topic exchange</h3><p>这种路由方式，可以实现来自不同消息源的消息到达同一队列，示意图如下：<br><img src="http://bop-to.top/topic-exchange.png" alt=""></p>
 <p><code>Topic exchange</code>与<code>Direct exchange有</code>些类似，都是通过匹配特定的routing key来讲消息发送给绑定到exchange上的queue中。但是对于<code>Topic exchange</code>来讲，有两个特殊的binding key：</p>
 <ul>
 <li>*，星号，替代/匹配一个单词</li>

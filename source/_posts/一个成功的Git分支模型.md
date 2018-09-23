@@ -13,7 +13,7 @@ tags: Git
 <!--more-->
 
 先来张图：
-![分支模型全貌](http://7xrgsx.com1.z0.glb.clouddn.com/git-model%402x.png)
+![分支模型全貌](http://bop-to.top/git-model%402x.png)
 
 
 ## 详细展开
@@ -25,7 +25,7 @@ tags: Git
 * `master`
 * `develop`
 
-![主要分支](http://7xrgsx.com1.z0.glb.clouddn.com/main-branches%402x.png)
+![主要分支](http://bop-to.top/main-branches%402x.png)
 
 我们认为，`origin/master`这个主要分支上，源码的`HEAD`永远保持生产就绪的状态。`origin/develop`这个主要分支的源码`HEAD`则永远代表了最新提交的开发变更，所以也被称为是“集成分支”。该分支可以用于每晚的自动化构建所使用。
 
@@ -53,7 +53,7 @@ tags: Git
 合并目标：`develop`
 命名惯例：除`master`、`develop`、`release-*`或者`hotfix-*`之外的任何名字均可
 
-![](http://7xrgsx.com1.z0.glb.clouddn.com/fb%402x.png)
+![](http://bop-to.top/fb%402x.png)
 
 功能特性分支（或者有时被称作专题分支）被用于开发接下来或者将来版本的新功能、新特性。当开始开发一项功能时，目标发布用分支并未明确，但只要功能在开发中，这个分支就存在，最终会合并回`develop`（意味着即将发布的版本中一定会包含该功能）或者被废弃（这当然是一种令人十分失望的情况）。
 
@@ -84,7 +84,7 @@ $ git push origin develop
 ```
 `--no-ff`表示合并总是创建新的提交对象，这样可以避免在合并分支时丢失历史信息，对比图如下：
 
-![](http://7xrgsx.com1.z0.glb.clouddn.com/merge-without-ff%402x.png)
+![](http://bop-to.top/merge-without-ff%402x.png)
 
 显而易见，这就是证据啊，证据！:joy:
 
@@ -164,7 +164,7 @@ Deleted branch release-1.2 (was ff452fe)
 合并目标：`develop`和`master`
 命名惯例：`hotfix-*`
 
-![Hoxfix branches](http://7xrgsx.com1.z0.glb.clouddn.com/hotfix-branches%402x.png)
+![Hoxfix branches](http://bop-to.top/hotfix-branches%402x.png)
 
 这类分支与发布用分支很类似，不过补丁分支的产生是为了快速响应生产环境中的紧急问题。当线上遭遇紧急缺陷需要立刻解决，则需要在对应标记的`master`分支上拉出一个补丁分支。
 

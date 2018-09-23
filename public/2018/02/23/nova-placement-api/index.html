@@ -39,13 +39,13 @@
 <meta property="og:url" content="http://elbarco.cn/2018/02/23/nova-placement-api/index.html">
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="是什么由于历史遗留原因，Nova认为资源全部是由计算节点提供，所以在报告某些资源使用时，Nova仅仅通过查询数据库中不同计算节点的数据，简单的做累加计算得到使用量和可用资源情况，这一定不是严谨科学的做法，于是，在N版中，Nova引入了Placement API，这是一个单独的RESTful API和数据模型，用于管理和查询资源提供者的资源存量、使用情况、分配记录等等，以提供更好、更准确的资源跟踪">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/boot-instance-pike.png">
-<meta property="og:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/how%20filterscheduler%20works.jpg">
-<meta property="og:updated_time" content="2018-02-27T03:17:44.796Z">
+<meta property="og:image" content="http://bop-to.top/boot-instance-pike.png">
+<meta property="og:image" content="http://bop-to.top/how%20filterscheduler%20works.jpg">
+<meta property="og:updated_time" content="2018-09-23T06:09:32.392Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nova Placement API与Nova调度全解析">
 <meta name="twitter:description" content="是什么由于历史遗留原因，Nova认为资源全部是由计算节点提供，所以在报告某些资源使用时，Nova仅仅通过查询数据库中不同计算节点的数据，简单的做累加计算得到使用量和可用资源情况，这一定不是严谨科学的做法，于是，在N版中，Nova引入了Placement API，这是一个单独的RESTful API和数据模型，用于管理和查询资源提供者的资源存量、使用情况、分配记录等等，以提供更好、更准确的资源跟踪">
-<meta name="twitter:image" content="http://7xrgsx.com1.z0.glb.clouddn.com/boot-instance-pike.png">
+<meta name="twitter:image" content="http://bop-to.top/boot-instance-pike.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -268,7 +268,7 @@
 <p>有了OSC placement commands，我们不再需要使用curl命令模拟HTTP请求，并且可以非常轻松的进行操作：</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@f-packstack ~(keystone_admin)]# openstack --debug resource provider list</span><br><span class="line">...</span><br><span class="line">http://192.168.122.105:8778 "GET /placement/resource_providers HTTP/1.1" 200 185</span><br><span class="line">RESP: [200] Date: Thu, 08 Feb 2018 05:59:56 GMT Server: Apache/2.4.6 (CentOS) OpenStack-API-Version: placement 1.0 vary: OpenStack-API-Version,Accept-Encoding x-openstack-request-id: req-c6077c19-ca05-4cab-95fa-6129ff989400 Content-Encoding: gzip Content-Length: 185 Keep-Alive: timeout=15, max=100 Connection: Keep-Alive Content-Type: application/json</span><br><span class="line">RESP BODY: &#123;"resource_providers": [&#123;"generation": 30, "uuid": "4cae2ef8-30eb-4571-80c3-3289e86bd65c", "links": [&#123;"href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c", "rel": "self"&#125;, &#123;"href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/inventories", "rel": "inventories"&#125;, &#123;"href": "/placement/resource_providers/4cae2ef8-30eb-4571-80c3-3289e86bd65c/usages", "rel": "usages"&#125;], "name": "f-packstack"&#125;]&#125;</span><br><span class="line"></span><br><span class="line">GET call to placement for http://192.168.122.105:8778/placement/resource_providers used request id req-c6077c19-ca05-4cab-95fa-6129ff989400</span><br><span class="line">+--------------------------------------+-------------+------------+</span><br><span class="line">| uuid                                 | name        | generation |</span><br><span class="line">+--------------------------------------+-------------+------------+</span><br><span class="line">| 4cae2ef8-30eb-4571-80c3-3289e86bd65c | f-packstack |         30 |</span><br><span class="line">+--------------------------------------+-------------+------------+</span><br><span class="line">clean_up ListResourceProvider:</span><br><span class="line">END return value: 0</span><br></pre></td></tr></table></figure>
 <p>当然还有很多其他的命令，有兴趣的可以尝试玩一下。</p>
-<h3 id="划重点：Nova调度与Placement-API的结合"><a href="#划重点：Nova调度与Placement-API的结合" class="headerlink" title="划重点：Nova调度与Placement API的结合"></a>划重点：Nova调度与Placement API的结合</h3><p>首先来一张图，来认识一下在P版中，创建一台虚机过程中各个服务之间的调用/调度关系：<br><img src="http://7xrgsx.com1.z0.glb.clouddn.com/boot-instance-pike.png" alt=""><br>可以看到，在nova-scheduler与Placement API的交互过程中，有两部分：</p>
+<h3 id="划重点：Nova调度与Placement-API的结合"><a href="#划重点：Nova调度与Placement-API的结合" class="headerlink" title="划重点：Nova调度与Placement API的结合"></a>划重点：Nova调度与Placement API的结合</h3><p>首先来一张图，来认识一下在P版中，创建一台虚机过程中各个服务之间的调用/调度关系：<br><img src="http://bop-to.top/boot-instance-pike.png" alt=""><br>可以看到，在nova-scheduler与Placement API的交互过程中，有两部分：</p>
 <ol>
 <li>Get allocation candidates</li>
 <li>Claim Resources<br>下面，我们结合代码详细的讲述一下调度过程。</li>
@@ -298,7 +298,7 @@
 </blockquote>
 <p>But how does filter scheduler work?</p>
 <p>我们依然从代码入手，来张序列图先看为敬：</p>
-<p><img src="http://7xrgsx.com1.z0.glb.clouddn.com/how%20filterscheduler%20works.jpg" alt="FilterScheduler"></p>
+<p><img src="http://bop-to.top/how%20filterscheduler%20works.jpg" alt="FilterScheduler"></p>
 <p>在<code>FilterScheduler</code>的泳道中，可以看到，大体上分三步：</p>
 <ol>
 <li>调度器缓存刷新、状态更新：通过<code>nova.scheduler.host_manager.HostState</code>来维护内存中一份主机状态，并返回可见的计算节点信息</li>
