@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
     
 
     
@@ -39,6 +39,7 @@
 <meta property="og:url" content="http://elbarco.cn/2017/12/01/understanding-message-with-rabbitmq/index.html">
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="本文为先导文章，对消息的一些概念，AMQP的架构、基本知识点进行一个梳理和学习，为OpenStack中基于AMQP实现RPC调用的后续文章做个铺垫。">
+<meta property="og:locale" content="default">
 <meta property="og:image" content="http://bop-to.top/msg-flow.png">
 <meta property="og:image" content="http://bop-to.top/amqp-channel.png">
 <meta property="og:image" content="http://bop-to.top/amqp-stack.png">
@@ -59,7 +60,7 @@
 <body>
     <div id="loading" class="active"></div>
 
-    <aside id="menu"  >
+    <aside id="menu">
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
@@ -79,35 +80,35 @@
       <ul class="nav">
         
             <li class="waves-block waves-effect">
-              <a href="/"  >
+              <a href="/">
                 <i class="icon icon-lg icon-home"></i>
                 Home
               </a>
             </li>
         
             <li class="waves-block waves-effect">
-              <a href="/archives"  >
+              <a href="/archives">
                 <i class="icon icon-lg icon-archives"></i>
                 Archives
               </a>
             </li>
         
             <li class="waves-block waves-effect">
-              <a href="/tags"  >
+              <a href="/tags">
                 <i class="icon icon-lg icon-tags"></i>
                 Tags
               </a>
             </li>
         
             <li class="waves-block waves-effect">
-              <a href="/links"  >
+              <a href="/links">
                 <i class="icon icon-lg icon-link"></i>
                 Links
               </a>
             </li>
         
             <li class="waves-block waves-effect">
-              <a href="https://github.com/zh-f" target="_blank" >
+              <a href="https://github.com/zh-f" target="_blank">
                 <i class="icon icon-lg icon-github"></i>
                 Github
               </a>
@@ -130,7 +131,7 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
@@ -173,19 +174,18 @@
         </nav>
     </aside>
     
-<article id="post-understanding-message-with-rabbitmq"
-  class="post-article article-type-post fade" itemprop="blogPost">
+<article id="post-understanding-message-with-rabbitmq" class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Understanding message with RabbitMQ</h1>
         <div class="post-meta">
-            <time class="post-time" title="2017-12-01 18:17:31" datetime="2017-12-01T10:17:31.000Z"  itemprop="datePublished">2017-12-01</time>
+            <time class="post-time" title="2017-12-01 18:17:31" datetime="2017-12-01T10:17:31.000Z" itemprop="datePublished">2017-12-01</time>
 
             
 
 
             
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
     <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
 </span>
 
@@ -424,8 +424,7 @@
         </div>
         
         <label class="reward-toggle">
-            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
-                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check" data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
             <div class="reward-toggle-ctrol">
                 <span class="reward-toggle-item wechat">Wechat</span>
                 <span class="reward-toggle-label"></span>
@@ -444,10 +443,10 @@
     <!-- div class="top">
         
 <p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
+    <span id="busuanzi_container_site_uv" style="display:none">
         UV：<span id="busuanzi_value_site_uv"></span>
     </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
+    <span id="busuanzi_container_site_pv" style="display:none">
         PV：<span id="busuanzi_value_site_pv"></span>
     </span>
 </p>
@@ -455,16 +454,16 @@
 
         <p>
             
-            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
         </p>
     </div -->
     <div class="bottom">
     
 <p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
+    <span id="busuanzi_container_site_uv" style="display:none">
         UV：<span id="busuanzi_value_site_uv"></span>
     </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
+    <span id="busuanzi_container_site_pv" style="display:none">
         PV：<span id="busuanzi_value_site_pv"></span>
     </span>
 </p>
