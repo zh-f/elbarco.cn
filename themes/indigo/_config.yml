@@ -77,10 +77,12 @@ toc:
 postMessage: 尊重原创，转载请标注作者及原文链接，感谢~
 
 # 站长统计，如要开启，输入CNZZ站点id，如 cnzz: 1255152447
-cnzz: 1257688433
+#cnzz: 1257688433
+cnzz: false
 
 # 百度统计，如要开启，改为你的 key
-baidu_tongji: eacacdefbe98e3b19a0b75b243dbeb5c
+#baidu_tongji: eacacdefbe98e3b19a0b75b243dbeb5c
+baidu_tongji: false
 
 # 腾讯分析，如要开启，输入站点id
 tajs: 62987721

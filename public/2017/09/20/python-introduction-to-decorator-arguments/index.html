@@ -13,11 +13,6 @@
 
 
     
-<!-- Baidu Tongji -->
-<script>var _hmt = _hmt || []</script>
-<script async src="//hm.baidu.com/hm.js?eacacdefbe98e3b19a0b75b243dbeb5c"></script>
-<!-- End Baidu Tongji -->
-
 
 
 
@@ -36,7 +31,7 @@
 <meta name="keywords" content="Python,decorator">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python中的装饰器——装饰器参数篇">
-<meta property="og:url" content="http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/index.html">
+<meta property="og:url" content="https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/index.html">
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是">
 <meta property="og:locale" content="default">
@@ -185,7 +180,7 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="先举个例子"><a href="#先举个例子" class="headerlink" title="先举个例子"></a>先举个例子</h2><p>在<a href="https://elbarco.cn/2017/09/20/python-introduction-to-decorators-with-examples/">上一篇文章</a>中，我们提到的装饰器的例子有一个共同的特点，就是<a id="more"></a>只接收被装饰的方法作为参数。但是在很多时候，装饰器本身接收更多的参数是非常有用的。但是如何做到呢？我们先回想一下基本的装饰器，它在内部声明一个方法，然后将这个内部方法返回，即被装饰器返回的callable。如果要使装饰器接收更多的参数，我们就要再包装一层——即接收参数的”装饰器”并不是真正的装饰器，而是一个返回装饰器的函数，而真正的装饰器负责接收被装饰的方法作为参数，然后装饰方法，返回一个callable。 还是用前面<code>json_output</code>的例子，简单改造一下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JSONOutputError</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, message)</span>:</span></span><br><span class="line">        self._message = message</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._message</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">json_output</span><span class="params">(indent=None, sort_keys=False)</span>:</span></span><br><span class="line">    <span class="string">"""Run the decorated function, serialize the result of that function</span></span><br><span class="line"><span class="string">    to JSON, and return the JSON string.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">actual_decorator</span><span class="params">(decorated)</span>:</span></span><br><span class="line"><span class="meta">        @functools.wraps(decorated)</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">inner</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                result = decorated(*args, **kwargs)</span><br><span class="line">            <span class="keyword">except</span> JSONOutputError <span class="keyword">as</span> ex:</span><br><span class="line">                result = &#123;</span><br><span class="line">                    <span class="string">'state'</span>: <span class="string">'error'</span>,</span><br><span class="line">                    <span class="string">'message'</span>: str(ex),</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">return</span> json.dumps(result, indent=indent, sort_keys=sort_keys)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> actual_decorator</span><br></pre></td></tr></table></figure></p>
+            <h2 id="先举个例子"><a href="#先举个例子" class="headerlink" title="先举个例子"></a>先举个例子</h2><p>在<a href="https://elbarco.cn/2017/09/20/python-introduction-to-decorators-with-examples/" target="_blank" rel="noopener">上一篇文章</a>中，我们提到的装饰器的例子有一个共同的特点，就是<a id="more"></a>只接收被装饰的方法作为参数。但是在很多时候，装饰器本身接收更多的参数是非常有用的。但是如何做到呢？我们先回想一下基本的装饰器，它在内部声明一个方法，然后将这个内部方法返回，即被装饰器返回的callable。如果要使装饰器接收更多的参数，我们就要再包装一层——即接收参数的”装饰器”并不是真正的装饰器，而是一个返回装饰器的函数，而真正的装饰器负责接收被装饰的方法作为参数，然后装饰方法，返回一个callable。 还是用前面<code>json_output</code>的例子，简单改造一下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JSONOutputError</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, message)</span>:</span></span><br><span class="line">        self._message = message</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._message</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">json_output</span><span class="params">(indent=None, sort_keys=False)</span>:</span></span><br><span class="line">    <span class="string">"""Run the decorated function, serialize the result of that function</span></span><br><span class="line"><span class="string">    to JSON, and return the JSON string.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">actual_decorator</span><span class="params">(decorated)</span>:</span></span><br><span class="line"><span class="meta">        @functools.wraps(decorated)</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">inner</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                result = decorated(*args, **kwargs)</span><br><span class="line">            <span class="keyword">except</span> JSONOutputError <span class="keyword">as</span> ex:</span><br><span class="line">                result = &#123;</span><br><span class="line">                    <span class="string">'state'</span>: <span class="string">'error'</span>,</span><br><span class="line">                    <span class="string">'message'</span>: str(ex),</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">return</span> json.dumps(result, indent=indent, sort_keys=sort_keys)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> actual_decorator</span><br></pre></td></tr></table></figure></p>
 <p>可以看到，在<code>json_output</code>中，传入了两个参数<code>indent</code>和<code>sort_keys</code>, 返回的是装饰器<code>actual_decorator</code>，而在<code>inner</code>中用到了传入的两个参数，用于JSON格式化时的缩进和Key的排序展示，来看这个装饰器的效果：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@json_output(indent=4, sort_keys=True)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># output </span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"a"</span>: <span class="string">"1"</span>, </span><br><span class="line">    <span class="string">"status"</span>: <span class="string">"done"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h2 id="还有这种操作？"><a href="#还有这种操作？" class="headerlink" title="还有这种操作？"></a>还有这种操作？</h2><p>通过上面的例子，可以看到，装饰器是<code>actual_decorator</code>而不是<code>json_output</code>，那么问题来了，如果<code>json_output</code>不是装饰器而只是一个返回装饰器的函数，为什么可以像装饰器一样使用？</p>
 <p>问题的关键在于操作的顺序。具体来说，<code>json_output(indent=4,sort_keys=True)</code>的调用在前，@操作符应用在后，那么这个函数的结果就会被当作装饰器使用。即先调用<code>json_output</code>，其中定义了装饰器<code>actual_decorator</code>，并且由<code>json_output</code>返回，则此时再应用@操作符就等价于：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@actual_decorator</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_nothing</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">'status'</span>: <span class="string">'done'</span>,<span class="string">'a'</span>: <span class="string">'1'</span>&#125;</span><br></pre></td></tr></table></figure></p>
@@ -219,7 +214,7 @@
         
     </div>
     <footer>
-        <a href="http://elbarco.cn">
+        <a href="https://zh-f.cn">
             <img src="/img/avatar.jpg" alt="Fan Zhang">
             Fan Zhang
         </a>
@@ -245,7 +240,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&pic=https://zh-f.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -255,22 +250,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&source=先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&source=先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的装饰器——装饰器参数篇》 — El barco&url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&via=http://elbarco.cn" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的装饰器——装饰器参数篇》 — El barco&url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/&via=https://zh-f.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -415,7 +410,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&pic=http://elbarco.cn/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&pic=https://zh-f.cn/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -425,22 +420,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&source=先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/&title=《Python中的装饰器——装饰器参数篇》 — El barco&source=先举个例子在上一篇文章中，我们提到的装饰器的例子有一个共同的特点，就是" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的装饰器——装饰器参数篇》 — El barco&url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/&via=http://elbarco.cn" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Python中的装饰器——装饰器参数篇》 — El barco&url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/&via=https://zh-f.cn" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -451,7 +446,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://elbarco.cn/2017/09/20/python-introduction-to-decorator-arguments/" alt="微信分享二维码">
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://zh-f.cn/2017/09/20/python-introduction-to-decorator-arguments/" alt="微信分享二维码">
 </div>
 
 
@@ -461,8 +456,6 @@
 <script>
 var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
 
-
-lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
 
 </script>
 
@@ -493,7 +486,7 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1257688433&web_id=1257688433')
 
 
 
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
