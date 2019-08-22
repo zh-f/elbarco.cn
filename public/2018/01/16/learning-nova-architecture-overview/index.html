@@ -36,15 +36,15 @@
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="What’s Nova我们首先来看一下OpenStack的逻辑架构图：">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://bop-to.top/osog_0001.png">
-<meta property="og:image" content="http://bop-to.top/architecture.svg">
-<meta property="og:image" content="http://bop-to.top/kvm_archi_base_oh9pnk.png">
-<meta property="og:image" content="http://bop-to.top/nova-compute-drivers.jpg">
-<meta property="og:updated_time" content="2018-09-23T06:09:32.398Z">
+<meta property="og:image" content="http://cdn.elbarco.cn/osog_0001.png">
+<meta property="og:image" content="http://cdn.elbarco.cn/architecture.svg">
+<meta property="og:image" content="http://cdn.elbarco.cn/kvm_archi_base_oh9pnk.png">
+<meta property="og:image" content="http://cdn.elbarco.cn/nova-compute-drivers.jpg">
+<meta property="og:updated_time" content="2019-08-22T07:44:31.524Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nova架构体系概览">
 <meta name="twitter:description" content="What’s Nova我们首先来看一下OpenStack的逻辑架构图：">
-<meta name="twitter:image" content="http://bop-to.top/osog_0001.png">
+<meta name="twitter:image" content="http://cdn.elbarco.cn/osog_0001.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -186,11 +186,11 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="What’s-Nova"><a href="#What’s-Nova" class="headerlink" title="What’s Nova"></a>What’s Nova</h2><p>我们首先来看一下OpenStack的逻辑架构图：<a id="more"></a><br><img src="http://bop-to.top/osog_0001.png" alt=""></p>
+            <h2 id="What’s-Nova"><a href="#What’s-Nova" class="headerlink" title="What’s Nova"></a>What’s Nova</h2><p>我们首先来看一下OpenStack的逻辑架构图：<a id="more"></a><br><img src="http://cdn.elbarco.cn/osog_0001.png" alt=""></p>
 <p>接触过云计算，接触过OpenStack的童鞋都会有所了解，IaaS中最重要的就是计算、存储和网络。Nova，作为OpenStack核心项目，承担起了提供计算资源的重任，即，为用户提供了计算实例，这些实例又称为虚拟机。从上面的逻辑架构图中也可以看到，有了虚拟机之后，才可以外接存储、网络，亦或是有类似Trove（OpenStack中Database-as-a-Service的项目，详见<a href="https://www.openstack.org/software/releases/ocata/components/trove" target="_blank" rel="noopener">&gt;&gt;&gt;传送门</a>）这种在虚机中运行数据库服务的PaaS项目。当然，虚机也需要像认证服务（Keystone）、镜像（Glance）、网络（Neutron）、存储（Cinder、Swift）这些项目的支持，可谓是你中有我，我中有你。</p>
 <p>目前在OpenStack Nova项目的页面（详见<a href="https://www.openstack.org/software/releases/ocata/components/nova" target="_blank" rel="noopener">&gt;&gt;&gt;传送门</a>）显示的生产环境的应用率高达95%，可以说是很“强势”。</p>
 <p>本文就作为Nova学习系列的开篇文章，先熟悉一下Nova架构体系及代码结构。</p>
-<h2 id="Components"><a href="#Components" class="headerlink" title="Components"></a>Components</h2><p>Nova项目也是有好几个组件构成，组件的关系架构图如下所示，其中网络模块一个是Nova-networking，一个是Neutron，当然现在大部分使用的都是Neutron，所以我们只关注第二张图就OK了：<br><img src="http://bop-to.top/architecture.svg" alt=""></p>
+<h2 id="Components"><a href="#Components" class="headerlink" title="Components"></a>Components</h2><p>Nova项目也是有好几个组件构成，组件的关系架构图如下所示，其中网络模块一个是Nova-networking，一个是Neutron，当然现在大部分使用的都是Neutron，所以我们只关注第二张图就OK了：<br><img src="http://cdn.elbarco.cn/architecture.svg" alt=""></p>
 <p>可以看到，在Nova中，有这么几个主要的服务：</p>
 <ul>
 <li>DB：用于数据存储的基础设施数据库</li>
@@ -208,10 +208,10 @@
 <p>目前常见的Hypervisor有QEMU、KVM、XEN、VMware等，其中，KVM是集成到Linux内核的Hypervisor，是X86架构且硬件支持虚拟化技术（Intel VT或AMD-V）的Linux的全虚拟化解决方案。它是Linux的一个很小的模块，利用Linux做大量的事，如任务调度、内存管理与硬件设备交互等。最为热门，也最为常用。</p>
 <p>此外，需要提一下qemu-kvm——</p>
 <blockquote>
-<p>QEMU将KVM整合进来，通过ioctl调用/dev/kvm接口，将有关CPU指令的部分交由内核模块来做。KVM负责CPU虚拟化+内存虚拟化，实现了CPU和内存的虚拟化，但KVM不能模拟其他设备。QEMU模拟IO设备（网卡，磁盘等），KVM加上QEMU之后就能实现真正意义上服务器虚拟化。因为用到了上面两个东西，所以称之为qemu-kvm，来张图：<br><img src="http://bop-to.top/kvm_archi_base_oh9pnk.png" alt=""></p>
+<p>QEMU将KVM整合进来，通过ioctl调用/dev/kvm接口，将有关CPU指令的部分交由内核模块来做。KVM负责CPU虚拟化+内存虚拟化，实现了CPU和内存的虚拟化，但KVM不能模拟其他设备。QEMU模拟IO设备（网卡，磁盘等），KVM加上QEMU之后就能实现真正意义上服务器虚拟化。因为用到了上面两个东西，所以称之为qemu-kvm，来张图：<br><img src="http://cdn.elbarco.cn/kvm_archi_base_oh9pnk.png" alt=""></p>
 </blockquote>
 <p>在KVM这一层之上，是libvirt，它提供统一、稳定、开放源码的对各种虚拟机进行管理的工具（守护进程libvirtd、默认命令行管理工具virsh）和应用程序接口（API）。一些常用的虚拟机管理工具（如virsh、virt-install、virt-manager等）和云计算框架平台（如OpenStack等）都在底层使用libvirt的应用程序接口。</p>
-<p>在Nova的Compute服务中，通过不同的驱动来支持多种Hypervisor，与各种Hypervisor驱动的关系可以用下面的一张图来表示：<br><img src="http://bop-to.top/nova-compute-drivers.jpg" alt=""></p>
+<p>在Nova的Compute服务中，通过不同的驱动来支持多种Hypervisor，与各种Hypervisor驱动的关系可以用下面的一张图来表示：<br><img src="http://cdn.elbarco.cn/nova-compute-drivers.jpg" alt=""></p>
 <h2 id="Instance-Life-Cycle-Management-Process"><a href="#Instance-Life-Cycle-Management-Process" class="headerlink" title="Instance Life Cycle Management Process"></a>Instance Life Cycle Management Process</h2><p>在实例的生命周期管理流程中，常见的一些操作如下：</p>
 <ul>
 <li>创建：nova boot<ul>

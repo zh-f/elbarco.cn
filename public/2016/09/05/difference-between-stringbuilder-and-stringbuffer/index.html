@@ -36,14 +36,14 @@
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="从StringBuilder和StringBuffer的不同说起最近在搬砖的时候，发现在拼接字符串的时候，有人习惯使用StringBuffer，有人习惯使用StringBuilder，于是想到了之前在知乎上看到的这个讨论：国内Java面试总是问StringBuffer，StringBuilder区别是啥？档次为什么这么低，果然这在面试中只是一道预热筛选题嘛">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://bop-to.top/catplus.png">
-<meta property="og:image" content="http://bop-to.top/catsb.png">
-<meta property="og:image" content="http://bop-to.top/catsb2.png">
-<meta property="og:updated_time" content="2018-09-23T06:09:32.395Z">
+<meta property="og:image" content="http://cdn.elbarco.cn/catplus.png">
+<meta property="og:image" content="http://cdn.elbarco.cn/catsb.png">
+<meta property="og:image" content="http://cdn.elbarco.cn/catsb2.png">
+<meta property="og:updated_time" content="2019-08-22T07:44:31.519Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="简述StringBuilder和StringBuffer的区别">
 <meta name="twitter:description" content="从StringBuilder和StringBuffer的不同说起最近在搬砖的时候，发现在拼接字符串的时候，有人习惯使用StringBuffer，有人习惯使用StringBuilder，于是想到了之前在知乎上看到的这个讨论：国内Java面试总是问StringBuffer，StringBuilder区别是啥？档次为什么这么低，果然这在面试中只是一道预热筛选题嘛">
-<meta name="twitter:image" content="http://bop-to.top/catplus.png">
+<meta name="twitter:image" content="http://cdn.elbarco.cn/catplus.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -213,15 +213,15 @@
 <ul>
 <li>使用<code>+</code>操作符</li>
 </ul>
-<p><img src="http://bop-to.top/catplus.png" alt=""></p>
+<p><img src="http://cdn.elbarco.cn/catplus.png" alt=""></p>
 <ul>
 <li>使用<code>StringBuilder</code></li>
 </ul>
-<p><img src="http://bop-to.top/catsb.png" alt=""></p>
+<p><img src="http://cdn.elbarco.cn/catsb.png" alt=""></p>
 <ul>
 <li>使用<code>StringBuilder</code>的基准</li>
 </ul>
-<p><img src="http://bop-to.top/catsb2.png" alt=""></p>
+<p><img src="http://cdn.elbarco.cn/catsb2.png" alt=""></p>
 <p>这位童鞋贴心的把测试用的代码托管在<a href="https://github.com/skuro/stringbuilder" target="_blank" rel="noopener">Github</a>上，有兴趣的可以去看一下。最终这篇文章得出的结论就是——通过对字节码的分析，我们得到了答案，显而易见的是，使用<code>StringBuilder</code>是可以提高性能的。文章开篇还提到这么一句话——</p>
 <blockquote>
 <p>Concatenating two Strings with the plus operator is the source of all evil — Anonymous Java dev</p>

@@ -36,13 +36,13 @@
 <meta property="og:site_name" content="El barco">
 <meta property="og:description" content="在Trove的上篇文章中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://bop-to.top/openstack-dbaas-trove.png">
-<meta property="og:image" content="http://bop-to.top/mysql-backup-flow.png">
-<meta property="og:updated_time" content="2018-09-23T06:09:32.400Z">
+<meta property="og:image" content="http://cdn.elbarco.cn/openstack-dbaas-trove.png">
+<meta property="og:image" content="http://cdn.elbarco.cn/mysql-backup-flow.png">
+<meta property="og:updated_time" content="2019-08-22T07:44:31.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="学习和认识Trove Strategies">
 <meta name="twitter:description" content="在Trove的上篇文章中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：">
-<meta name="twitter:image" content="http://bop-to.top/openstack-dbaas-trove.png">
+<meta name="twitter:image" content="http://cdn.elbarco.cn/openstack-dbaas-trove.png">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css?v=1.6.10">
@@ -184,11 +184,11 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <p>在Trove的<a href="https://elbarco.cn/2017/07/25/introduction-to-trove/" target="_blank" rel="noopener">上篇文章</a>中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：<br><a id="more"></a><br><img src="http://bop-to.top/openstack-dbaas-trove.png" alt=""></p>
+            <p>在Trove的<a href="https://elbarco.cn/2017/07/25/introduction-to-trove/" target="_blank" rel="noopener">上篇文章</a>中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：<br><a id="more"></a><br><img src="http://cdn.elbarco.cn/openstack-dbaas-trove.png" alt=""></p>
 <p>看图，可以简单回顾一下，Trove这个基于OpenStack中的计算、存储、网络、镜像等之上的一个DBaaS项目，图中可以看到它的几个组件，以及它跟其他OpenStack组件的交互。</p>
 <h2 id="Trove-strategies"><a href="#Trove-strategies" class="headerlink" title="Trove strategies"></a>Trove strategies</h2><p>对于Trove来讲，其目标就是提供一个数据库无关的功能集，并且可以在框架内实现扩展，这里我们就引入了Trove的Strategies，即策略。 策略是Trove中的一个设计结构，允许开发人员在Trove作为整体框架的前提下，建立指定抽象的新的实现来扩展Trove，举个🌰来说明——</p>
 <p>我们知道，无论是MySQL、PostgreSQL等关系型数据库，还是其他的非关系型数据库比如MongoDB、Redis，均提供备份的功能。然而不同数据库的备份功能又有所差别，甚至同一个数据库具有不同的集中方式来产生一个备份。下面结合MySQL备份的消息流转图来说明：</p>
-<h3 id="MySQL备份功能中的策略"><a href="#MySQL备份功能中的策略" class="headerlink" title="MySQL备份功能中的策略"></a>MySQL备份功能中的策略</h3><p><img src="http://bop-to.top/mysql-backup-flow.png" alt=""></p>
+<h3 id="MySQL备份功能中的策略"><a href="#MySQL备份功能中的策略" class="headerlink" title="MySQL备份功能中的策略"></a>MySQL备份功能中的策略</h3><p><img src="http://cdn.elbarco.cn/mysql-backup-flow.png" alt=""></p>
 <p>客户端通过Trove API发起备份的请求，通过阅读代码我们知道调用的API的方法是<code>trove.backup.service.BackupController#create</code>，API通过消息队列发起对Task Manager中<code>create_backup</code>的异步调用（见<code>trove.taskmanager.api.API#create_backup</code>）:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_backup</span><span class="params">(self, backup_info, instance_id)</span>:</span></span><br><span class="line">    LOG.debug(<span class="string">"Making async call to create a backup for instance: %s"</span> %</span><br><span class="line">              instance_id)</span><br><span class="line"></span><br><span class="line">    self._cast(<span class="string">"create_backup"</span>, self.version_cap,</span><br><span class="line">               backup_info=backup_info,</span><br><span class="line">               instance_id=instance_id)</span><br></pre></td></tr></table></figure></p>
 <p>然后Task Manager中（见<code>trove.taskmanager.manager.Manager#create_backup</code>）:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_backup</span><span class="params">(self, context, backup_info, instance_id)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> EndNotification(context, backup_id=backup_info[<span class="string">'id'</span>]):</span><br><span class="line">        instance_tasks = models.BuiltInstanceTasks.load(context,</span><br><span class="line">                                                        instance_id)</span><br><span class="line">        instance_tasks.create_backup(backup_info)</span><br></pre></td></tr></table></figure></p>
 <p>其中又调用了BuildInstanceTasks中的<code>create_backup</code>方法，这里实际发起了对Guest Agent中备份创建的调用：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_backup</span><span class="params">(self, backup_info)</span>:</span></span><br><span class="line">    LOG.info(_(<span class="string">"Initiating backup for instance %s."</span>) % self.id)</span><br><span class="line">    self.guest.create_backup(backup_info)</span><br></pre></td></tr></table></figure></p>

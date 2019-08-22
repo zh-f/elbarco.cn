@@ -140,7 +140,7 @@ if __name__ == '__main__':
 ```
 
 这样，我们在执行时，打开data.txt写入信息，就会在控制台看到输出。在这个例子中，`follow()`用于逐行读取，然后把数据发送到`printer()`协程中，过程如图：
-![](http://bop-to.top/coroutine-pipline.png)
+![](http://cdn.elbarco.cn/coroutine-pipline.png)
 
 在这里，`source`就是`follow()`，`sink`就是`printer()`。
 
@@ -166,14 +166,14 @@ if __name__ == '__main__':
 ```
 
 启动后，`grep()`这个协程负责只有在data.txt中写入行含有`python`才会把当前行数据发送到`printer()`，由其在控制台打印出来，过程如图：
-![](http://bop-to.top/coroutine-pipline-filter.png)
+![](http://cdn.elbarco.cn/coroutine-pipline-filter.png)
 
 > 注：coroutine和generator的关键区别在于生成器使用迭代器在管道中拉取数据；协程通过send()向管道中推送数据。
 
 ### 管道连接更多的管道
 
 有了协程，我们可以将数据发送到更多的地方……
-![](http://bop-to.top/coroutine-pipline-branchy.png)
+![](http://cdn.elbarco.cn/coroutine-pipline-branchy.png)
 
 那么我们就来一个🌰，下列代码实现了一个广播的coroutine，将数据推送到批量的coroutines中：
 ```python

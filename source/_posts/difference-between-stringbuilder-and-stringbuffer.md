@@ -89,15 +89,15 @@ return out.toString();
 
 * 使用`+`操作符
 
-![](http://bop-to.top/catplus.png)
+![](http://cdn.elbarco.cn/catplus.png)
 
 * 使用`StringBuilder`
 
-![](http://bop-to.top/catsb.png)
+![](http://cdn.elbarco.cn/catsb.png)
 
 * 使用`StringBuilder`的基准
 
-![](http://bop-to.top/catsb2.png)
+![](http://cdn.elbarco.cn/catsb2.png)
 
 这位童鞋贴心的把测试用的代码托管在[Github](https://github.com/skuro/stringbuilder)上，有兴趣的可以去看一下。最终这篇文章得出的结论就是——通过对字节码的分析，我们得到了答案，显而易见的是，使用`StringBuilder`是可以提高性能的。文章开篇还提到这么一句话——
 

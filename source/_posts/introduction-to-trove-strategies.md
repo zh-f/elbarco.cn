@@ -6,7 +6,7 @@ tags: [OpenStack, Trove]
 
 在Trove的[上篇文章](https://elbarco.cn/2017/07/25/introduction-to-trove/)中，我们简单的介绍了一下Trove的架构和各个组件，最近看到一张图，感觉非常清晰，列到这里：
 <!--more-->
-![](http://bop-to.top/openstack-dbaas-trove.png)
+![](http://cdn.elbarco.cn/openstack-dbaas-trove.png)
 
 看图，可以简单回顾一下，Trove这个基于OpenStack中的计算、存储、网络、镜像等之上的一个DBaaS项目，图中可以看到它的几个组件，以及它跟其他OpenStack组件的交互。
 
@@ -19,7 +19,7 @@ tags: [OpenStack, Trove]
 
 ### MySQL备份功能中的策略
 
-![](http://bop-to.top/mysql-backup-flow.png)
+![](http://cdn.elbarco.cn/mysql-backup-flow.png)
 
 客户端通过Trove API发起备份的请求，通过阅读代码我们知道调用的API的方法是`trove.backup.service.BackupController#create`，API通过消息队列发起对Task Manager中`create_backup`的异步调用（见`trove.taskmanager.api.API#create_backup`）:
 ```python

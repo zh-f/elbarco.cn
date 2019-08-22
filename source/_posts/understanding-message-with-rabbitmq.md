@@ -14,18 +14,18 @@ AMQP(Advanced Message Queuing Protocol)，即高级消息队列协议，是一�
 ## RabbitMQ中的消息流
 
 用过RabbitMQ的同学肯定对下面这个图会非常理解：
-![message-flow](http://bop-to.top/msg-flow.png)
+![message-flow](http://cdn.elbarco.cn/msg-flow.png)
 总体来讲，消息的生产者，产生消息，将消息发到消息队列RabbitMQ；消息的消费者在队列中取得消息执行后续操作，这就是RabbitMQ中的消息流。
 
 然而在在将消息推送到MQ或者在MQ中消费时，我们要连接到MQ上。在连接的时候，客户端会创建一个TCP连接到RabbitMQ broker上。一旦连接成功，则客户端会创建一个AMQP channel。AMQP的channel是在TCP连接上的虚拟频道，当我们发布消息，订阅一个队列或者是接收消息，均在频道中完成——为什么需要AMQP channel呢？因为TCP会话的建立和销毁对于操作系统来讲，是十分昂贵的。我们假设说，我们的客户端连接到MQ上进行消息消费，短时间内产生大量的TCP连接，消费完成后，又要将这些TCP连接销毁，这不仅会造成了TCP连接的巨大浪费，而且操作系统每秒钟创建的连接数量有限。很快我们就会遇到性能瓶颈。于是，AMQP channel就诞生了，在一个TCP连接上使用多个频道，每个频道都会被分配一个唯一ID作为标识，在保证每个线程的私有连接的前提下，显著的提高性能，下面是一个生动的示意图：
-![amqp-channel](http://bop-to.top/amqp-channel.png)
+![amqp-channel](http://cdn.elbarco.cn/amqp-channel.png)
 
 ## 从队列说起
 
 现在，已经对消息整个的生产、消费过程有了大概的了解，我们再进到内部去看下，消息究竟在RabbitMQ内部是如何流转的。
 
 从概念上来讲，消息的成功流转离不开三部分：exchange，queue和binding：
-![amqp-stack](http://bop-to.top/amqp-stack.png)
+![amqp-stack](http://cdn.elbarco.cn/amqp-stack.png)
 
 * Exchange是生产者发布消息的地方
 * Queue是消息结束并被消费者接收的地方
@@ -93,7 +93,7 @@ AMQP(Advanced Message Queuing Protocol)，即高级消息队列协议，是一�
 ### Direct exchange
 
 字面意思，直接路由。如果routing key匹配，则消息会被发送到响应的队列中，如下图所示：
-![direct-exchange](http://bop-to.top/direct-exchange.png)
+![direct-exchange](http://cdn.elbarco.cn/direct-exchange.png)
 
 所有的消息队列必须实现这种方式，包括创建一个名称为空字符串的exchange，如：
 ```
@@ -106,14 +106,14 @@ $channel->basic_publish($msg, '', 'queue-name');
 ### Fanout exchange
 
 扇区路由，示意图如下：
-![](http://bop-to.top/fanout-exchange.png)
+![](http://cdn.elbarco.cn/fanout-exchange.png)
 
  Exchange会将收到的消息组播（multicast）到绑定的消息队列中，即这种模式下，支持应用根据一个（only one）消息做出不同的反应。比如我们考虑这么一个用户场景，在用户上传完图片后，既要更新图片缓存，又要奖励用户操作，那么此时如果使用fanout exchange，只需要将两个consumer都绑定到这个exchange上即可。那么如果还需要在上传图片后增加新的处理，只需要写好消费者的功能代码绑定到exchange上即可，对于消息生产者来讲，代码是完全解耦的。
 
 ### Topic exchange
 
 这种路由方式，可以实现来自不同消息源的消息到达同一队列，示意图如下：
-![](http://bop-to.top/topic-exchange.png)
+![](http://cdn.elbarco.cn/topic-exchange.png)
 
 `Topic exchange`与`Direct exchange有`些类似，都是通过匹配特定的routing key来讲消息发送给绑定到exchange上的queue中。但是对于`Topic exchange`来讲，有两个特殊的binding key：
 * *，星号，替代/匹配一个单词
